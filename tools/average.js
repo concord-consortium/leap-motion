@@ -5,6 +5,7 @@
   var data = {};
   var timestamp = {}; // in ms
 
+  // Adds 'sample' to 'id' set, saves current time and makes sure that length of the set is <= 'limit'.
   avg.addSample = function (id, sample, limit) {
     if (!data[id]) {
       data[id] = [];
@@ -23,6 +24,15 @@
     }
   };
 
+  // Clears 'id' set.
+  avg.clear = function (id) {
+    if (data[id]) {
+      data[id].length = 0;
+      timestamp[id].length = 0;
+    }
+  };
+
+  // Returns average of all sample values from 'id' set.
   avg.getAvg = function (id) {
     var d = data[id];
     var len = d.length;
@@ -33,8 +43,14 @@
     return sum / len;
   };
 
-  avg.getFreq = function (id, minAmplitude, minCount) {
-    if (minCount === undefined) minCount = 1;
+  // Returns "frequency" based on samples from 'id' set if data looks like a wave.
+  // 'minAmplitude' describes minimal amplitude that is required to treat a group of points as a wave. It should be
+  // used to filter out a noise. Frequency is based on the last three waves (FREQ_MIN_COUNT). If there are not enough
+  // samples or waves, 0 is returned. Also, if data is flat during the most recent second, 0 is returned automatically
+  // (it usually means that motion has stopped).
+  // Note it's a simple heuristic which is designed to work fast and good enough for given application.
+  var FREQ_MIN_COUNT = 3;
+  avg.getFreq = function (id, minAmplitude) {
     var d = data[id];
     var t = timestamp[id];
     var len = d.length;
@@ -46,18 +62,21 @@
     var globalMax = -Infinity;
     for (var i = 0; i < len - 2; i++) {
       max = Math.max(max, d[i]);
+      // Look for local minimum, but also make sure that the amplitude is big enough.
       if (d[i] > d[i + 1] && d[i + 1] <= d[i + 2] && (max - d[i + 1]) >= minAmplitude) {
         if (lastMin !== null) {
+          // Wave found, save its period and increase count value.
           sum += lastMin - t[i + 1];
           count += 1;
-          if (count >= minCount) {
-            return 1000 / (sum / count);
+          if (count >= FREQ_MIN_COUNT) {
+            // 1000 divided by average wave period, so we return value in Hertz (Hz).
+            return 1000 / (sum / count); // Hz
           }
         }
         lastMin = t[i + 1];
+        // Reset max!
         max = d[i + 1];
       }
-
       // Additional check - detects when there was no movement during 1 second.
       globalMin = Math.min(globalMin, d[i]);
       globalMax = Math.max(globalMax, d[i]);

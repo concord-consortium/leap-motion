@@ -50,10 +50,18 @@ title: Temperature
     processLeapGestures({
       'initial': {
         info: 'Please keep your hands steady above the Leap device.',
+        action: function () {
+          // Clear data if user totally removes hand from Leap POV. It ensures that when he starts gesture again,
+          // we won't have old data that can initially be interpreted as part of the new gesture. It could have been
+          // added as a part of other, non-final states too. But it's possible that we get back to other states
+          // due to Leap inaccuracy, while this one is pretty reliable.
+          avg.clear('fistXPosAvg');
+        },
         nextState: function (frame) {
           if (frame.hands.length === 2) {
             return 'two-hands-detected';
           }
+          // Hide debug data.
           plotter.showCanvas(null);
           return null;
         }
@@ -89,13 +97,13 @@ title: Temperature
               'Do it slowly to decrease the temperature (> 1.7Hz).</p>',
         nextState: function (frame, data) {
           var hand = data.closedHand;
-          avg.addSample('chp', hand.palmPosition[0], 6);
-          avg.addSample('chpFreq', avg.getAvg('chp'), 500);
-          var fistFreq = avg.getFreq('chpFreq', 20, 3);
+          avg.addSample('fistXPos', hand.palmPosition[0], 6);
+          avg.addSample('fistXPosAvg', avg.getAvg('fistXPos'), 500);
+          var fistFreq = avg.getFreq('fistXPosAvg', 20);
 
           plotter.showCanvas('gesture-detected');
           plotter.plot('closed fist X pos', hand.palmPosition[0]);
-          plotter.plot('closed fist X pos (avg)', avg.getAvg('chp'));
+          plotter.plot('closed fist X pos (avg)', avg.getAvg('fistXPos'));
           plotter.plot('closed fist X frequency', fistFreq);
           plotter.update();
 
