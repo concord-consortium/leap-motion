@@ -1,5 +1,11 @@
 # leap-motion
 
+Experiments related to the gesture detection.
+
+- http://concord-consortium.github.io/leap-motion/examples/lab/temperature-delta.html
+- http://concord-consortium.github.io/leap-motion/examples/lab/temperature-absolute.html
+
+
 ## Local Development
 
 This repository uses Jekyll. 
