@@ -93,8 +93,8 @@ title: Temperature (Delta)
         }
       },
       'gesture-detected': {
-        info: '<p>Move your closed fist towards open palm and back rapidly to increase the temperature (< 1.2Hz). ' +
-              'Do it slowly to decrease the temperature (> 1.7Hz).</p>',
+        info: '<p>Move your closed fist towards open palm and back rapidly to increase the temperature (> 1.7Hz). ' +
+              'Do it slowly to decrease the temperature (< 1.2Hz).</p>',
         nextState: function (frame, data) {
           var hand = data.closedHand;
           avg.addSample('fistXPos', hand.palmPosition[0], 6);
