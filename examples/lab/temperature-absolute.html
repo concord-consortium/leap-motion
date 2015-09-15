@@ -1,6 +1,6 @@
 ---
 layout: lab
-title: Temperature (Delta)
+title: Temperature (Absolute)
 ---
 <iframe id="lab-model" width="610px" height="450px" frameborder="0"
         src="http://lab.concord.org/embeddable.html#interactives/sam/gas-laws/5-temperature-pressure-relationship.json">
@@ -32,12 +32,6 @@ title: Temperature (Delta)
     var phone = new iframePhone.ParentEndpoint(iframe);
     phone.addListener('modelLoaded', function setObserver () {
       phone.post('play');
-      phone.post('observe', 'targetTemperature');
-    });
-    phone.addListener('propertyValue', function (data) {
-      if (data.name == 'targetTemperature') {
-        targetTemperature = data.value;
-      }
     });
 
     // Leap works only when window is active.
@@ -93,46 +87,24 @@ title: Temperature (Delta)
         }
       },
       'gesture-detected': {
-        info: '<p>Move your closed fist towards open palm and back rapidly to increase the temperature (< 1.2Hz). ' +
-              'Do it slowly to decrease the temperature (> 1.7Hz).</p>',
-        nextState: function (frame, data) {
+        info: '<p>Move your closed fist towards open palm and back rapidly to increase the temperature. ' +
+              'Do it slowly to decrease the temperature.</p>',
+        action: function (frame, data) {
           var hand = data.closedHand;
           avg.addSample('fistXPos', hand.palmPosition[0], 6);
           avg.addSample('fistXPosAvg', avg.getAvg('fistXPos'), 500);
-          avg.addSample('fistFreq', avg.getFreq('fistXPosAvg', 20), 6);
+          avg.addSample('fistFreq', avg.getFreq('fistXPosAvg', 20), 40);
           var fistFreq = avg.getAvg('fistFreq');
 
           plotter.showCanvas('gesture-detected');
           plotter.plot('closed fist X pos', hand.palmPosition[0]);
           plotter.plot('closed fist X pos (avg)', avg.getAvg('fistXPos'));
-          plotter.plot('closed fist X frequency', fistFreq);
+          plotter.plot('closed fist X frequency (avg)', fistFreq);
           plotter.update();
 
-          if (fistFreq > 1.7) {
-            return 'temp-increasing';
-          } else if (fistFreq < 1.2 && fistFreq > 0) {
-            return 'temp-decreasing';
+          if (fistFreq > 0) {
+            phone.post('set', { name: 'targetTemperature', value: fistFreq * 250 });
           }
-          // Do nothing when freq is between 1.2 and 1.7 or equal to 0.
-          return null;
-        }
-      },
-      'temp-increasing': {
-        info: 'Temperature is increasing (frequency > 1.7Hz).',
-        action: function () {
-          plotter.showCanvas('gesture-detected');
-          // Send msg to Lab model.
-          var newTemp = Math.min(1000, targetTemperature + 2);
-          phone.post('set', { name: 'targetTemperature', value: newTemp });
-        }
-      },
-      'temp-decreasing': {
-        info: 'Temperature is decreasing (frequency < 1.2Hz).',
-        action: function () {
-          plotter.showCanvas('gesture-detected');
-          // Send msg to Lab model.
-          var newTemp = Math.max(0, targetTemperature - 2);
-          phone.post('set', { name: 'targetTemperature', value: newTemp });
         }
       }
     });
