@@ -86,13 +86,13 @@ title: Frequency calculated using velocity or position
         action: function (frame, data) {
           var hand = data.closedHand;
 
-          avg.addSample('fistXVel1', Math.abs(hand.palmVelocity[0]), 150);
+          avg.addSample('fistXVel1', vec3.len(hand.palmVelocity), 150);
           avg.addSample('fistXVel2', avg.getAvg('fistXVel1'), 10);
-          var velAvg1 = avg.getAvg('fistXVel2') / 200;
+          var velAvg1 = avg.getAvg('fistXVel2');
 
-          avg.addSample('fistXVel3', Math.abs(hand.palmVelocity[0]), 200);
+          avg.addSample('fistXVel3', vec3.len(hand.palmVelocity), 200);
           avg.addSample('fistXVel4', avg.getAvg('fistXVel3'), 20);
-          var velAvg2 = avg.getAvg('fistXVel4') / 200;
+          var velAvg2 = avg.getAvg('fistXVel4');
 
           avg.addSample('fistXVel', hand.palmVelocity[0], 6);
           avg.addSample('fistXVelAvg', avg.getAvg('fistXVel'), 500);

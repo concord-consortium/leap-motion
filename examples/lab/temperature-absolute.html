@@ -91,18 +91,16 @@ title: Temperature (Absolute)
               'Do it slowly to decrease the temperature.</p>',
         action: function (frame, data) {
           var hand = data.closedHand;
-          avg.addSample('fistXVel', hand.palmVelocity[0], 6);
-          avg.addSample('fistXVelAvg', avg.getAvg('fistXVel'), 500);
-          avg.addSample('fistFreq', avg.getFreqFromVel('fistXVelAvg', conf.minAmplitude), conf.freqSmoothing);
-          var fistFreq = avg.getAvg('fistFreq');
+          avg.addSample('fistXVel', vec3.len(hand.palmVelocity), 100);
+          avg.addSample('fistXVelAvg', avg.getAvg('fistXVel'), 20);
+          var vel = avg.getAvg('fistXVelAvg');
 
           plotter.showCanvas('gesture-detected');
-          plotter.plot('closed fist X vel (avg)', avg.getAvg('fistXVel'));
-          plotter.plot('closed fist X frequency', fistFreq);
+          plotter.plot('closed fist vel (avg)', vel);
           plotter.update();
 
-          if (fistFreq > 0) {
-            phone.post('set', { name: 'targetTemperature', value: fistFreq * 250 });
+          if (vel > 0) {
+            phone.post('set', { name: 'targetTemperature', value: vel });
           }
         }
       }
