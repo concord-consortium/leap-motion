@@ -2,8 +2,8 @@
 layout: lab
 title: Temperature (Absolute)
 ---
-<iframe id="lab-model" width="610px" height="450px" frameborder="0"
-        src="http://lab.concord.org/embeddable.html#interactives/sam/gas-laws/5-temperature-pressure-relationship.json">
+<iframe id="lab-model" width="610px" height="350px" frameborder="0"
+        src="http://lab.concord.org/embeddable.html#interactives/grasp/temperature-pressure-relationship.json">
 </iframe>
 
 <div id="debug">
@@ -100,7 +100,7 @@ title: Temperature (Absolute)
           plotter.update();
 
           if (vel > 0) {
-            phone.post('set', { name: 'targetTemperature', value: vel });
+            phone.post('set', { name: 'targetTemperature', value: vel * 4.5 });
           }
         }
       }
