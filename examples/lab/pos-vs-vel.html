@@ -21,7 +21,7 @@ title: Frequency calculated using velocity or position
     });
 
     // Setup plotter.
-    var plotter = new Plotter({el: $('#plotter')[0]});
+    var plotter = new Plotter({el: $('#plotter')[0], height: 200});
 
     // Config
     var config = {
@@ -86,6 +86,14 @@ title: Frequency calculated using velocity or position
         action: function (frame, data) {
           var hand = data.closedHand;
 
+          avg.addSample('fistXVel1', Math.abs(hand.palmVelocity[0]), 150);
+          avg.addSample('fistXVel2', avg.getAvg('fistXVel1'), 10);
+          var velAvg1 = avg.getAvg('fistXVel2') / 200;
+
+          avg.addSample('fistXVel3', Math.abs(hand.palmVelocity[0]), 200);
+          avg.addSample('fistXVel4', avg.getAvg('fistXVel3'), 20);
+          var velAvg2 = avg.getAvg('fistXVel4') / 200;
+
           avg.addSample('fistXVel', hand.palmVelocity[0], 6);
           avg.addSample('fistXVelAvg', avg.getAvg('fistXVel'), 500);
           avg.addSample('fistFreqVel', avg.getFreqFromVel('fistXVelAvg', config.velMinAmplitude), Math.round(config.freqAvg));
@@ -97,6 +105,8 @@ title: Frequency calculated using velocity or position
           var fistFreqFromPos = avg.getAvg('fistFreqPos');
 
           plotter.showCanvas('gesture-detected');
+          plotter.plot('X velocity avg', velAvg1);
+          plotter.plot('X velocity (stronger smoothing)', velAvg2);
           plotter.plot('frequency (based on X velocity)', fistFreqFromVel);
           plotter.plot('frequency (based on X position)', fistFreqFromPos);
           plotter.update();

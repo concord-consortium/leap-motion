@@ -1,10 +1,12 @@
 (function () {
-  var DEFAULT_OPTIONS = {precision: 2};
+  var DEFAULT_OPTIONS = {height: '150px'};
+  var DEFAULT_PLOT_OPTIONS = {precision: 2};
   // Wrapper around LeapDataPlotter:
   // http://leapmotion.github.io/leapjs-plugins/utils/data-plotter/
   // The main difference is that it handles multiple instances in an easy way.
   function Plotter(options) {
-    this._element = options.el;
+    this._options = $.extend({}, DEFAULT_OPTIONS, options);
+    this._element = this._options.el;
     this._$canvas = {};
     this._instance = {};
     this._activeInstance = null;
@@ -40,7 +42,7 @@
   Plotter.prototype.plot = function (id, data, opts) {
     if (!this._enabled) return;
     if (!opts) {
-      opts = DEFAULT_OPTIONS;
+      opts = DEFAULT_PLOT_OPTIONS;
     }
     this.getInstance(this._activeInstance).plot(id, data, opts);
   };
@@ -52,7 +54,10 @@
 
   Plotter.prototype.getInstance = function (canvasId) {
     if (!this._instance[canvasId]) {
-      this._$canvas[canvasId] = $('<canvas>').attr('id', canvasId).appendTo(this._element);
+      this._$canvas[canvasId] = $('<canvas>')
+        .attr('id', canvasId)
+        .attr('height', this._options.height)
+        .appendTo(this._element);
       this._instance[canvasId] = new LeapDataPlotter({el: this._$canvas[canvasId][0]});
     }
     return this._instance[canvasId];
