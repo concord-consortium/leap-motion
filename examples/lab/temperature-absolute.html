@@ -45,8 +45,8 @@ title: Temperature (Absolute)
       closedGrabStrength: 0.4,
       openGrabStrength: 0.7,
       handTwistTolerance: 0.7,
-      minAmplitude: 20,
-      freqSmoothing: 6
+      velAvg1: 100,
+      velAvg2: 20
     };
     processLeapGestures({
       'initial': {
@@ -91,9 +91,9 @@ title: Temperature (Absolute)
               'Do it slowly to decrease the temperature.</p>',
         action: function (frame, data) {
           var hand = data.closedHand;
-          avg.addSample('fistXVel', vec3.len(hand.palmVelocity), 100);
-          avg.addSample('fistXVelAvg', avg.getAvg('fistXVel'), 20);
-          var vel = avg.getAvg('fistXVelAvg');
+          avg.addSample('fistVel', vec3.len(hand.palmVelocity), conf.velAvg1);
+          avg.addSample('fistVelAvg', avg.getAvg('fistVel'), conf.velAvg2);
+          var vel = avg.getAvg('fistVelAvg');
 
           plotter.showCanvas('gesture-detected');
           plotter.plot('closed fist vel (avg)', vel);

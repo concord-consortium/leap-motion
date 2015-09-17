@@ -2,8 +2,8 @@
 layout: lab
 title: Temperature (Delta)
 ---
-<iframe id="lab-model" width="610px" height="450px" frameborder="0"
-        src="http://lab.concord.org/embeddable.html#interactives/sam/gas-laws/5-temperature-pressure-relationship.json">
+<iframe id="lab-model" width="610px" height="350px" frameborder="0"
+        src="http://lab.concord.org/embeddable.html#interactives/grasp/temperature-pressure-relationship.json">
 </iframe>
 
 <div id="debug">
@@ -51,8 +51,14 @@ title: Temperature (Delta)
       closedGrabStrength: 0.4,
       openGrabStrength: 0.7,
       handTwistTolerance: 0.7,
-      minAmplitude: 20
+      velAvg1: 100,
+      velAvg2: 20,
+      tempIncreaseVel: 600,
+      tempDecreaseVel: 300
     };
+    var gui = new dat.GUI();
+    gui.add(conf, 'tempIncreaseVel', 0, 1000);
+    gui.add(conf, 'tempDecreaseVel', 0, 1000);
     processLeapGestures({
       'initial': {
         info: 'Please keep your hands steady above the Leap device.',
@@ -92,23 +98,23 @@ title: Temperature (Delta)
         }
       },
       'gesture-detected': {
-        info: '<p>Move your closed fist towards open palm and back rapidly to increase the temperature (> 1.7Hz). ' +
-              'Do it slowly to decrease the temperature (< 1.2Hz).</p>',
+        info: function () {
+              return '<p>Move your closed fist towards open palm and back rapidly to increase the temperature (velocity > '
+                     + Math.round(conf.tempIncreaseVel) + '). Do it slowly to decrease the temperature (velocity < ' + Math.round(conf.tempDecreaseVel) + ').</p>';
+        },
         nextState: function (frame, data) {
           var hand = data.closedHand;
-          avg.addSample('fistXPos', hand.palmPosition[0], 6);
-          avg.addSample('fistXPosAvg', avg.getAvg('fistXPos'), 500);
-          avg.addSample('fistFreq', avg.getFreq('fistXPosAvg', conf.minAmplitude), 6);
-          var fistFreq = avg.getAvg('fistFreq');
+          avg.addSample('fistVel', vec3.len(hand.palmVelocity), conf.velAvg1);
+          avg.addSample('fistVelAvg', avg.getAvg('fistVel'), conf.velAvg2);
+          var vel = avg.getAvg('fistVelAvg');
 
           plotter.showCanvas('gesture-detected');
-          plotter.plot('closed fist X pos (avg)', avg.getAvg('fistXPos'));
-          plotter.plot('closed fist X frequency', fistFreq);
+          plotter.plot('closed fist vel (avg)', vel);
           plotter.update();
 
-          if (fistFreq > 1.7) {
+          if (vel > conf.tempIncreaseVel) {
             return 'temp-increasing';
-          } else if (fistFreq < 1.2 && fistFreq > 0) {
+          } else if (vel < conf.tempDecreaseVel) {
             return 'temp-decreasing';
           }
           // Do nothing when freq is between 1.2 and 1.7 or equal to 0.
@@ -116,20 +122,20 @@ title: Temperature (Delta)
         }
       },
       'temp-increasing': {
-        info: 'Temperature is increasing (frequency > 1.7Hz).',
+        info: function () { return 'Temperature is increasing (velocity > ' + Math.round(conf.tempIncreaseVel) + ').'; },
         action: function () {
           plotter.showCanvas('gesture-detected');
           // Send msg to Lab model.
-          var newTemp = Math.min(1000, targetTemperature + 2);
+          var newTemp = Math.min(5000, targetTemperature + 10);
           phone.post('set', { name: 'targetTemperature', value: newTemp });
         }
       },
       'temp-decreasing': {
-        info: 'Temperature is decreasing (frequency < 1.2Hz).',
+        info: function () { return 'Temperature is decreasing (velocity < ' + Math.round(conf.tempDecreaseVel) + ').'; },
         action: function () {
           plotter.showCanvas('gesture-detected');
           // Send msg to Lab model.
-          var newTemp = Math.max(0, targetTemperature - 2);
+          var newTemp = Math.max(0, targetTemperature - 10);
           phone.post('set', { name: 'targetTemperature', value: newTemp });
         }
       }

@@ -47,7 +47,8 @@
     }
 
     function setActiveState(state) {
-      $('#state-msg').html(state.info);
+      var info = typeof state.info === 'function' ? state.info() : state.info;
+      $('#state-msg').html(info);
     }
 
     Leap.loop(function (frame) {
