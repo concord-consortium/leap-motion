@@ -1,6 +1,6 @@
 ---
 layout: lab
-title: Frequency calculated using velocity or position
+title: Temperature test
 ---
 
 <div id="debug">
@@ -21,26 +21,54 @@ title: Frequency calculated using velocity or position
     });
 
     // Setup plotter.
-    var plotter = new Plotter({el: $('#plotter')[0], height: 200});
+    var plotter = new Plotter({el: $('#plotter')[0]});
+
+    // Sound.
+    var sound = new Howl({
+      src: ['tap.wav']
+    });
 
     // Config
     var config = {
       closedGrabStrength: 0.4,
       openGrabStrength: 0.7,
       handTwistTolerance: 0.7,
-      posMinAmplitude: 10,
-      velMinAmplitude: 30,
-      freqAvg: 6
+      minAmplitude: 5,
+      freqAvg: 120,
+      maxVelAvg: 120
     };
+
+    // Frequency calculator
+    var lastDirChange = null;
+    var freq = 0;
+    var maxVel = 0;
+    var freqCalc = new DirectionChange({
+      minAmplitude: config.minAmplitude,
+      onDirChange: function (newMaxVel) {
+        var timestamp = Date.now();
+        if (lastDirChange) {
+          freq = 0.5 * 1000 / (timestamp - lastDirChange);
+          maxVel = newMaxVel;
+        }
+        lastDirChange = timestamp;
+        // Play sound effect!
+        sound.play();
+      },
+      onStop: function () {
+        lastDirChange = Date.now();
+        freq = 0;
+        maxVel = 0;
+      }
+    });
+
+    // GUI
     var gui = new dat.GUI();
     gui.add(config, 'closedGrabStrength', 0, 1);
     gui.add(config, 'openGrabStrength', 0, 1);
     gui.add(config, 'handTwistTolerance', 0, 1);
-    gui.add(config, 'posMinAmplitude', 0, 100);
-    gui.add(config, 'velMinAmplitude', 0, 100);
-    gui.add(config, 'freqAvg', 0, 100);
-    gui.add(avg, 'FREQ_MIN_COUNT', 0, 20);
-    gui.add(avg, 'FREQ_MIN_TIME', 0, 3000);
+    gui.add(freqCalc.options, 'minAmplitude', 0, 200);
+    gui.add(config, 'maxVelAvg', 0, 500);
+    gui.add(config, 'freqAvg', 0, 500);
 
     // Define gestures.
     processLeapGestures({
@@ -84,31 +112,21 @@ title: Frequency calculated using velocity or position
       'gesture-detected': {
         info: '<p>Move your closed fist towards open palm and back rapidly.</p>',
         action: function (frame, data) {
+          plotter.showCanvas('gesture-detected');
+
           var hand = data.closedHand;
 
-          avg.addSample('fistXVel1', vec3.len(hand.palmVelocity), 150);
-          avg.addSample('fistXVel2', avg.getAvg('fistXVel1'), 10);
-          var velAvg1 = avg.getAvg('fistXVel2');
-
-          avg.addSample('fistXVel3', vec3.len(hand.palmVelocity), 200);
-          avg.addSample('fistXVel4', avg.getAvg('fistXVel3'), 20);
-          var velAvg2 = avg.getAvg('fistXVel4');
+          avg.addSample('fistXVel1', vec3.len(hand.palmVelocity), 100);
+          avg.addSample('fistXVel2', avg.getAvg('fistXVel1'), 20);
+          plotter.plot('velocity avg', avg.getAvg('fistXVel2'));
 
           avg.addSample('fistXVel', hand.palmVelocity[0], 6);
-          avg.addSample('fistXVelAvg', avg.getAvg('fistXVel'), 500);
-          avg.addSample('fistFreqVel', avg.getFreqFromVel('fistXVelAvg', config.velMinAmplitude), Math.round(config.freqAvg));
-          var fistFreqFromVel = avg.getAvg('fistFreqVel');
+          freqCalc.addSample(avg.getAvg('fistXVel'), hand.stabilizedPalmPosition[0]);
+          avg.addSample('newFreq', freq, Math.round(config.freqAvg));
+          avg.addSample('maxVel', maxVel, Math.round(config.maxVelAvg));
+          plotter.plot('max velocity avg', avg.getAvg('maxVel'));
+          plotter.plot('frequency (new alg)', avg.getAvg('newFreq'));
 
-          avg.addSample('fistXPos', hand.palmPosition[0], 6);
-          avg.addSample('fistXPosAvg', avg.getAvg('fistXPos'), 500);
-          avg.addSample('fistFreqPos', avg.getFreq('fistXPosAvg', config.posMinAmplitude), Math.round(config.freqAvg));
-          var fistFreqFromPos = avg.getAvg('fistFreqPos');
-
-          plotter.showCanvas('gesture-detected');
-          plotter.plot('X velocity avg', velAvg1);
-          plotter.plot('X velocity (stronger smoothing)', velAvg2);
-          plotter.plot('frequency (based on X velocity)', fistFreqFromVel);
-          plotter.plot('frequency (based on X position)', fistFreqFromPos);
           plotter.update();
 
           return null;

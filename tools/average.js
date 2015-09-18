@@ -8,6 +8,9 @@
   avg.FREQ_MIN_COUNT = 3;
   avg.FREQ_MIN_TIME = 1000;
 
+  avg.data = data;
+  avg.timestamp = timestamp;
+
   // Adds 'sample' to 'id' set, saves current time and makes sure that length of the set is <= 'limit'.
   avg.addSample = function (id, sample, limit) {
     if (!data[id]) {
@@ -37,6 +40,7 @@
 
   // Returns average of all sample values from 'id' set.
   avg.getAvg = function (id) {
+    if (!data[id]) return null;
     var d = data[id];
     var len = d.length;
     var sum = 0;
