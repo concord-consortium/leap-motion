@@ -118,14 +118,14 @@ title: Temperature test
 
           avg.addSample('fistXVel1', vec3.len(hand.palmVelocity), 100);
           avg.addSample('fistXVel2', avg.getAvg('fistXVel1'), 20);
-          plotter.plot('velocity avg', avg.getAvg('fistXVel2'));
+          plotter.plot('velocity avg', avg.getAvg('fistXVel2'), {min: 0, max: 1300, precision: 2});
 
           avg.addSample('fistXVel', hand.palmVelocity[0], 6);
           freqCalc.addSample(avg.getAvg('fistXVel'), hand.stabilizedPalmPosition[0]);
           avg.addSample('newFreq', freq, Math.round(config.freqAvg));
           avg.addSample('maxVel', maxVel, Math.round(config.maxVelAvg));
-          plotter.plot('max velocity avg', avg.getAvg('maxVel'));
-          plotter.plot('frequency (new alg)', avg.getAvg('newFreq'));
+          plotter.plot('max velocity avg', avg.getAvg('maxVel'), {min: 0, max: 1500, precision: 2});
+          plotter.plot('frequency (new alg)', avg.getAvg('newFreq'), {min: 0, max: 6, precision: 2});
 
           plotter.update();
 
