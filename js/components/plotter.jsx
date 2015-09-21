@@ -1,19 +1,25 @@
-(function () {
-  var DEFAULT_OPTIONS = {height: '150px'};
-  var DEFAULT_PLOT_OPTIONS = {precision: 2};
-  // Wrapper around LeapDataPlotter:
-  // http://leapmotion.github.io/leapjs-plugins/utils/data-plotter/
-  // The main difference is that it handles multiple instances in an easy way.
-  function Plotter(options) {
-    this._options = $.extend({}, DEFAULT_OPTIONS, options);
-    this._element = this._options.el;
+import React from 'react';
+import $ from 'jquery';
+import LeapDataPlotter from '../tools/leap-data-plotter';
+
+const DEFAULT_PLOT_OPTIONS = {
+  precision: 2
+};
+
+export default class Plotter extends React.Component {
+  constructor(props) {
+    super(props);
     this._$canvas = {};
     this._instance = {};
     this._activeInstance = null;
     this._enabled = true;
   }
 
-  Plotter.prototype.setEnabled = function (v) {
+  shouldComponentUpdate() {
+    return false;
+  }
+
+  setEnabled(v) {
     this._enabled = v;
     if (!v) {
       for (var id in this._instance) {
@@ -23,9 +29,9 @@
       }
       this._activeInstance = null;
     }
-  };
+  }
 
-  Plotter.prototype.showCanvas = function (canvasId) {
+  showCanvas(canvasId) {
     if (!this._enabled || this._activeInstance === canvasId) return;
     for (var id in this._instance) {
       if (this._instance.hasOwnProperty(id)) {
@@ -37,31 +43,39 @@
       }
     }
     this._activeInstance = canvasId;
-  };
+  }
 
-  Plotter.prototype.plot = function (id, data, opts) {
+  plot(id, data, opts) {
     if (!this._enabled) return;
     if (!opts) {
       opts = DEFAULT_PLOT_OPTIONS;
     }
     this.getInstance(this._activeInstance).plot(id, data, opts);
-  };
+  }
 
-  Plotter.prototype.update = function () {
+  update() {
     if (!this._enabled) return;
     this.getInstance(this._activeInstance).update();
-  };
+  }
 
-  Plotter.prototype.getInstance = function (canvasId) {
+  getInstance(canvasId) {
     if (!this._instance[canvasId]) {
       this._$canvas[canvasId] = $('<canvas>')
         .attr('id', canvasId)
-        .attr('height', this._options.height)
-        .appendTo(this._element);
+        .attr('height', this.props.height)
+        .appendTo(React.findDOMNode(this.refs.container));
       this._instance[canvasId] = new LeapDataPlotter({el: this._$canvas[canvasId][0]});
     }
     return this._instance[canvasId];
-  };
+  }
 
-  window.Plotter = Plotter;
-})();
+  render() {
+    return (
+      <div className='plotter' ref='container'></div>
+    )
+  }
+}
+
+Plotter.defaultProps = {
+  height: '150px'
+};

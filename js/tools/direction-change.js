@@ -1,21 +1,18 @@
-(function () {
-  var DEFAULT_OPTIONS = {
-    bufferLength: 30, // around 0.5s in practice, as Leap Motion is providing 60 samples per second
-    minAmplitude: 10  // mm
-  };
-  var LEFT_TO_RIGHT = 0;
-  var RIGHT_TO_LEFT = 1;
+import $ from 'jquery';
 
-  function DirectionChange(options) {
+const DEFAULT_OPTIONS = {
+  bufferLength: 30, // around 0.5s in practice, as Leap Motion is providing ~60 samples per second
+  minAmplitude: 10  // mm
+};
+
+class DirectionChange {
+  constructor(options) {
     this.options = $.extend({}, DEFAULT_OPTIONS, options);
     this._vel = [];
     this._pos = [];
   }
 
-  DirectionChange.LEFT_TO_RIGHT = 0;
-  DirectionChange.RIGHT_TO_LEFT = 1;
-
-  DirectionChange.prototype.addSample = function (vel, pos) {
+  addSample(vel, pos) {
     this._vel.unshift(vel);
     this._pos.unshift(pos);
     if (this._vel.length > this.options.bufferLength) {
@@ -23,7 +20,7 @@
       this._pos.length = this.options.bufferLength;
     }
     this._check();
-  };
+  }
 
   // We assume that direction has changed when velocity changes its sign and:
   //  1. position diff (amplitude) before the sign change is greater than options.minAmplitude
@@ -32,17 +29,17 @@
   //   OR
   //   2b. position diff (amplitude) after the sign change is smaller than options.minAmplitude AND
   //       that lasts for more that 50% of samples (it means that motion has stopped).
-  DirectionChange.prototype._check = function () {
-    var v = this._vel;
-    var p = this._pos;
-    var len = v.length;
-    var minAmp = this.options.minAmplitude;
-    var signChangeCount = 0;
-    var initialPos = p[0];
-    var initialAmp = 0;
-    var currentAmp = 0;
-    var maxAmp = -Infinity;
-    for (var i = 0; i < len - 1; i++) {
+  _check() {
+    let v = this._vel;
+    let p = this._pos;
+    let len = v.length;
+    let minAmp = this.options.minAmplitude;
+    let signChangeCount = 0;
+    let initialPos = p[0];
+    let initialAmp = 0;
+    let currentAmp = 0;
+    let maxAmp = -Infinity;
+    for (let i = 0; i < len - 1; i++) {
       // Max velocity within half-period (between direction changes) is provided to options.onDirChange callback.
       this._maxVel = Math.max(this._maxVel, Math.abs(v[i]));
       currentAmp = Math.abs(initialPos - p[i]);
@@ -67,22 +64,25 @@
     if (len === this.options.bufferLength && maxAmp < minAmp) {
       this._stopped();
     }
-  };
+  }
 
-  DirectionChange.prototype._directionChanged = function (data) {
+  _directionChanged(data) {
     if (this.options.onDirChange) {
       this.options.onDirChange(data);
     }
     this._vel.length = 0;
     this._pos.length = 0;
     this._maxVel = -Infinity;
-  };
+  }
 
-  DirectionChange.prototype._stopped = function () {
+  _stopped() {
     if (this.options.onStop) {
       this.options.onStop();
     }
-  };
+  }
+}
 
-  window.DirectionChange = DirectionChange;
-})();
+DirectionChange.LEFT_TO_RIGHT = 0;
+DirectionChange.RIGHT_TO_LEFT = 1;
+
+export default DirectionChange;
