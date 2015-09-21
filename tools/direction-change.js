@@ -3,12 +3,17 @@
     bufferLength: 30, // around 0.5s in practice, as Leap Motion is providing 60 samples per second
     minAmplitude: 10  // mm
   };
+  var LEFT_TO_RIGHT = 0;
+  var RIGHT_TO_LEFT = 1;
 
   function DirectionChange(options) {
     this.options = $.extend({}, DEFAULT_OPTIONS, options);
     this._vel = [];
     this._pos = [];
   }
+
+  DirectionChange.LEFT_TO_RIGHT = 0;
+  DirectionChange.RIGHT_TO_LEFT = 1;
 
   DirectionChange.prototype.addSample = function (vel, pos) {
     this._vel.unshift(vel);
@@ -44,7 +49,10 @@
       maxAmp = Math.max(maxAmp, currentAmp);
       // Note that if the sign has changed 2 or 4 times, in fact it means it hasn't changed. That's why we test % 2.
       if (currentAmp >= minAmp && (initialAmp >= minAmp || i > len / 2) && signChangeCount % 2 === 1) {
-        this._directionChanged();
+        this._directionChanged({
+          maxVelocity: this._maxVel,
+          type: v[i] > 0 ? DirectionChange.RIGHT_TO_LEFT : DirectionChange.LEFT_TO_RIGHT
+        });
         return;
       }
       if (Math.sign(v[i]) !== Math.sign(v[i + 1])) {
@@ -61,9 +69,9 @@
     }
   };
 
-  DirectionChange.prototype._directionChanged = function () {
+  DirectionChange.prototype._directionChanged = function (data) {
     if (this.options.onDirChange) {
-      this.options.onDirChange(this._maxVel);
+      this.options.onDirChange(data);
     }
     this._vel.length = 0;
     this._pos.length = 0;

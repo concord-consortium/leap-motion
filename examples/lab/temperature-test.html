@@ -8,7 +8,9 @@ title: Temperature test
     <div id="state-msg"></div>
     <div id="plotter"></div>
   </div>
-  <div id="hands-view"></div>
+  <div id="hands-view">
+    <div id="leap-fps">Leap frame rate: <span id="leap-fps-value"></span></div>
+  </div>
 </div>
 
 <script>
@@ -22,6 +24,9 @@ title: Temperature test
 
     // Setup plotter.
     var plotter = new Plotter({el: $('#plotter')[0]});
+
+    // FPS display.
+    var $fps = $('#leap-fps-value');
 
     // Sound.
     var sound = new Howl({
@@ -42,17 +47,21 @@ title: Temperature test
     var lastDirChange = null;
     var freq = 0;
     var maxVel = 0;
+    var hand = null;
     var freqCalc = new DirectionChange({
       minAmplitude: config.minAmplitude,
-      onDirChange: function (newMaxVel) {
+      onDirChange: function (data) {
         var timestamp = Date.now();
         if (lastDirChange) {
           freq = 0.5 * 1000 / (timestamp - lastDirChange);
-          maxVel = newMaxVel;
+          maxVel = data.maxVelocity;
         }
         lastDirChange = timestamp;
-        // Play sound effect!
-        sound.play();
+        if (hand && ((hand.type === 'right' && data.type === DirectionChange.LEFT_TO_RIGHT) ||
+                     (hand.type === 'left' && data.type === DirectionChange.RIGHT_TO_LEFT))) {
+          // Play sound effect!
+          sound.play();
+        }
       },
       onStop: function () {
         lastDirChange = Date.now();
@@ -75,6 +84,7 @@ title: Temperature test
       'initial': {
         info: 'Please keep your hands steady above the Leap device.',
         nextState: function (frame) {
+          $fps.text(frame.currentFrameRate.toFixed());
           if (frame.hands.length === 2) {
             return 'two-hands-detected';
           }
@@ -114,14 +124,12 @@ title: Temperature test
         action: function (frame, data) {
           plotter.showCanvas('gesture-detected');
 
-          var hand = data.closedHand;
+          hand = data.closedHand;
 
-          avg.addSample('fistXVel1', vec3.len(hand.palmVelocity), 100);
-          avg.addSample('fistXVel2', avg.getAvg('fistXVel1'), 20);
-          plotter.plot('velocity avg', avg.getAvg('fistXVel2'), {min: 0, max: 1300, precision: 2});
+          plotter.plot('leap frame rate', frame.currentFrameRate, {min: 0, max: 100, precision: 2});
 
           avg.addSample('fistXVel', hand.palmVelocity[0], 6);
-          freqCalc.addSample(avg.getAvg('fistXVel'), hand.stabilizedPalmPosition[0]);
+          freqCalc.addSample(avg.getAvg('fistXVel'), hand.palmPosition[0]);
           avg.addSample('newFreq', freq, Math.round(config.freqAvg));
           avg.addSample('maxVel', maxVel, Math.round(config.maxVelAvg));
           plotter.plot('max velocity avg', avg.getAvg('maxVel'), {min: 0, max: 1500, precision: 2});
