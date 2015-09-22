@@ -56,8 +56,8 @@ export default class LabAddRmAtomTest extends React.Component {
       case 'oneHandDetected':
         return (
           <div>
-            <p>Close your hand, move it <b>up</b> and open to <b>add</b> an atom.</p>
-            <p>Close your hand, move it <b>down</b> and open to <b>remove</b> an atom.</p>
+            <p>Close your hand, move it <b>up</b> and open to <b>remove</b> an atom.</p>
+            <p>Close your hand, move it <b>down</b> and open to <b>add</b> an atom.</p>
           </div>
         );
     }
