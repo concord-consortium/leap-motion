@@ -1,4 +1,5 @@
 import avg from '../tools/avg';
+import leapFps from '../tools/leap-fps';
 import {Howl} from 'howler';
 import DirectionChange from '../tools/direction-change';
 
@@ -49,15 +50,15 @@ export default class LeapTemperatureTestHelper {
         return null;
 
       case 'two-hands-detected':
-      function condition(closedHandIdx, openHandIdx) {
-        var closedHand = frame.hands[closedHandIdx];
-        var openHand = frame.hands[openHandIdx];
-        if (closedHand.grabStrength > config.closedGrabStrength && openHand.grabStrength < config.openGrabStrength &&
-            Math.abs(Math.abs(openHand.roll()) - Math.PI / 2) < config.handTwistTolerance) {
-          return true;
+        function condition(closedHandIdx, openHandIdx) {
+          var closedHand = frame.hands[closedHandIdx];
+          var openHand = frame.hands[openHandIdx];
+          if (closedHand.grabStrength > config.closedGrabStrength && openHand.grabStrength < config.openGrabStrength &&
+              Math.abs(Math.abs(openHand.roll()) - Math.PI / 2) < config.handTwistTolerance) {
+            return true;
+          }
+          return false;
         }
-        return false;
-      }
         if (condition(0, 1)) {
           return {stateId: 'gesture-detected', data: {closedHand: frame.hands[0], openHand: frame.hands[1]}};
         } else if (condition(1, 0)) {
@@ -75,14 +76,14 @@ export default class LeapTemperatureTestHelper {
 
         this.hand = data.closedHand;
 
-        this.plotter.plot('leap frame rate', frame.currentFrameRate, {min: 0, max: 100, precision: 2});
+        this.plotter.plot('frame rate', leapFps(), {min: 0, max: 130, precision: 2});
 
         avg.addSample('fistXVel', this.hand.palmVelocity[0], 6);
         this.freqCalc.addSample(avg.getAvg('fistXVel'), this.hand.palmPosition[0]);
         avg.addSample('newFreq', this.freq, Math.round(config.freqAvg));
         avg.addSample('this.maxVel', this.maxVel, Math.round(config.maxVelAvg));
         this.plotter.plot('max velocity avg', avg.getAvg('this.maxVel'), {min: 0, max: 1500, precision: 2});
-        this.plotter.plot('frequency (new alg)', avg.getAvg('newFreq'), {min: 0, max: 6, precision: 2});
+        this.plotter.plot('frequency', avg.getAvg('newFreq'), {min: 0, max: 6, precision: 2});
 
         this.plotter.update();
 

@@ -31051,6 +31051,10 @@
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
 
+	var _toolsLeapFps = __webpack_require__(243);
+
+	var _toolsLeapFps2 = _interopRequireDefault(_toolsLeapFps);
+
 	var _howler = __webpack_require__(218);
 
 	var _toolsDirectionChange = __webpack_require__(219);
@@ -31133,14 +31137,14 @@
 
 	          this.hand = data.closedHand;
 
-	          this.plotter.plot('leap frame rate', frame.currentFrameRate, { min: 0, max: 100, precision: 2 });
+	          this.plotter.plot('frame rate', (0, _toolsLeapFps2['default'])(), { min: 0, max: 130, precision: 2 });
 
 	          _toolsAvg2['default'].addSample('fistXVel', this.hand.palmVelocity[0], 6);
 	          this.freqCalc.addSample(_toolsAvg2['default'].getAvg('fistXVel'), this.hand.palmPosition[0]);
 	          _toolsAvg2['default'].addSample('newFreq', this.freq, Math.round(config.freqAvg));
 	          _toolsAvg2['default'].addSample('this.maxVel', this.maxVel, Math.round(config.maxVelAvg));
 	          this.plotter.plot('max velocity avg', _toolsAvg2['default'].getAvg('this.maxVel'), { min: 0, max: 1500, precision: 2 });
-	          this.plotter.plot('frequency (new alg)', _toolsAvg2['default'].getAvg('newFreq'), { min: 0, max: 6, precision: 2 });
+	          this.plotter.plot('frequency', _toolsAvg2['default'].getAvg('newFreq'), { min: 0, max: 6, precision: 2 });
 
 	          this.plotter.update();
 
@@ -31164,6 +31168,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.rollingAvg = rollingAvg;
 	exports["default"] = {
 	  data: {},
 
@@ -31201,7 +31206,10 @@
 	    }
 	  }
 	};
-	module.exports = exports["default"];
+
+	function rollingAvg(newSample, oldAvg, n) {
+	  return oldAvg - oldAvg / n + newSample / n;
+	}
 
 /***/ },
 /* 218 */
@@ -42318,6 +42326,10 @@
 
 	var _leapjs2 = _interopRequireDefault(_leapjs);
 
+	var _toolsLeapFps = __webpack_require__(243);
+
+	var _toolsLeapFps2 = _interopRequireDefault(_toolsLeapFps);
+
 	__webpack_require__(228);
 
 	__webpack_require__(237);
@@ -42334,10 +42346,13 @@
 	  _createClass(LeapHandsView, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
+	      var fpsValue = _react2['default'].findDOMNode(this.refs.fpsValue);
+	      var leapFpsValue = _react2['default'].findDOMNode(this.refs.leapFpsValue);
 	      _leapjs2['default'].loop((function (frame) {
 	        // To do it "reactive" way should use state, but we also use 'shouldComponentUpdate = false' so we
-	        // don't mess up ThreeJS scene. That's why we need to update FPS reading manually.
-	        _react2['default'].findDOMNode(this.refs.fpsValue).textContent = frame.currentFrameRate.toFixed();
+	        // don't mess up ThreeJS scene. That's why we need to update FPS readings manually.
+	        fpsValue.textContent = (0, _toolsLeapFps2['default'])().toFixed();
+	        leapFpsValue.textContent = frame.currentFrameRate.toFixed();
 	      }).bind(this)).use('boneHand', {
 	        targetEl: _react2['default'].findDOMNode(this.refs.container),
 	        width: this.props.width,
@@ -42347,7 +42362,7 @@
 	  }, {
 	    key: 'shouldComponentUpdate',
 	    value: function shouldComponentUpdate() {
-	      // Don't modifiy container so we don't break ThreeJS scene!
+	      // Don't modify container so we don't break ThreeJS scene!
 	      return false;
 	    }
 	  }, {
@@ -42359,8 +42374,15 @@
 	        _react2['default'].createElement(
 	          'div',
 	          { className: 'leap-fps' },
-	          'Leap frame rate: ',
-	          _react2['default'].createElement('span', { ref: 'fpsValue' })
+	          _react2['default'].createElement(
+	            'div',
+	            null,
+	            'Frame rate: ',
+	            _react2['default'].createElement('span', { ref: 'fpsValue' }),
+	            ' (',
+	            _react2['default'].createElement('span', { ref: 'leapFpsValue' }),
+	            ')'
+	          )
 	        )
 	      );
 	    }
@@ -80150,6 +80172,45 @@
 
 	// exports
 
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports['default'] = leapFps;
+
+	var _leapjs = __webpack_require__(192);
+
+	var _leapjs2 = _interopRequireDefault(_leapjs);
+
+	var _toolsAvg = __webpack_require__(217);
+
+	var RUNNING_AVG_LEN = 60;
+
+	var prevTime = null;
+	var avgFps = 0;
+
+	_leapjs2['default'].loop(function () {
+	  var time = Date.now();
+	  if (prevTime) {
+	    var currentFps = 1000 / (time - prevTime);
+	    avgFps = (0, _toolsAvg.rollingAvg)(currentFps, avgFps, RUNNING_AVG_LEN);
+	  }
+	  prevTime = time;
+	});
+
+	function leapFps() {
+	  return avgFps;
+	}
+
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

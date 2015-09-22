@@ -35,3 +35,7 @@ export default {
     }
   }
 };
+
+export function rollingAvg(newSample, oldAvg, n) {
+  return oldAvg - oldAvg / n + newSample / n;
+}
