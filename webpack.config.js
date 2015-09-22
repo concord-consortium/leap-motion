@@ -1,7 +1,9 @@
 var path = require('path');
 module.exports = {
   entry: {
-    'lab-temperature-test': './js/gestures/lab-temperature-test.jsx'
+    'lab-temperature-test': './js/pages/lab-temperature-test.jsx',
+    'lab-temperature-delta': './js/pages/lab-temperature-delta.jsx',
+    'lab-temperature-absolute': './js/pages/lab-temperature-absolute.jsx'
   },
   output: {
     path: path.join(__dirname, 'dist'),

@@ -33,10 +33,6 @@ export default {
     };
   },
 
-  componentWillUnmount: function () {
-
-  },
-
   componentDidMount: function () {
     Leap.loop(function (frame) {
       this.handleLeapState('initial', frame);

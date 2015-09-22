@@ -52,13 +52,13 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentsLabTemperatureTestJsx = __webpack_require__(250);
+	var _componentsLabTemperatureAbsoluteJsx = __webpack_require__(158);
 
-	var _componentsLabTemperatureTestJsx2 = _interopRequireDefault(_componentsLabTemperatureTestJsx);
+	var _componentsLabTemperatureAbsoluteJsx2 = _interopRequireDefault(_componentsLabTemperatureAbsoluteJsx);
 
 	__webpack_require__(247);
 
-	_react2['default'].render(_react2['default'].createElement(_componentsLabTemperatureTestJsx2['default'], null), document.getElementById('app'));
+	_react2['default'].render(_react2['default'].createElement(_componentsLabTemperatureAbsoluteJsx2['default'], null), document.getElementById('app'));
 
 /***/ },
 /* 1 */
@@ -20451,7 +20451,168 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 158 */,
+/* 158 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = __webpack_require__(159)['default'];
+
+	var _inherits = __webpack_require__(173)['default'];
+
+	var _createClass = __webpack_require__(184)['default'];
+
+	var _classCallCheck = __webpack_require__(187)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactMixin = __webpack_require__(188);
+
+	var _reactMixin2 = _interopRequireDefault(_reactMixin);
+
+	var _mixinsLeapStateHandling = __webpack_require__(191);
+
+	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
+
+	var _gesturesFistBump = __webpack_require__(216);
+
+	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
+
+	var _plotterJsx = __webpack_require__(225);
+
+	var _plotterJsx2 = _interopRequireDefault(_plotterJsx);
+
+	var _toolsAvg = __webpack_require__(217);
+
+	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+
+	var _iframePhone = __webpack_require__(227);
+
+	var _iframePhone2 = _interopRequireDefault(_iframePhone);
+
+	var _leapHandsViewJsx = __webpack_require__(232);
+
+	var _leapHandsViewJsx2 = _interopRequireDefault(_leapHandsViewJsx);
+
+	var LabTemperatureAbsolute = (function (_React$Component) {
+	  _inherits(LabTemperatureAbsolute, _React$Component);
+
+	  function LabTemperatureAbsolute() {
+	    _classCallCheck(this, LabTemperatureAbsolute);
+
+	    _get(Object.getPrototypeOf(LabTemperatureAbsolute.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(LabTemperatureAbsolute, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.fistBump = new _gesturesFistBump2['default'](this.props.handBumpConfig, this.gestureDetected.bind(this), this.refs.plotter);
+	      this.setupLabCommunication();
+	    }
+	  }, {
+	    key: 'setupLabCommunication',
+	    value: function setupLabCommunication() {
+	      // Leap works only when window is active.
+	      // We can easily loose focus when when user interacts with Lab model.
+	      setInterval(function () {
+	        window.focus();
+	      }, 500);
+
+	      this.labTemperature = null;
+	      this.labPhone = new _iframePhone2['default'].ParentEndpoint(_react2['default'].findDOMNode(this.refs.labModel));
+
+	      this.labPhone.addListener('modelLoaded', (function () {
+	        this.labPhone.post('play');
+	        this.labPhone.post('observe', 'targetTemperature');
+	      }).bind(this));
+
+	      this.labPhone.addListener('propertyValue', (function (data) {
+	        if (data.name == 'targetTemperature') {
+	          this.labTemperature = data.value;
+	        }
+	      }).bind(this));
+	    }
+	  }, {
+	    key: 'gestureDetected',
+	    value: function gestureDetected() {
+	      _toolsAvg2['default'].addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
+	      var maxVelAvg = _toolsAvg2['default'].getAvg('maxVel');
+	      this.labPhone.post('set', { name: 'targetTemperature', value: maxVelAvg * this.props.tempMult });
+	      this.refs.plotter.showCanvas('gesture-detected');
+	      this.refs.plotter.plot('max velocity avg', maxVelAvg, { min: 0, max: 1500, precision: 2 });
+	      this.refs.plotter.update();
+	    }
+	  }, {
+	    key: 'nextLeapState',
+	    value: function nextLeapState(stateId, frame, data) {
+	      return this.fistBump.nextLeapState(stateId, frame, data);
+	    }
+	  }, {
+	    key: 'getStateMsg',
+	    value: function getStateMsg() {
+	      switch (this.state.leapState) {
+	        case 'initial':
+	          return 'Please keep your hands steady above the Leap device.';
+	        case 'twoHandsDetected':
+	          return 'Close one fist and twist the other hand.';
+	        case 'gestureDetected':
+	          return 'Move your closed fist towards open palm and back rapidly.';
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        null,
+	        _react2['default'].createElement(
+	          'div',
+	          null,
+	          _react2['default'].createElement('iframe', { ref: 'labModel', width: '610px', height: '350px', frameBorder: '0', src: 'http://lab.concord.org/embeddable.html#interactives/grasp/temperature-pressure-relationship.json' })
+	        ),
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'state-and-plotter' },
+	          _react2['default'].createElement(
+	            'div',
+	            { className: 'state-msg' },
+	            this.getStateMsg()
+	          ),
+	          _react2['default'].createElement(_plotterJsx2['default'], { ref: 'plotter' })
+	        ),
+	        _react2['default'].createElement(_leapHandsViewJsx2['default'], null)
+	      );
+	    }
+	  }]);
+
+	  return LabTemperatureAbsolute;
+	})(_react2['default'].Component);
+
+	exports['default'] = LabTemperatureAbsolute;
+
+	LabTemperatureAbsolute.defaultProps = {
+	  tempMult: 4.4, // max velocity avg * temp mult = new target temperature
+	  maxVelAvg: 120,
+	  handBumpConfig: {
+	    closedGrabStrength: 0.4,
+	    openGrabStrength: 0.7,
+	    handTwistTolerance: 0.7,
+	    minAmplitude: 5
+	  }
+	};
+
+	_reactMixin2['default'].onClass(LabTemperatureAbsolute, _mixinsLeapStateHandling2['default']);
+	module.exports = exports['default'];
+
+/***/ },
 /* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -42182,11 +42343,496 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 227 */,
-/* 228 */,
-/* 229 */,
-/* 230 */,
-/* 231 */,
+/* 227 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = {
+	  /**
+	   * Allows to communicate with an iframe.
+	   */
+	  ParentEndpoint:  __webpack_require__(228),
+	  /**
+	   * Allows to communicate with a parent page.
+	   * IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
+	   */
+	  getIFrameEndpoint: __webpack_require__(230),
+	  structuredClone: __webpack_require__(229),
+
+	  // TODO: May be misnamed
+	  IframePhoneRpcEndpoint: __webpack_require__(231)
+
+	};
+
+
+/***/ },
+/* 228 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var structuredClone = __webpack_require__(229);
+
+	/**
+	  Call as:
+	    new ParentEndpoint(targetWindow, targetOrigin, afterConnectedCallback)
+	      targetWindow is a WindowProxy object. (Messages will be sent to it)
+
+	      targetOrigin is the origin of the targetWindow. (Messages will be restricted to this origin)
+
+	      afterConnectedCallback is an optional callback function to be called when the connection is
+	        established.
+
+	  OR (less secure):
+	    new ParentEndpoint(targetIframe, afterConnectedCallback)
+
+	      targetIframe is a DOM object (HTMLIframeElement); messages will be sent to its contentWindow.
+
+	      afterConnectedCallback is an optional callback function
+
+	    In this latter case, targetOrigin will be inferred from the value of the src attribute of the
+	    provided DOM object at the time of the constructor invocation. This is less secure because the
+	    iframe might have been navigated to an unexpected domain before constructor invocation.
+
+	  Note that it is important to specify the expected origin of the iframe's content to safeguard
+	  against sending messages to an unexpected domain. This might happen if our iframe is navigated to
+	  a third-party URL unexpectedly. Furthermore, having a reference to Window object (as in the first
+	  form of the constructor) does not protect against sending a message to the wrong domain. The
+	  window object is actualy a WindowProxy which transparently proxies the Window object of the
+	  underlying iframe, so that when the iframe is navigated, the "same" WindowProxy now references a
+	  completely differeent Window object, possibly controlled by a hostile domain.
+
+	  See http://www.esdiscuss.org/topic/a-dom-use-case-that-can-t-be-emulated-with-direct-proxies for
+	  more about this weird behavior of WindowProxies (the type returned by <iframe>.contentWindow).
+	*/
+
+	module.exports = function ParentEndpoint(targetWindowOrIframeEl, targetOrigin, afterConnectedCallback) {
+	  var selfOrigin = window.location.href.match(/(.*?\/\/.*?)\//)[1];
+	  var postMessageQueue = [];
+	  var connected = false;
+	  var handlers = {};
+	  var targetWindowIsIframeElement;
+
+	  function getOrigin(iframe) {
+	    return iframe.src.match(/(.*?\/\/.*?)\//)[1];
+	  }
+
+	  function post(type, content) {
+	    var message;
+	    // Message object can be constructed from 'type' and 'content' arguments or it can be passed
+	    // as the first argument.
+	    if (arguments.length === 1 && typeof type === 'object' && typeof type.type === 'string') {
+	      message = type;
+	    } else {
+	      message = {
+	        type: type,
+	        content: content
+	      };
+	    }
+	    if (connected) {
+	      var tWindow = getTargetWindow();
+	      // if we are laready connected ... send the message
+	      message.origin = selfOrigin;
+	      // See http://dev.opera.com/articles/view/window-postmessage-messagechannel/#crossdoc
+	      //     https://github.com/Modernizr/Modernizr/issues/388
+	      //     http://jsfiddle.net/ryanseddon/uZTgD/2/
+	      if (structuredClone.supported()) {
+	        tWindow.postMessage(message, targetOrigin);
+	      } else {
+	        tWindow.postMessage(JSON.stringify(message), targetOrigin);
+	      }
+	    } else {
+	      // else queue up the messages to send after connection complete.
+	      postMessageQueue.push(message);
+	    }
+	  }
+
+	  function addListener(messageName, func) {
+	    handlers[messageName] = func;
+	  }
+
+	  function removeListener(messageName) {
+	    handlers[messageName] = null;
+	  }
+
+	  // Note that this function can't be used when IFrame element hasn't been added to DOM yet
+	  // (.contentWindow would be null). At the moment risk is purely theoretical, as the parent endpoint
+	  // only listens for an incoming 'hello' message and the first time we call this function
+	  // is in #receiveMessage handler (so iframe had to be initialized before, as it could send 'hello').
+	  // It would become important when we decide to refactor the way how communication is initialized.
+	  function getTargetWindow() {
+	    if (targetWindowIsIframeElement) {
+	      var tWindow = targetWindowOrIframeEl.contentWindow;
+	      if (!tWindow) {
+	        throw "IFrame element needs to be added to DOM before communication " +
+	              "can be started (.contentWindow is not available)";
+	      }
+	      return tWindow;
+	    }
+	    return targetWindowOrIframeEl;
+	  }
+
+	  function receiveMessage(message) {
+	    var messageData;
+	    if (message.source === getTargetWindow() && message.origin === targetOrigin) {
+	      messageData = message.data;
+	      if (typeof messageData === 'string') {
+	        messageData = JSON.parse(messageData);
+	      }
+	      if (handlers[messageData.type]) {
+	        handlers[messageData.type](messageData.content);
+	      } else {
+	        console.log("cant handle type: " + messageData.type);
+	      }
+	    }
+	  }
+
+	  function disconnect() {
+	    connected = false;
+	    window.removeEventListener('message', receiveMessage);
+	  }
+
+	  // handle the case that targetWindowOrIframeEl is actually an <iframe> rather than a Window(Proxy) object
+	  // Note that if it *is* a WindowProxy, this probe will throw a SecurityException, but in that case
+	  // we also don't need to do anything
+	  try {
+	    targetWindowIsIframeElement = targetWindowOrIframeEl.constructor === HTMLIFrameElement;
+	  } catch (e) {
+	    targetWindowIsIframeElement = false;
+	  }
+
+	  if (targetWindowIsIframeElement) {
+	    // Infer the origin ONLY if the user did not supply an explicit origin, i.e., if the second
+	    // argument is empty or is actually a callback (meaning it is supposed to be the
+	    // afterConnectionCallback)
+	    if (!targetOrigin || targetOrigin.constructor === Function) {
+	      afterConnectedCallback = targetOrigin;
+	      targetOrigin = getOrigin(targetWindowOrIframeEl);
+	    }
+	  }
+
+	  // when we receive 'hello':
+	  addListener('hello', function() {
+	    connected = true;
+
+	    // send hello response
+	    post('hello');
+
+	    // give the user a chance to do things now that we are connected
+	    // note that is will happen before any queued messages
+	    if (afterConnectedCallback && typeof afterConnectedCallback === "function") {
+	      afterConnectedCallback();
+	    }
+
+	    // Now send any messages that have been queued up ...
+	    while(postMessageQueue.length > 0) {
+	      post(postMessageQueue.shift());
+	    }
+	  });
+
+	  window.addEventListener('message', receiveMessage, false);
+
+	  // Public API.
+	  return {
+	    post: post,
+	    addListener: addListener,
+	    removeListener: removeListener,
+	    disconnect: disconnect,
+	    getTargetWindow: getTargetWindow,
+	    targetOrigin: targetOrigin
+	  };
+	};
+
+
+/***/ },
+/* 229 */
+/***/ function(module, exports) {
+
+	var featureSupported = false;
+
+	(function () {
+	  var result = 0;
+
+	  if (!!window.postMessage) {
+	    try {
+	      // Safari 5.1 will sometimes throw an exception and sometimes won't, lolwut?
+	      // When it doesn't we capture the message event and check the
+	      // internal [[Class]] property of the message being passed through.
+	      // Safari will pass through DOM nodes as Null iOS safari on the other hand
+	      // passes it through as DOMWindow, gotcha.
+	      window.onmessage = function(e){
+	        var type = Object.prototype.toString.call(e.data);
+	        result = (type.indexOf("Null") != -1 || type.indexOf("DOMWindow") != -1) ? 1 : 0;
+	        featureSupported = {
+	          'structuredClones': result
+	        };
+	      };
+	      // Spec states you can't transmit DOM nodes and it will throw an error
+	      // postMessage implimentations that support cloned data will throw.
+	      window.postMessage(document.createElement("a"),"*");
+	    } catch(e) {
+	      // BBOS6 throws but doesn't pass through the correct exception
+	      // so check error message
+	      result = (e.DATA_CLONE_ERR || e.message == "Cannot post cyclic structures.") ? 1 : 0;
+	      featureSupported = {
+	        'structuredClones': result
+	      };
+	    }
+	  }
+	}());
+
+	exports.supported = function supported() {
+	  return featureSupported && featureSupported.structuredClones > 0;
+	};
+
+
+/***/ },
+/* 230 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var structuredClone = __webpack_require__(229);
+	var HELLO_INTERVAL_LENGTH = 200;
+	var HELLO_TIMEOUT_LENGTH = 60000;
+
+	function IFrameEndpoint() {
+	  var parentOrigin;
+	  var listeners = {};
+	  var isInitialized = false;
+	  var connected = false;
+	  var postMessageQueue = [];
+	  var helloInterval;
+
+	  function postToTarget(message, target) {
+	    // See http://dev.opera.com/articles/view/window-postmessage-messagechannel/#crossdoc
+	    //     https://github.com/Modernizr/Modernizr/issues/388
+	    //     http://jsfiddle.net/ryanseddon/uZTgD/2/
+	    if (structuredClone.supported()) {
+	      window.parent.postMessage(message, target);
+	    } else {
+	      window.parent.postMessage(JSON.stringify(message), target);
+	    }
+	  }
+
+	  function post(type, content) {
+	    var message;
+	    // Message object can be constructed from 'type' and 'content' arguments or it can be passed
+	    // as the first argument.
+	    if (arguments.length === 1 && typeof type === 'object' && typeof type.type === 'string') {
+	      message = type;
+	    } else {
+	      message = {
+	        type: type,
+	        content: content
+	      };
+	    }
+	    if (connected) {
+	      postToTarget(message, parentOrigin);
+	    } else {
+	      postMessageQueue.push(message);
+	    }
+	  }
+
+	  // Only the initial 'hello' message goes permissively to a '*' target (because due to cross origin
+	  // restrictions we can't find out our parent's origin until they voluntarily send us a message
+	  // with it.)
+	  function postHello() {
+	    postToTarget({
+	      type: 'hello',
+	      origin: document.location.href.match(/(.*?\/\/.*?)\//)[1]
+	    }, '*');
+	  }
+
+	  function addListener(type, fn) {
+	    listeners[type] = fn;
+	  }
+
+	  function removeAllListeners() {
+	    listeners = {};
+	  }
+
+	  function getListenerNames() {
+	    return Object.keys(listeners);
+	  }
+
+	  function messageListener(message) {
+	      // Anyone can send us a message. Only pay attention to messages from parent.
+	      if (message.source !== window.parent) return;
+
+	      var messageData = message.data;
+
+	      if (typeof messageData === 'string') messageData = JSON.parse(messageData);
+
+	      // We don't know origin property of parent window until it tells us.
+	      if (!connected && messageData.type === 'hello') {
+	        // This is the return handshake from the embedding window.
+	        parentOrigin = messageData.origin;
+	        connected = true;
+	        stopPostingHello();
+	        while(postMessageQueue.length > 0) {
+	          post(postMessageQueue.shift());
+	        }
+	      }
+
+	      // Perhaps-redundantly insist on checking origin as well as source window of message.
+	      if (message.origin === parentOrigin) {
+	        if (listeners[messageData.type]) listeners[messageData.type](messageData.content);
+	      }
+	   }
+
+	   function disconnect() {
+	     connected = false;
+	     stopPostingHello();
+	     window.removeEventListener('message', messsageListener);
+	   }
+
+	  /**
+	    Initialize communication with the parent frame. This should not be called until the app's custom
+	    listeners are registered (via our 'addListener' public method) because, once we open the
+	    communication, the parent window may send any messages it may have queued. Messages for which
+	    we don't have handlers will be silently ignored.
+	  */
+	  function initialize() {
+	    if (isInitialized) {
+	      return;
+	    }
+	    isInitialized = true;
+	    if (window.parent === window) return;
+
+	    // We kick off communication with the parent window by sending a "hello" message. Then we wait
+	    // for a handshake (another "hello" message) from the parent window.
+	    postHello();
+	    startPostingHello();
+	    window.addEventListener('message', messageListener, false);
+	  }
+
+	  function startPostingHello() {
+	    if (helloInterval) {
+	      stopPostingHello();
+	    }
+	    helloInterval = window.setInterval(postHello, HELLO_INTERVAL_LENGTH);
+	    window.setTimeout(stopPostingHello, HELLO_TIMEOUT_LENGTH);
+	  }
+
+	  function stopPostingHello() {
+	    window.clearInterval(helloInterval);
+	    helloInterval = null;
+	  }
+
+	  // Public API.
+	  return {
+	    initialize        : initialize,
+	    getListenerNames  : getListenerNames,
+	    addListener       : addListener,
+	    removeAllListeners: removeAllListeners,
+	    disconnect        : disconnect,
+	    post              : post
+	  };
+	}
+
+	var instance = null;
+
+	// IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
+	module.exports = function getIFrameEndpoint() {
+	  if (!instance) {
+	    instance = new IFrameEndpoint();
+	  }
+	  return instance;
+	};
+
+/***/ },
+/* 231 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var ParentEndpoint = __webpack_require__(228);
+	var getIFrameEndpoint = __webpack_require__(230);
+
+	// Not a real UUID as there's an RFC for that (needed for proper distributed computing).
+	// But in this fairly parochial situation, we just need to be fairly sure to avoid repeats.
+	function getPseudoUUID() {
+	    var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+	    var len = chars.length;
+	    var ret = [];
+
+	    for (var i = 0; i < 10; i++) {
+	        ret.push(chars[Math.floor(Math.random() * len)]);
+	    }
+	    return ret.join('');
+	}
+
+	module.exports = function IframePhoneRpcEndpoint(handler, namespace, targetWindow, targetOrigin, phone) {
+	    var pendingCallbacks = Object.create({});
+
+	    // if it's a non-null object, rather than a function, 'handler' is really an options object
+	    if (handler && typeof handler === 'object') {
+	        namespace = handler.namespace;
+	        targetWindow = handler.targetWindow;
+	        targetOrigin = handler.targetOrigin;
+	        phone = handler.phone;
+	        handler = handler.handler;
+	    }
+
+	    if ( ! phone ) {
+	        if (targetWindow === window.parent) {
+	            phone = getIFrameEndpoint();
+	            phone.initialize();
+	        } else {
+	            phone = new ParentEndpoint(targetWindow, targetOrigin);
+	        }
+	    }
+
+	    phone.addListener(namespace, function(message) {
+	        var callbackObj;
+
+	        if (message.messageType === 'call' && typeof this.handler === 'function') {
+	            this.handler.call(undefined, message.value, function(returnValue) {
+	                phone.post(namespace, {
+	                    messageType: 'returnValue',
+	                    uuid: message.uuid,
+	                    value: returnValue
+	                });
+	            });
+	        } else if (message.messageType === 'returnValue') {
+	            callbackObj = pendingCallbacks[message.uuid];
+
+	            if (callbackObj) {
+	                window.clearTimeout(callbackObj.timeout);
+	                if (callbackObj.callback) {
+	                    callbackObj.callback.call(undefined, message.value);
+	                }
+	                pendingCallbacks[message.uuid] = null;
+	            }
+	        }
+	    }.bind(this));
+
+	    function call(message, callback) {
+	        var uuid = getPseudoUUID();
+
+	        pendingCallbacks[uuid] = {
+	            callback: callback,
+	            timeout: window.setTimeout(function() {
+	                if (callback) {
+	                    callback(undefined, new Error("IframePhone timed out waiting for reply"));
+	                }
+	            }, 2000)
+	        };
+
+	        phone.post(namespace, {
+	            messageType: 'call',
+	            uuid: uuid,
+	            value: message
+	        });
+	    }
+
+	    function disconnect() {
+	        phone.disconnect();
+	    }
+
+	    this.handler = handler;
+	    this.call = call.bind(this);
+	    this.disconnect = disconnect.bind(this);
+	};
+
+
+/***/ },
 /* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -80099,141 +80745,6 @@
 
 	// exports
 
-
-/***/ },
-/* 249 */,
-/* 250 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _get = __webpack_require__(159)['default'];
-
-	var _inherits = __webpack_require__(173)['default'];
-
-	var _createClass = __webpack_require__(184)['default'];
-
-	var _classCallCheck = __webpack_require__(187)['default'];
-
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactMixin = __webpack_require__(188);
-
-	var _reactMixin2 = _interopRequireDefault(_reactMixin);
-
-	var _mixinsLeapStateHandling = __webpack_require__(191);
-
-	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
-
-	var _toolsLeapFps = __webpack_require__(233);
-
-	var _toolsLeapFps2 = _interopRequireDefault(_toolsLeapFps);
-
-	var _toolsAvg = __webpack_require__(217);
-
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
-
-	var _gesturesFistBump = __webpack_require__(216);
-
-	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
-
-	var _plotterJsx = __webpack_require__(225);
-
-	var _plotterJsx2 = _interopRequireDefault(_plotterJsx);
-
-	var _leapHandsViewJsx = __webpack_require__(232);
-
-	var _leapHandsViewJsx2 = _interopRequireDefault(_leapHandsViewJsx);
-
-	var LabTemperatureTest = (function (_React$Component) {
-	  _inherits(LabTemperatureTest, _React$Component);
-
-	  function LabTemperatureTest() {
-	    _classCallCheck(this, LabTemperatureTest);
-
-	    _get(Object.getPrototypeOf(LabTemperatureTest.prototype), 'constructor', this).apply(this, arguments);
-	  }
-
-	  _createClass(LabTemperatureTest, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.fistBump = new _gesturesFistBump2['default'](this.props.handBumpConfig, this.gestureDetected.bind(this), this.refs.plotter);
-	    }
-	  }, {
-	    key: 'gestureDetected',
-	    value: function gestureDetected() {
-	      _toolsAvg2['default'].addSample('newFreq', this.fistBump.freq, Math.round(this.props.freqAvg));
-	      _toolsAvg2['default'].addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
-	      this.refs.plotter.showCanvas('gesture-detected');
-	      this.refs.plotter.plot('frame rate', (0, _toolsLeapFps2['default'])(), { min: 0, max: 130, precision: 2 });
-	      this.refs.plotter.plot('max velocity avg', _toolsAvg2['default'].getAvg('maxVel'), { min: 0, max: 1500, precision: 2 });
-	      this.refs.plotter.plot('frequency', _toolsAvg2['default'].getAvg('newFreq'), { min: 0, max: 6, precision: 2 });
-	      this.refs.plotter.update();
-	    }
-	  }, {
-	    key: 'nextLeapState',
-	    value: function nextLeapState(stateId, frame, data) {
-	      return this.fistBump.nextLeapState(stateId, frame, data);
-	    }
-	  }, {
-	    key: 'getStateMsg',
-	    value: function getStateMsg() {
-	      switch (this.state.leapState) {
-	        case 'initial':
-	          return 'Please keep your hands steady above the Leap device.';
-	        case 'twoHandsDetected':
-	          return 'Close one fist and twist the other hand.';
-	        case 'gestureDetected':
-	          return 'Move your closed fist towards open palm and back rapidly.';
-	      }
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        null,
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'state-and-plotter' },
-	          _react2['default'].createElement(
-	            'div',
-	            { className: 'state-msg' },
-	            this.getStateMsg()
-	          ),
-	          _react2['default'].createElement(_plotterJsx2['default'], { ref: 'plotter' })
-	        ),
-	        _react2['default'].createElement(_leapHandsViewJsx2['default'], null)
-	      );
-	    }
-	  }]);
-
-	  return LabTemperatureTest;
-	})(_react2['default'].Component);
-
-	exports['default'] = LabTemperatureTest;
-
-	LabTemperatureTest.defaultProps = {
-	  maxVelAvg: 120,
-	  freqAvg: 120,
-	  handBumpConfig: {
-	    closedGrabStrength: 0.4,
-	    openGrabStrength: 0.7,
-	    handTwistTolerance: 0.7,
-	    minAmplitude: 5
-	  }
-	};
-
-	_reactMixin2['default'].onClass(LabTemperatureTest, _mixinsLeapStateHandling2['default']);
-	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);
