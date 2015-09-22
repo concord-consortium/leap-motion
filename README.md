@@ -5,6 +5,7 @@ Experiments related to the gesture detection.
 - http://concord-consortium.github.io/leap-motion/examples/lab-temperature-test.html
 - http://concord-consortium.github.io/leap-motion/examples/lab-temperature-delta.html
 - http://concord-consortium.github.io/leap-motion/examples/lab-temperature-absolute.html
+- http://concord-consortium.github.io/leap-motion/examples/lab-add-rm-atom-test.html
 
 ## Development
 
