@@ -2,22 +2,29 @@
 
 Experiments related to the gesture detection.
 
-- http://concord-consortium.github.io/leap-motion/examples/lab/temperature-delta.html
-- http://concord-consortium.github.io/leap-motion/examples/lab/temperature-absolute.html
+- http://concord-consortium.github.io/leap-motion/examples/lab-temperature-test.html
+- http://concord-consortium.github.io/leap-motion/examples/lab-temperature-delta.html
+- http://concord-consortium.github.io/leap-motion/examples/lab-temperature-absolute.html
 
+## Development
 
-## Local Development
+This project is using [webpack](http://webpack.github.io/) to build the final JS file in `/dist` folder.
 
-This repository uses Jekyll. 
-To serve content of that repository locally, run in the root of your repository:
+First, you need to make sure that webpack is installed and all the NPM packages required by this project are available:
 
 ```
-bundle install
-bundle exec jekyll serve
+npm install -g webpack
+npm install
+```
+Then you can build JavaScript files using:
+```
+webpack
+```
+or:
+```
+webpack --watch
 ```
 
-Your site should be available at [http://localhost:4000]()
+## License 
 
-Please take a look at Github docs:
-
-https://help.github.com/articles/using-jekyll-with-pages/
+[MIT](https://github.com/concord-consortium/grasp-seasons/blob/master/LICENSE)
