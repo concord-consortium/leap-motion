@@ -75,8 +75,8 @@ export default class FistBump {
       return {stateId: 'gestureDetected', data: {closedHand: frame.hands[1], openHand: frame.hands[0]}};
     } else {
       this.plotter.showCanvas('two-hands-detected');
-      this.plotter.plot('this.hand 0 roll', frame.hands[0].roll());
-      this.plotter.plot('this.hand 1 grab strength', frame.hands[1].grabStrength);
+      this.plotter.plot('hand 0 roll', frame.hands[0].roll());
+      this.plotter.plot('hand 1 grab strength', frame.hands[1].grabStrength);
       this.plotter.update();
       return null;
     }

@@ -3,7 +3,8 @@ module.exports = {
   entry: {
     'lab-temperature-test': './js/pages/lab-temperature-test.jsx',
     'lab-temperature-delta': './js/pages/lab-temperature-delta.jsx',
-    'lab-temperature-absolute': './js/pages/lab-temperature-absolute.jsx'
+    'lab-temperature-absolute': './js/pages/lab-temperature-absolute.jsx',
+    'lab-add-rm-atom-test': './js/pages/lab-add-rm-atom-test.jsx'
   },
   output: {
     path: path.join(__dirname, 'dist'),

@@ -52,11 +52,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentsLabTemperatureTestJsx = __webpack_require__(250);
+	var _componentsLabTemperatureTestJsx = __webpack_require__(252);
 
 	var _componentsLabTemperatureTestJsx2 = _interopRequireDefault(_componentsLabTemperatureTestJsx);
 
-	__webpack_require__(247);
+	__webpack_require__(242);
 
 	_react2['default'].render(_react2['default'].createElement(_componentsLabTemperatureTestJsx2['default'], null), document.getElementById('app'));
 
@@ -30920,126 +30920,37 @@
 
 	'use strict';
 
-	var _createClass = __webpack_require__(184)['default'];
-
-	var _classCallCheck = __webpack_require__(187)['default'];
-
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
+	exports['default'] = leapFps;
+
+	var _leapjs = __webpack_require__(192);
+
+	var _leapjs2 = _interopRequireDefault(_leapjs);
 
 	var _toolsAvg = __webpack_require__(217);
 
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+	var RUNNING_AVG_LEN = 60;
 
-	var _howler = __webpack_require__(218);
+	var prevTime = null;
+	var avgFps = 0;
 
-	var _toolsDirectionChange = __webpack_require__(219);
-
-	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
-
-	var FistBump = (function () {
-	  function FistBump(config, callback, plotter) {
-	    _classCallCheck(this, FistBump);
-
-	    this.config = config;
-	    this.callback = callback;
-	    this.plotter = plotter;
-	    // Outputs:
-	    this.freq = 0;
-	    this.maxVel = 0;
-	    this.hand = null;
-	    this._setupDirectionChangeAlg();
+	_leapjs2['default'].loop(function () {
+	  var time = Date.now();
+	  if (prevTime) {
+	    var currentFps = 1000 / (time - prevTime);
+	    avgFps = (0, _toolsAvg.rollingAvg)(currentFps, avgFps, RUNNING_AVG_LEN);
 	  }
+	  prevTime = time;
+	});
 
-	  _createClass(FistBump, [{
-	    key: '_setupDirectionChangeAlg',
-	    value: function _setupDirectionChangeAlg() {
-	      var lastDirChange = null;
-	      var sound = new _howler.Howl({
-	        urls: ['tap.wav']
-	      });
-	      this.freqCalc = new _toolsDirectionChange2['default']({
-	        minAmplitude: this.config.minAmplitude,
-	        onDirChange: (function (data) {
-	          var timestamp = Date.now();
-	          if (lastDirChange) {
-	            this.freq = 0.5 * 1000 / (timestamp - lastDirChange);
-	            this.maxVel = data.maxVelocity;
-	          }
-	          lastDirChange = timestamp;
-	          if (this.hand && (this.hand.type === 'right' && data.type === _toolsDirectionChange2['default'].LEFT_TO_RIGHT || this.hand.type === 'left' && data.type === _toolsDirectionChange2['default'].RIGHT_TO_LEFT)) {
-	            // Sound effect!
-	            sound.play();
-	          }
-	        }).bind(this),
-	        onStop: (function () {
-	          lastDirChange = Date.now();
-	          this.freq = 0;
-	          this.maxVel = 0;
-	        }).bind(this)
-	      });
-	    }
-	  }, {
-	    key: 'nextLeapState',
-	    value: function nextLeapState(stateId, frame, data) {
-	      var stateFuncName = 'state_' + stateId;
-	      return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
-	    }
+	function leapFps() {
+	  return avgFps;
+	}
 
-	    // State definitions:
-
-	  }, {
-	    key: 'state_initial',
-	    value: function state_initial(frame, data) {
-	      if (frame.hands.length === 2) {
-	        return 'twoHandsDetected';
-	      }
-	      // Hide debug data.
-	      this.plotter.showCanvas(null);
-	      return null;
-	    }
-	  }, {
-	    key: 'state_twoHandsDetected',
-	    value: function state_twoHandsDetected(frame, data) {
-	      var config = this.config;
-	      function condition(closedHandIdx, openHandIdx) {
-	        var closedHand = frame.hands[closedHandIdx];
-	        var openHand = frame.hands[openHandIdx];
-	        if (closedHand.grabStrength > config.closedGrabStrength && openHand.grabStrength < config.openGrabStrength && Math.abs(Math.abs(openHand.roll()) - Math.PI / 2) < config.handTwistTolerance) {
-	          return true;
-	        }
-	        return false;
-	      }
-	      if (condition(0, 1)) {
-	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[0], openHand: frame.hands[1] } };
-	      } else if (condition(1, 0)) {
-	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[1], openHand: frame.hands[0] } };
-	      } else {
-	        this.plotter.showCanvas('two-hands-detected');
-	        this.plotter.plot('this.hand 0 roll', frame.hands[0].roll());
-	        this.plotter.plot('this.hand 1 grab strength', frame.hands[1].grabStrength);
-	        this.plotter.update();
-	        return null;
-	      }
-	    }
-	  }, {
-	    key: 'state_gestureDetected',
-	    value: function state_gestureDetected(frame, data) {
-	      this.hand = data.closedHand;
-	      _toolsAvg2['default'].addSample('fistXVel', this.hand.palmVelocity[0], 6);
-	      this.freqCalc.addSample(_toolsAvg2['default'].getAvg('fistXVel'), this.hand.palmPosition[0]);
-	      this.callback();
-	      return null;
-	    }
-	  }]);
-
-	  return FistBump;
-	})();
-
-	exports['default'] = FistBump;
 	module.exports = exports['default'];
 
 /***/ },
@@ -31095,7 +31006,8 @@
 	}
 
 /***/ },
-/* 218 */
+/* 218 */,
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -32454,7 +32366,7 @@
 
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32463,7 +32375,7 @@
 
 	var _classCallCheck = __webpack_require__(187)['default'];
 
-	var _Math$sign = __webpack_require__(220)['default'];
+	var _Math$sign = __webpack_require__(221)['default'];
 
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 
@@ -32471,7 +32383,7 @@
 	  value: true
 	});
 
-	var _jquery = __webpack_require__(224);
+	var _jquery = __webpack_require__(225);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
@@ -32575,29 +32487,29 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 220 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = { "default": __webpack_require__(221), __esModule: true };
-
-/***/ },
 /* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(222);
-	module.exports = __webpack_require__(171).Math.sign;
+	module.exports = { "default": __webpack_require__(222), __esModule: true };
 
 /***/ },
 /* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// 20.2.2.28 Math.sign(x)
-	var $def = __webpack_require__(169);
-
-	$def($def.S, 'Math', {sign: __webpack_require__(223)});
+	__webpack_require__(223);
+	module.exports = __webpack_require__(171).Math.sign;
 
 /***/ },
 /* 223 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 20.2.2.28 Math.sign(x)
+	var $def = __webpack_require__(169);
+
+	$def($def.S, 'Math', {sign: __webpack_require__(224)});
+
+/***/ },
+/* 224 */
 /***/ function(module, exports) {
 
 	// 20.2.2.28 Math.sign(x)
@@ -32606,7 +32518,7 @@
 	};
 
 /***/ },
-/* 224 */
+/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -41822,7 +41734,7 @@
 
 
 /***/ },
-/* 225 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41845,11 +41757,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _jquery = __webpack_require__(224);
+	var _jquery = __webpack_require__(225);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _toolsLeapDataPlotter = __webpack_require__(226);
+	var _toolsLeapDataPlotter = __webpack_require__(227);
 
 	var _toolsLeapDataPlotter2 = _interopRequireDefault(_toolsLeapDataPlotter);
 
@@ -41945,7 +41857,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 226 */
+/* 227 */
 /***/ function(module, exports) {
 
 	// It's slightly modified version of the LeapDataPlotter (leap-plugins-utils).
@@ -42182,12 +42094,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 227 */,
-/* 228 */,
-/* 229 */,
-/* 230 */,
-/* 231 */,
-/* 232 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42214,13 +42121,13 @@
 
 	var _leapjs2 = _interopRequireDefault(_leapjs);
 
-	var _toolsLeapFps = __webpack_require__(233);
+	var _toolsLeapFps = __webpack_require__(216);
 
 	var _toolsLeapFps2 = _interopRequireDefault(_toolsLeapFps);
 
-	__webpack_require__(234);
+	__webpack_require__(229);
 
-	__webpack_require__(243);
+	__webpack_require__(238);
 
 	var LeapHandsView = (function (_React$Component) {
 	  _inherits(LeapHandsView, _React$Component);
@@ -42288,60 +42195,21 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 233 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = leapFps;
-
-	var _leapjs = __webpack_require__(192);
-
-	var _leapjs2 = _interopRequireDefault(_leapjs);
-
-	var _toolsAvg = __webpack_require__(217);
-
-	var RUNNING_AVG_LEN = 60;
-
-	var prevTime = null;
-	var avgFps = 0;
-
-	_leapjs2['default'].loop(function () {
-	  var time = Date.now();
-	  if (prevTime) {
-	    var currentFps = 1000 / (time - prevTime);
-	    avgFps = (0, _toolsAvg.rollingAvg)(currentFps, avgFps, RUNNING_AVG_LEN);
-	  }
-	  prevTime = time;
-	});
-
-	function leapFps() {
-	  return avgFps;
-	}
-
-	module.exports = exports['default'];
-
-/***/ },
-/* 234 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Leap = __webpack_require__(192)
-	__webpack_require__(235)
+	__webpack_require__(230)
+	__webpack_require__(231)
+	__webpack_require__(232)
+	__webpack_require__(234)
 	__webpack_require__(236)
 	__webpack_require__(237)
-	__webpack_require__(239)
-	__webpack_require__(241)
-	__webpack_require__(242)
 	module.exports = true
 
 
 /***/ },
-/* 235 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
@@ -42414,7 +42282,7 @@
 
 
 /***/ },
-/* 236 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
@@ -42502,7 +42370,7 @@
 
 
 /***/ },
-/* 237 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/bone-hand/leap.bone-hand.coffee
@@ -42511,7 +42379,7 @@
 
 	  scope = null;
 
-	  THREE =  true ? __webpack_require__(238) : window.THREE;
+	  THREE =  true ? __webpack_require__(233) : window.THREE;
 
 	  initScene = function(targetEl, scale) {
 	    var camera, far, height, near, renderer, width;
@@ -42896,7 +42764,7 @@
 
 
 /***/ },
-/* 238 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var self = self || {};// File:src/Three.js
@@ -77645,7 +77513,7 @@
 
 
 /***/ },
-/* 239 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/*
@@ -79483,10 +79351,10 @@
 
 	}).call(this);
 	}( window ));
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(240)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(235)(module)))
 
 /***/ },
-/* 240 */
+/* 235 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -79502,7 +79370,7 @@
 
 
 /***/ },
-/* 241 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/screen-position/leap.screen-position.coffee
@@ -79592,7 +79460,7 @@
 
 
 /***/ },
-/* 242 */
+/* 237 */
 /***/ function(module, exports) {
 
 	//CoffeeScript generated from main/transform/leap.transform.coffee
@@ -79740,16 +79608,16 @@
 
 
 /***/ },
-/* 243 */
+/* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(244);
+	var content = __webpack_require__(239);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(246)(content, {});
+	var update = __webpack_require__(241)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -79766,10 +79634,10 @@
 	}
 
 /***/ },
-/* 244 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(245)();
+	exports = module.exports = __webpack_require__(240)();
 	// imports
 
 
@@ -79780,7 +79648,7 @@
 
 
 /***/ },
-/* 245 */
+/* 240 */
 /***/ function(module, exports) {
 
 	/*
@@ -79836,7 +79704,7 @@
 
 
 /***/ },
-/* 246 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -80061,16 +79929,16 @@
 
 
 /***/ },
-/* 247 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(248);
+	var content = __webpack_require__(243);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(246)(content, {});
+	var update = __webpack_require__(241)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -80087,10 +79955,10 @@
 	}
 
 /***/ },
-/* 248 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(245)();
+	exports = module.exports = __webpack_require__(240)();
 	// imports
 
 
@@ -80101,8 +79969,142 @@
 
 
 /***/ },
+/* 244 */,
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = __webpack_require__(184)['default'];
+
+	var _classCallCheck = __webpack_require__(187)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _toolsAvg = __webpack_require__(217);
+
+	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+
+	var _howler = __webpack_require__(219);
+
+	var _toolsDirectionChange = __webpack_require__(220);
+
+	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
+
+	var FistBump = (function () {
+	  function FistBump(config, callback, plotter) {
+	    _classCallCheck(this, FistBump);
+
+	    this.config = config;
+	    this.callback = callback;
+	    this.plotter = plotter;
+	    // Outputs:
+	    this.freq = 0;
+	    this.maxVel = 0;
+	    this.hand = null;
+	    this._setupDirectionChangeAlg();
+	  }
+
+	  _createClass(FistBump, [{
+	    key: '_setupDirectionChangeAlg',
+	    value: function _setupDirectionChangeAlg() {
+	      var lastDirChange = null;
+	      var sound = new _howler.Howl({
+	        urls: ['tap.wav']
+	      });
+	      this.freqCalc = new _toolsDirectionChange2['default']({
+	        minAmplitude: this.config.minAmplitude,
+	        onDirChange: (function (data) {
+	          var timestamp = Date.now();
+	          if (lastDirChange) {
+	            this.freq = 0.5 * 1000 / (timestamp - lastDirChange);
+	            this.maxVel = data.maxVelocity;
+	          }
+	          lastDirChange = timestamp;
+	          if (this.hand && (this.hand.type === 'right' && data.type === _toolsDirectionChange2['default'].LEFT_TO_RIGHT || this.hand.type === 'left' && data.type === _toolsDirectionChange2['default'].RIGHT_TO_LEFT)) {
+	            // Sound effect!
+	            sound.play();
+	          }
+	        }).bind(this),
+	        onStop: (function () {
+	          lastDirChange = Date.now();
+	          this.freq = 0;
+	          this.maxVel = 0;
+	        }).bind(this)
+	      });
+	    }
+	  }, {
+	    key: 'nextLeapState',
+	    value: function nextLeapState(stateId, frame, data) {
+	      var stateFuncName = 'state_' + stateId;
+	      return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
+	    }
+
+	    // State definitions:
+
+	  }, {
+	    key: 'state_initial',
+	    value: function state_initial(frame, data) {
+	      if (frame.hands.length === 2) {
+	        return 'twoHandsDetected';
+	      }
+	      // Hide debug data.
+	      this.plotter.showCanvas(null);
+	      return null;
+	    }
+	  }, {
+	    key: 'state_twoHandsDetected',
+	    value: function state_twoHandsDetected(frame, data) {
+	      var config = this.config;
+	      function condition(closedHandIdx, openHandIdx) {
+	        var closedHand = frame.hands[closedHandIdx];
+	        var openHand = frame.hands[openHandIdx];
+	        if (closedHand.grabStrength > config.closedGrabStrength && openHand.grabStrength < config.openGrabStrength && Math.abs(Math.abs(openHand.roll()) - Math.PI / 2) < config.handTwistTolerance) {
+	          return true;
+	        }
+	        return false;
+	      }
+	      if (condition(0, 1)) {
+	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[0], openHand: frame.hands[1] } };
+	      } else if (condition(1, 0)) {
+	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[1], openHand: frame.hands[0] } };
+	      } else {
+	        this.plotter.showCanvas('two-hands-detected');
+	        this.plotter.plot('hand 0 roll', frame.hands[0].roll());
+	        this.plotter.plot('hand 1 grab strength', frame.hands[1].grabStrength);
+	        this.plotter.update();
+	        return null;
+	      }
+	    }
+	  }, {
+	    key: 'state_gestureDetected',
+	    value: function state_gestureDetected(frame, data) {
+	      this.hand = data.closedHand;
+	      _toolsAvg2['default'].addSample('fistXVel', this.hand.palmVelocity[0], 6);
+	      this.freqCalc.addSample(_toolsAvg2['default'].getAvg('fistXVel'), this.hand.palmPosition[0]);
+	      this.callback();
+	      return null;
+	    }
+	  }]);
+
+	  return FistBump;
+	})();
+
+	exports['default'] = FistBump;
+	module.exports = exports['default'];
+
+/***/ },
+/* 246 */,
+/* 247 */,
+/* 248 */,
 /* 249 */,
-/* 250 */
+/* 250 */,
+/* 251 */,
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -80133,7 +80135,7 @@
 
 	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
 
-	var _toolsLeapFps = __webpack_require__(233);
+	var _toolsLeapFps = __webpack_require__(216);
 
 	var _toolsLeapFps2 = _interopRequireDefault(_toolsLeapFps);
 
@@ -80141,15 +80143,15 @@
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
 
-	var _gesturesFistBump = __webpack_require__(216);
+	var _gesturesFistBump = __webpack_require__(245);
 
 	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
 
-	var _plotterJsx = __webpack_require__(225);
+	var _plotterJsx = __webpack_require__(226);
 
 	var _plotterJsx2 = _interopRequireDefault(_plotterJsx);
 
-	var _leapHandsViewJsx = __webpack_require__(232);
+	var _leapHandsViewJsx = __webpack_require__(228);
 
 	var _leapHandsViewJsx2 = _interopRequireDefault(_leapHandsViewJsx);
 
