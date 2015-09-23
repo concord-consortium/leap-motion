@@ -52,7 +52,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentsLabTemperatureTestJsx = __webpack_require__(252);
+	var _componentsLabTemperatureTestJsx = __webpack_require__(253);
 
 	var _componentsLabTemperatureTestJsx2 = _interopRequireDefault(_componentsLabTemperatureTestJsx);
 
@@ -80104,7 +80104,8 @@
 /* 249 */,
 /* 250 */,
 /* 251 */,
-/* 252 */
+/* 252 */,
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

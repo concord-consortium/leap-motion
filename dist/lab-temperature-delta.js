@@ -52,7 +52,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentsLabTemperatureDeltaJsx = __webpack_require__(251);
+	var _componentsLabTemperatureDeltaJsx = __webpack_require__(252);
 
 	var _componentsLabTemperatureDeltaJsx2 = _interopRequireDefault(_componentsLabTemperatureDeltaJsx);
 
@@ -80588,7 +80588,8 @@
 
 
 /***/ },
-/* 251 */
+/* 251 */,
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

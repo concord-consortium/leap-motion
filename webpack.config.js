@@ -4,7 +4,8 @@ module.exports = {
     'lab-temperature-test': './js/pages/lab-temperature-test.jsx',
     'lab-temperature-delta': './js/pages/lab-temperature-delta.jsx',
     'lab-temperature-absolute': './js/pages/lab-temperature-absolute.jsx',
-    'lab-add-rm-atom-test': './js/pages/lab-add-rm-atom-test.jsx'
+    'lab-add-rm-atom-test': './js/pages/lab-add-rm-atom-test.jsx',
+    'lab-pressure-equilibrium': './js/pages/lab-pressure-equilibrium.jsx'
   },
   output: {
     path: path.join(__dirname, 'dist'),
