@@ -20523,6 +20523,11 @@
 	      this.addRmObj = new _gesturesAddRmObj2['default'](this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.refs.plotter);
 	    }
 	  }, {
+	    key: 'handleGestureConfigChange',
+	    value: function handleGestureConfigChange(event) {
+	      this.addRmObj.config[event.target.name] = event.target.value;
+	    }
+	  }, {
 	    key: 'gestureDetected',
 	    value: function gestureDetected(data) {
 	      if (data.removed) {
@@ -20582,7 +20587,7 @@
 	              _react2['default'].createElement(
 	                'b',
 	                null,
-	                'add'
+	                'remove'
 	              ),
 	              ' an atom.'
 	            ),
@@ -20599,7 +20604,7 @@
 	              _react2['default'].createElement(
 	                'b',
 	                null,
-	                'remove'
+	                'add'
 	              ),
 	              ' an atom.'
 	            )
@@ -20628,7 +20633,15 @@
 	          ),
 	          _react2['default'].createElement(_plotterJsx2['default'], { ref: 'plotter' })
 	        ),
-	        _react2['default'].createElement(_leapHandsViewJsx2['default'], null)
+	        _react2['default'].createElement(_leapHandsViewJsx2['default'], null),
+	        _react2['default'].createElement(
+	          'p',
+	          null,
+	          'Closed hand grab strength [0, 1]: ',
+	          _react2['default'].createElement('input', { type: 'text', name: 'closedGrabStrength',
+	            defaultValue: this.props.addRmAtomConfig.closedGrabStrength,
+	            onChange: this.handleGestureConfigChange.bind(this) })
+	        )
 	      );
 	    }
 	  }]);
@@ -20640,7 +20653,7 @@
 
 	LabAddRmAtomTest.defaultProps = {
 	  addRmAtomConfig: {
-	    closedGrabStrength: 0.5,
+	    closedGrabStrength: 0.8,
 	    minAmplitude: 50, // mm
 	    maxTime: 2000 // ms
 	  }

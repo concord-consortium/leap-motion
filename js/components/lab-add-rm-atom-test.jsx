@@ -22,6 +22,10 @@ export default class LabAddRmAtomTest extends React.Component {
     this.addRmObj = new AddRmObj(this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.refs.plotter);
   }
 
+  handleGestureConfigChange(event) {
+    this.addRmObj.config[event.target.name] = event.target.value;
+  }
+
   gestureDetected(data) {
     if (data.removed) {
       this.setState({objRemoved: true, objCount: this.state.objCount - 1, handType: data.handType});
@@ -72,6 +76,11 @@ export default class LabAddRmAtomTest extends React.Component {
           <Plotter ref='plotter'/>
         </div>
         <LeapHandsView/>
+        <p>
+          Closed hand grab strength [0, 1]: <input type='text' name='closedGrabStrength'
+                                                   defaultValue={this.props.addRmAtomConfig.closedGrabStrength}
+                                                   onChange={this.handleGestureConfigChange.bind(this)}/>
+        </p>
       </div>
     )
   }
@@ -79,7 +88,7 @@ export default class LabAddRmAtomTest extends React.Component {
 
 LabAddRmAtomTest.defaultProps = {
   addRmAtomConfig: {
-    closedGrabStrength: 0.5,
+    closedGrabStrength: 0.8,
     minAmplitude: 50, // mm
     maxTime: 2000     // ms
   }
