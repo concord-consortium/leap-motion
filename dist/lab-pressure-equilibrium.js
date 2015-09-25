@@ -31012,6 +31012,13 @@
 	    this.initialPos = null;
 	    this.initialTime = null;
 	    this.isClosed = false;
+
+	    this.addSound = new _howler.Howl({
+	      urls: ['add.wav']
+	    });
+	    this.rmSound = new _howler.Howl({
+	      urls: ['remove.wav']
+	    });
 	  }
 
 	  _createClass(AddRmObj, [{
@@ -31050,8 +31057,10 @@
 	        var posDelta = hand.stabilizedPalmPosition[1] - this.initialPos;
 	        var timeDelta = Date.now() - this.initialTime;
 	        if (this.isClosed && timeDelta < config.maxTime && posDelta > config.minAmplitude) {
+	          this.rmSound.play();
 	          this.callback({ removed: true, handType: hand.type });
 	        } else if (this.isClosed && timeDelta < config.maxTime && posDelta < -config.minAmplitude) {
+	          this.addSound.play();
 	          this.callback({ added: true, handType: hand.type });
 	        }
 	        this.isClosed = false;
