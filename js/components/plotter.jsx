@@ -12,27 +12,10 @@ export default class Plotter extends React.Component {
     this._$canvas = {};
     this._instance = {};
     this._activeInstance = null;
-    this._enabled = true;
-  }
-
-  shouldComponentUpdate() {
-    return false;
-  }
-
-  setEnabled(v) {
-    this._enabled = v;
-    if (!v) {
-      for (var id in this._instance) {
-        if (this._instance.hasOwnProperty(id)) {
-          this._$canvas[id].hide();
-        }
-      }
-      this._activeInstance = null;
-    }
   }
 
   showCanvas(canvasId) {
-    if (!this._enabled || this._activeInstance === canvasId) return;
+    if (this.props.hidden || this._activeInstance === canvasId) return;
     for (var id in this._instance) {
       if (this._instance.hasOwnProperty(id)) {
         if (id !== canvasId) {
@@ -46,7 +29,7 @@ export default class Plotter extends React.Component {
   }
 
   plot(id, data, opts) {
-    if (!this._enabled) return;
+    if (this.props.hidden) return;
     if (!opts) {
       opts = DEFAULT_PLOT_OPTIONS;
     }
@@ -54,7 +37,7 @@ export default class Plotter extends React.Component {
   }
 
   update() {
-    if (!this._enabled) return;
+    if (this.props.hidden) return;
     this.getInstance(this._activeInstance).update();
   }
 
@@ -71,11 +54,12 @@ export default class Plotter extends React.Component {
 
   render() {
     return (
-      <div className='plotter' ref='container'></div>
+      <div className='plotter' ref='container' style={{display: this.props.hidden ? 'none' : ''}}></div>
     )
   }
 }
 
 Plotter.defaultProps = {
+  hidden: false,
   height: '150px'
 };

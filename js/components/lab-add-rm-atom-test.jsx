@@ -1,11 +1,9 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
 import leapStateHandling from '../mixins/leap-state-handling';
-import leapFps from '../tools/leap-fps';
 import avg from '../tools/avg';
 import AddRmObj from '../gestures/add-rm-obj';
-import Plotter from './plotter.jsx';
-import LeapHandsView from './leap-hands-view.jsx';
+import LeapStandardInfo from './leap-standard-info.jsx';
 
 export default class LabAddRmAtomTest extends React.Component {
   constructor(props) {
@@ -19,7 +17,11 @@ export default class LabAddRmAtomTest extends React.Component {
   }
 
   componentDidMount() {
-    this.addRmObj = new AddRmObj(this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.refs.plotter);
+    this.addRmObj = new AddRmObj(this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.plotter);
+  }
+
+  get plotter() {
+    return this.refs.leapInfo.plotter;
   }
 
   handleGestureConfigChange(event) {
@@ -71,11 +73,7 @@ export default class LabAddRmAtomTest extends React.Component {
     return (
       <div>
         <h2>Number of atoms: { this.state.objCount }</h2>
-        <div className='state-and-plotter'>
-          <div className='state-msg'>{ this.getStateMsg() }</div>
-          <Plotter ref='plotter'/>
-        </div>
-        <LeapHandsView/>
+        <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
         <p>
           Closed hand grab strength [0, 1]: <input type='text' name='closedGrabStrength'
                                                    defaultValue={this.props.addRmAtomConfig.closedGrabStrength}

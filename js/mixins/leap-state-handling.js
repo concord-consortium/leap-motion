@@ -1,30 +1,6 @@
-// States is a hash object with states definition, for example:
-// {
-//   'initial': {
-//      nextState: function (frame, data) {
-//        // Optional callback executed when state is reached and processed.
-//        // It should return either name of the next state (string), object with name and data that should be passed
-//        // to the next state or null otherwise.
-//        // 'frame' argument is a frame object provided by Leap API, 'data' is provided by previous state (can be undefined).
-//        if (frame.hands.length === 0) return null;
-//        if (frame.hands.length === 1) return 'one-hand-detected';
-//        if (frame.hands.length === 0) return {stateId: 'two-hands-detected', data: {someData: 123}};
-//      },
-//      action: function (frame, data) {
-//        // Optional callback executed when state is considered to be the final one in the current iteration.
-//        // In practice it means that state is reached and its 'nextState' function isn't defined or returns null.
-//      },
-//    },
-//    'one-hand-detected': {
-//      (...)
-//    },
-//    'two-hands-detected': {
-//      (...)
-//    }
-// },
-//
-// 'initial' state is always required.
-import Leap from 'leapjs';
+import leapController from '../tools/leap-controller';
+
+let prevFrameId = null;
 
 export default {
   getInitialState: function (props) {
@@ -34,8 +10,15 @@ export default {
   },
 
   componentDidMount: function () {
-    Leap.loop(function (frame) {
-      this.handleLeapState('initial', frame);
+    leapController.on('frame', function () {
+      let lastFrame = leapController.frame(0);
+      if (prevFrameId === lastFrame.id) return;
+      let framesToProcess = Math.min(1, lastFrame.id - prevFrameId);
+      while (framesToProcess > 0) {
+        framesToProcess--;
+        this.handleLeapState('initial', leapController.frame(framesToProcess));
+      }
+      prevFrameId = lastFrame.id;
     }.bind(this));
   },
 

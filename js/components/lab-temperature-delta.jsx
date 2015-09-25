@@ -2,10 +2,9 @@ import React from 'react';
 import reactMixin from 'react-mixin';
 import leapStateHandling from '../mixins/leap-state-handling';
 import FistBump from '../gestures/fist-bump';
-import Plotter from './plotter.jsx';
 import avg from '../tools/avg';
 import iframePhone from 'iframe-phone';
-import LeapHandsView from './leap-hands-view.jsx';
+import LeapStandardInfo from './leap-standard-info.jsx';
 
 export default class LabTemperatureDelta extends React.Component {
   constructor(props) {
@@ -16,8 +15,12 @@ export default class LabTemperatureDelta extends React.Component {
   }
 
   componentDidMount() {
-    this.fistBump = new FistBump(this.props.handBumpConfig, this.gestureDetected.bind(this), this.refs.plotter);
+    this.fistBump = new FistBump(this.props.handBumpConfig, this.gestureDetected.bind(this), this.plotter);
     this.setupLabCommunication();
+  }
+  
+  get plotter() {
+    return this.refs.leapInfo.plotter;
   }
 
   setupLabCommunication() {
@@ -58,9 +61,9 @@ export default class LabTemperatureDelta extends React.Component {
     if (newTemp) {
       this.labPhone.post('set', { name: 'targetTemperature', value: newTemp });
     }
-    this.refs.plotter.showCanvas('gesture-detected');
-    this.refs.plotter.plot('max velocity avg', maxVelAvg, {min: 0, max: 1500, precision: 2});
-    this.refs.plotter.update();
+    this.plotter.showCanvas('gesture-detected');
+    this.plotter.plot('max velocity avg', maxVelAvg, {min: 0, max: 1500, precision: 2});
+    this.plotter.update();
   }
 
   nextLeapState(stateId, frame, data) {
@@ -95,11 +98,7 @@ export default class LabTemperatureDelta extends React.Component {
         <div>
           <iframe ref='labModel' width='610px' height='350px' frameBorder='0' src='http://lab.concord.org/embeddable.html#interactives/grasp/temperature-pressure-relationship.json'/>
         </div>
-        <div className='state-and-plotter'>
-          <div className='state-msg'>{ this.getStateMsg() }</div>
-          <Plotter ref='plotter'/>
-        </div>
-        <LeapHandsView/>
+        <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
       </div>
     );
   }

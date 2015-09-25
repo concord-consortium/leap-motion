@@ -56,7 +56,7 @@
 
 	var _componentsLabAddRmAtomTestJsx2 = _interopRequireDefault(_componentsLabAddRmAtomTestJsx);
 
-	__webpack_require__(242);
+	__webpack_require__(240);
 
 	_react2['default'].render(_react2['default'].createElement(_componentsLabAddRmAtomTestJsx2['default'], null), document.getElementById('app'));
 
@@ -20482,10 +20482,6 @@
 
 	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
 
-	var _toolsLeapFps = __webpack_require__(216);
-
-	var _toolsLeapFps2 = _interopRequireDefault(_toolsLeapFps);
-
 	var _toolsAvg = __webpack_require__(217);
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
@@ -20494,13 +20490,9 @@
 
 	var _gesturesAddRmObj2 = _interopRequireDefault(_gesturesAddRmObj);
 
-	var _plotterJsx = __webpack_require__(226);
+	var _leapStandardInfoJsx = __webpack_require__(226);
 
-	var _plotterJsx2 = _interopRequireDefault(_plotterJsx);
-
-	var _leapHandsViewJsx = __webpack_require__(228);
-
-	var _leapHandsViewJsx2 = _interopRequireDefault(_leapHandsViewJsx);
+	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
 
 	var LabAddRmAtomTest = (function (_React$Component) {
 	  _inherits(LabAddRmAtomTest, _React$Component);
@@ -20520,7 +20512,7 @@
 	  _createClass(LabAddRmAtomTest, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.addRmObj = new _gesturesAddRmObj2['default'](this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.refs.plotter);
+	      this.addRmObj = new _gesturesAddRmObj2['default'](this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.plotter);
 	    }
 	  }, {
 	    key: 'handleGestureConfigChange',
@@ -20623,17 +20615,7 @@
 	          'Number of atoms: ',
 	          this.state.objCount
 	        ),
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'state-and-plotter' },
-	          _react2['default'].createElement(
-	            'div',
-	            { className: 'state-msg' },
-	            this.getStateMsg()
-	          ),
-	          _react2['default'].createElement(_plotterJsx2['default'], { ref: 'plotter' })
-	        ),
-	        _react2['default'].createElement(_leapHandsViewJsx2['default'], null),
+	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
 	        _react2['default'].createElement(
 	          'p',
 	          null,
@@ -20643,6 +20625,11 @@
 	            onChange: this.handleGestureConfigChange.bind(this) })
 	        )
 	      );
+	    }
+	  }, {
+	    key: 'plotter',
+	    get: function get() {
+	      return this.refs.leapInfo.plotter;
 	    }
 	  }]);
 
@@ -21474,32 +21461,6 @@
 /* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// States is a hash object with states definition, for example:
-	// {
-	//   'initial': {
-	//      nextState: function (frame, data) {
-	//        // Optional callback executed when state is reached and processed.
-	//        // It should return either name of the next state (string), object with name and data that should be passed
-	//        // to the next state or null otherwise.
-	//        // 'frame' argument is a frame object provided by Leap API, 'data' is provided by previous state (can be undefined).
-	//        if (frame.hands.length === 0) return null;
-	//        if (frame.hands.length === 1) return 'one-hand-detected';
-	//        if (frame.hands.length === 0) return {stateId: 'two-hands-detected', data: {someData: 123}};
-	//      },
-	//      action: function (frame, data) {
-	//        // Optional callback executed when state is considered to be the final one in the current iteration.
-	//        // In practice it means that state is reached and its 'nextState' function isn't defined or returns null.
-	//      },
-	//    },
-	//    'one-hand-detected': {
-	//      (...)
-	//    },
-	//    'two-hands-detected': {
-	//      (...)
-	//    }
-	// },
-	//
-	// 'initial' state is always required.
 	'use strict';
 
 	var _interopRequireDefault = __webpack_require__(1)['default'];
@@ -21508,9 +21469,11 @@
 	  value: true
 	});
 
-	var _leapjs = __webpack_require__(192);
+	var _toolsLeapController = __webpack_require__(192);
 
-	var _leapjs2 = _interopRequireDefault(_leapjs);
+	var _toolsLeapController2 = _interopRequireDefault(_toolsLeapController);
+
+	var prevFrameId = null;
 
 	exports['default'] = {
 	  getInitialState: function getInitialState(props) {
@@ -21520,8 +21483,15 @@
 	  },
 
 	  componentDidMount: function componentDidMount() {
-	    _leapjs2['default'].loop((function (frame) {
-	      this.handleLeapState('initial', frame);
+	    _toolsLeapController2['default'].on('frame', (function () {
+	      var lastFrame = _toolsLeapController2['default'].frame(0);
+	      if (prevFrameId === lastFrame.id) return;
+	      var framesToProcess = Math.min(1, lastFrame.id - prevFrameId);
+	      while (framesToProcess > 0) {
+	        framesToProcess--;
+	        this.handleLeapState('initial', _toolsLeapController2['default'].frame(framesToProcess));
+	      }
+	      prevFrameId = lastFrame.id;
 	    }).bind(this));
 	  },
 
@@ -21551,34 +21521,60 @@
 /* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _leapjs = __webpack_require__(193);
+
+	var _leapjs2 = _interopRequireDefault(_leapjs);
+
+	var controller = new _leapjs2['default'].Controller();
+	controller.connect();
+
+	controller.on('connect', function () {
+	  console.log('Leap controller connected.');
+	});
+
+	exports['default'] = controller;
+	module.exports = exports['default'];
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/**
 	 * Leap is the global namespace of the Leap API.
 	 * @namespace Leap
 	 */
 	module.exports = {
-	  Controller: __webpack_require__(193),
-	  Frame: __webpack_require__(194),
-	  Gesture: __webpack_require__(200),
-	  Hand: __webpack_require__(195),
-	  Pointable: __webpack_require__(196),
-	  Finger: __webpack_require__(203),
-	  InteractionBox: __webpack_require__(202),
-	  CircularBuffer: __webpack_require__(205),
-	  UI: __webpack_require__(212),
-	  JSONProtocol: __webpack_require__(209).JSONProtocol,
-	  glMatrix: __webpack_require__(197),
-	  mat3: __webpack_require__(197).mat3,
-	  vec3: __webpack_require__(197).vec3,
+	  Controller: __webpack_require__(194),
+	  Frame: __webpack_require__(195),
+	  Gesture: __webpack_require__(201),
+	  Hand: __webpack_require__(196),
+	  Pointable: __webpack_require__(197),
+	  Finger: __webpack_require__(204),
+	  InteractionBox: __webpack_require__(203),
+	  CircularBuffer: __webpack_require__(206),
+	  UI: __webpack_require__(213),
+	  JSONProtocol: __webpack_require__(210).JSONProtocol,
+	  glMatrix: __webpack_require__(198),
+	  mat3: __webpack_require__(198).mat3,
+	  vec3: __webpack_require__(198).vec3,
 	  loopController: undefined,
-	  version: __webpack_require__(215),
+	  version: __webpack_require__(216),
 
 	  /**
 	   * Expose utility libraries for convenience
 	   * Use carefully - they may be subject to upgrade or removal in different versions of LeapJS.
 	   *
 	   */
-	  _: __webpack_require__(199),
-	  EventEmitter: __webpack_require__(201).EventEmitter,
+	  _: __webpack_require__(200),
+	  EventEmitter: __webpack_require__(202).EventEmitter,
 
 	  /**
 	   * The Leap.loop() function passes a frame of Leap data to your
@@ -21639,19 +21635,19 @@
 
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(process) {var Frame = __webpack_require__(194)
-	  , Hand = __webpack_require__(195)
-	  , Pointable = __webpack_require__(196)
-	  , Finger = __webpack_require__(203)
-	  , CircularBuffer = __webpack_require__(205)
-	  , Pipeline = __webpack_require__(206)
-	  , EventEmitter = __webpack_require__(201).EventEmitter
-	  , gestureListener = __webpack_require__(200).gestureListener
-	  , Dialog = __webpack_require__(204)
-	  , _ = __webpack_require__(199);
+	/* WEBPACK VAR INJECTION */(function(process) {var Frame = __webpack_require__(195)
+	  , Hand = __webpack_require__(196)
+	  , Pointable = __webpack_require__(197)
+	  , Finger = __webpack_require__(204)
+	  , CircularBuffer = __webpack_require__(206)
+	  , Pipeline = __webpack_require__(207)
+	  , EventEmitter = __webpack_require__(202).EventEmitter
+	  , gestureListener = __webpack_require__(201).gestureListener
+	  , Dialog = __webpack_require__(205)
+	  , _ = __webpack_require__(200);
 
 	/**
 	 * Constructs a Controller object.
@@ -21735,7 +21731,7 @@
 	  this.accumulatedGestures = [];
 	  this.checkVersion = opts.checkVersion;
 	  if (opts.connectionType === undefined) {
-	    this.connectionType = (this.inBrowser() ? __webpack_require__(207) : __webpack_require__(210));
+	    this.connectionType = (this.inBrowser() ? __webpack_require__(208) : __webpack_require__(211));
 	  } else {
 	    this.connectionType = opts.connectionType;
 	  }
@@ -22388,18 +22384,18 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Hand = __webpack_require__(195)
-	  , Pointable = __webpack_require__(196)
-	  , createGesture = __webpack_require__(200).createGesture
-	  , glMatrix = __webpack_require__(197)
+	var Hand = __webpack_require__(196)
+	  , Pointable = __webpack_require__(197)
+	  , createGesture = __webpack_require__(201).createGesture
+	  , glMatrix = __webpack_require__(198)
 	  , mat3 = glMatrix.mat3
 	  , vec3 = glMatrix.vec3
-	  , InteractionBox = __webpack_require__(202)
-	  , Finger = __webpack_require__(203)
-	  , _ = __webpack_require__(199);
+	  , InteractionBox = __webpack_require__(203)
+	  , Finger = __webpack_require__(204)
+	  , _ = __webpack_require__(200);
 
 	/**
 	 * Constructs a Frame object.
@@ -22897,15 +22893,15 @@
 
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Pointable = __webpack_require__(196)
-	  , Bone = __webpack_require__(198)
-	  , glMatrix = __webpack_require__(197)
+	var Pointable = __webpack_require__(197)
+	  , Bone = __webpack_require__(199)
+	  , glMatrix = __webpack_require__(198)
 	  , mat3 = glMatrix.mat3
 	  , vec3 = glMatrix.vec3
-	  , _ = __webpack_require__(199);
+	  , _ = __webpack_require__(200);
 
 	/**
 	 * Constructs a Hand object.
@@ -23355,10 +23351,10 @@
 
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var glMatrix = __webpack_require__(197)
+	var glMatrix = __webpack_require__(198)
 	  , vec3 = glMatrix.vec3;
 
 	/**
@@ -23576,7 +23572,7 @@
 
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -27830,15 +27826,15 @@
 
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Pointable = __webpack_require__(196),
-	  glMatrix = __webpack_require__(197)
+	var Pointable = __webpack_require__(197),
+	  glMatrix = __webpack_require__(198)
 	  , vec3 = glMatrix.vec3
 	  , mat3 = glMatrix.mat3
 	  , mat4 = glMatrix.mat4
-	  , _ = __webpack_require__(199);
+	  , _ = __webpack_require__(200);
 
 
 	var Bone = module.exports = function(finger, data) {
@@ -27999,7 +27995,7 @@
 
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     Underscore.js 1.4.4
@@ -29231,13 +29227,13 @@
 
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var glMatrix = __webpack_require__(197)
+	var glMatrix = __webpack_require__(198)
 	  , vec3 = glMatrix.vec3
-	  , EventEmitter = __webpack_require__(201).EventEmitter
-	  , _ = __webpack_require__(199);
+	  , EventEmitter = __webpack_require__(202).EventEmitter
+	  , _ = __webpack_require__(200);
 
 	/**
 	 * Constructs a new Gesture object.
@@ -29720,7 +29716,7 @@
 
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -30027,10 +30023,10 @@
 
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var glMatrix = __webpack_require__(197)
+	var glMatrix = __webpack_require__(198)
 	  , vec3 = glMatrix.vec3;
 
 	/**
@@ -30173,13 +30169,13 @@
 
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Pointable = __webpack_require__(196),
-	  Bone = __webpack_require__(198)
-	  , Dialog = __webpack_require__(204)
-	  , _ = __webpack_require__(199);
+	var Pointable = __webpack_require__(197),
+	  Bone = __webpack_require__(199)
+	  , Dialog = __webpack_require__(205)
+	  , _ = __webpack_require__(200);
 
 	/**
 	* Constructs a Finger object.
@@ -30368,7 +30364,7 @@
 
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {var Dialog = module.exports = function(message, options){
@@ -30520,7 +30516,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports) {
 
 	var CircularBuffer = module.exports = function(size) {
@@ -30543,7 +30539,7 @@
 
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports) {
 
 	var Pipeline = module.exports = function (controller) {
@@ -30601,11 +30597,11 @@
 	};
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var BaseConnection = module.exports = __webpack_require__(208)
-	  , _ = __webpack_require__(199);
+	var BaseConnection = module.exports = __webpack_require__(209)
+	  , _ = __webpack_require__(200);
 
 
 	var BrowserConnection = module.exports = function(opts) {
@@ -30705,12 +30701,12 @@
 
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var chooseProtocol = __webpack_require__(209).chooseProtocol
-	  , EventEmitter = __webpack_require__(201).EventEmitter
-	  , _ = __webpack_require__(199);
+	var chooseProtocol = __webpack_require__(210).chooseProtocol
+	  , EventEmitter = __webpack_require__(202).EventEmitter
+	  , _ = __webpack_require__(200);
 
 	var BaseConnection = module.exports = function(opts) {
 	  this.opts = _.defaults(opts || {}, {
@@ -30877,15 +30873,15 @@
 	_.extend(BaseConnection.prototype, EventEmitter.prototype);
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Frame = __webpack_require__(194)
-	  , Hand = __webpack_require__(195)
-	  , Pointable = __webpack_require__(196)
-	  , Finger = __webpack_require__(203)
-	  , _ = __webpack_require__(199)
-	  , EventEmitter = __webpack_require__(201).EventEmitter;
+	var Frame = __webpack_require__(195)
+	  , Hand = __webpack_require__(196)
+	  , Pointable = __webpack_require__(197)
+	  , Finger = __webpack_require__(204)
+	  , _ = __webpack_require__(200)
+	  , EventEmitter = __webpack_require__(202).EventEmitter;
 
 	var Event = function(data) {
 	  this.type = data.type;
@@ -30957,12 +30953,12 @@
 
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var WebSocket = __webpack_require__(211)
-	  , BaseConnection = __webpack_require__(208)
-	  , _ = __webpack_require__(199);
+	var WebSocket = __webpack_require__(212)
+	  , BaseConnection = __webpack_require__(209)
+	  , _ = __webpack_require__(200);
 
 	var NodeConnection = module.exports = function(opts) {
 	  BaseConnection.call(this, opts);
@@ -30986,7 +30982,7 @@
 
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/// shim for browser packaging
@@ -30998,20 +30994,20 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 212 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports.UI = {
-	  Region: __webpack_require__(213),
-	  Cursor: __webpack_require__(214)
-	};
-
-/***/ },
 /* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var EventEmitter = __webpack_require__(201).EventEmitter
-	  , _ = __webpack_require__(199)
+	exports.UI = {
+	  Region: __webpack_require__(214),
+	  Cursor: __webpack_require__(215)
+	};
+
+/***/ },
+/* 214 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var EventEmitter = __webpack_require__(202).EventEmitter
+	  , _ = __webpack_require__(200)
 
 	var Region = module.exports = function(start, end) {
 	  this.start = new Vector(start)
@@ -31099,7 +31095,7 @@
 	_.extend(Region.prototype, EventEmitter.prototype)
 
 /***/ },
-/* 214 */
+/* 215 */
 /***/ function(module, exports) {
 
 	var Cursor = module.exports = function() {
@@ -31114,7 +31110,7 @@
 
 
 /***/ },
-/* 215 */
+/* 216 */
 /***/ function(module, exports) {
 
 	// This file is automatically updated from package.json by grunt.
@@ -31124,45 +31120,6 @@
 	  minor: 6,
 	  dot: 4
 	}
-
-/***/ },
-/* 216 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = leapFps;
-
-	var _leapjs = __webpack_require__(192);
-
-	var _leapjs2 = _interopRequireDefault(_leapjs);
-
-	var _toolsAvg = __webpack_require__(217);
-
-	var RUNNING_AVG_LEN = 60;
-
-	var prevTime = null;
-	var avgFps = 0;
-
-	_leapjs2['default'].loop(function () {
-	  var time = Date.now();
-	  if (prevTime) {
-	    var currentFps = 1000 / (time - prevTime);
-	    avgFps = (0, _toolsAvg.rollingAvg)(currentFps, avgFps, RUNNING_AVG_LEN);
-	  }
-	  prevTime = time;
-	});
-
-	function leapFps() {
-	  return avgFps;
-	}
-
-	module.exports = exports['default'];
 
 /***/ },
 /* 217 */
@@ -42063,344 +42020,81 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _jquery = __webpack_require__(225);
+	var _leapHandsViewJsx = __webpack_require__(227);
 
-	var _jquery2 = _interopRequireDefault(_jquery);
+	var _leapHandsViewJsx2 = _interopRequireDefault(_leapHandsViewJsx);
 
-	var _toolsLeapDataPlotter = __webpack_require__(227);
+	var _leapFrameRateJsx = __webpack_require__(237);
 
-	var _toolsLeapDataPlotter2 = _interopRequireDefault(_toolsLeapDataPlotter);
+	var _leapFrameRateJsx2 = _interopRequireDefault(_leapFrameRateJsx);
 
-	var DEFAULT_PLOT_OPTIONS = {
-	  precision: 2
-	};
+	var _plotterJsx = __webpack_require__(238);
 
-	var Plotter = (function (_React$Component) {
-	  _inherits(Plotter, _React$Component);
+	var _plotterJsx2 = _interopRequireDefault(_plotterJsx);
 
-	  function Plotter(props) {
-	    _classCallCheck(this, Plotter);
+	var LeapStandardInfo = (function (_React$Component) {
+	  _inherits(LeapStandardInfo, _React$Component);
 
-	    _get(Object.getPrototypeOf(Plotter.prototype), 'constructor', this).call(this, props);
-	    this._$canvas = {};
-	    this._instance = {};
-	    this._activeInstance = null;
-	    this._enabled = true;
+	  function LeapStandardInfo(props) {
+	    _classCallCheck(this, LeapStandardInfo);
+
+	    _get(Object.getPrototypeOf(LeapStandardInfo.prototype), 'constructor', this).call(this, props);
+	    this.state = {
+	      debugEnabled: true
+	    };
+	    this._handleDebugChange = this._handleDebugChange.bind(this);
 	  }
 
-	  _createClass(Plotter, [{
-	    key: 'shouldComponentUpdate',
-	    value: function shouldComponentUpdate() {
-	      return false;
-	    }
-	  }, {
-	    key: 'setEnabled',
-	    value: function setEnabled(v) {
-	      this._enabled = v;
-	      if (!v) {
-	        for (var id in this._instance) {
-	          if (this._instance.hasOwnProperty(id)) {
-	            this._$canvas[id].hide();
-	          }
-	        }
-	        this._activeInstance = null;
-	      }
-	    }
-	  }, {
-	    key: 'showCanvas',
-	    value: function showCanvas(canvasId) {
-	      if (!this._enabled || this._activeInstance === canvasId) return;
-	      for (var id in this._instance) {
-	        if (this._instance.hasOwnProperty(id)) {
-	          if (id !== canvasId) {
-	            this._$canvas[id].hide();
-	          } else {
-	            this._$canvas[id].show();
-	          }
-	        }
-	      }
-	      this._activeInstance = canvasId;
-	    }
-	  }, {
-	    key: 'plot',
-	    value: function plot(id, data, opts) {
-	      if (!this._enabled) return;
-	      if (!opts) {
-	        opts = DEFAULT_PLOT_OPTIONS;
-	      }
-	      this.getInstance(this._activeInstance).plot(id, data, opts);
-	    }
-	  }, {
-	    key: 'update',
-	    value: function update() {
-	      if (!this._enabled) return;
-	      this.getInstance(this._activeInstance).update();
-	    }
-	  }, {
-	    key: 'getInstance',
-	    value: function getInstance(canvasId) {
-	      if (!this._instance[canvasId]) {
-	        this._$canvas[canvasId] = (0, _jquery2['default'])('<canvas>').attr('id', canvasId).attr('height', this.props.height).appendTo(_react2['default'].findDOMNode(this.refs.container));
-	        this._instance[canvasId] = new _toolsLeapDataPlotter2['default']({ el: this._$canvas[canvasId][0] });
-	      }
-	      return this._instance[canvasId];
+	  _createClass(LeapStandardInfo, [{
+	    key: '_handleDebugChange',
+	    value: function _handleDebugChange(event) {
+	      this.setState({ debugEnabled: event.target.checked });
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return _react2['default'].createElement('div', { className: 'plotter', ref: 'container' });
+	      return _react2['default'].createElement(
+	        'div',
+	        null,
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'state-and-plotter' },
+	          _react2['default'].createElement(
+	            'div',
+	            { className: 'state-msg' },
+	            this.props.stateMsg
+	          ),
+	          _react2['default'].createElement(
+	            'div',
+	            { className: 'status-box' },
+	            _react2['default'].createElement(
+	              'label',
+	              null,
+	              _react2['default'].createElement('input', { type: 'checkbox', checked: this.state.debugEnabled, onChange: this._handleDebugChange }),
+	              ' Status'
+	            ),
+	            this.state.debugEnabled ? _react2['default'].createElement(_leapFrameRateJsx2['default'], null) : '',
+	            _react2['default'].createElement(_plotterJsx2['default'], { ref: 'plotter', hidden: !this.state.debugEnabled })
+	          )
+	        ),
+	        _react2['default'].createElement(_leapHandsViewJsx2['default'], { height: '347' })
+	      );
+	    }
+	  }, {
+	    key: 'plotter',
+	    get: function get() {
+	      return this.refs.plotter;
 	    }
 	  }]);
 
-	  return Plotter;
+	  return LeapStandardInfo;
 	})(_react2['default'].Component);
 
-	exports['default'] = Plotter;
-
-	Plotter.defaultProps = {
-	  height: '150px'
-	};
+	exports['default'] = LeapStandardInfo;
 	module.exports = exports['default'];
 
 /***/ },
 /* 227 */
-/***/ function(module, exports) {
-
-	// It's slightly modified version of the LeapDataPlotter (leap-plugins-utils).
-	// Based on the 0.1.11 version. Modifications:
-	// - ES6 export,
-	// - min and max options support (so autoscaling can be disabled).
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	var LeapDataPlotter, TimeSeries;
-
-	var colors = ['#900', '#090', '#009', '#990', '#909', '#099'];
-	var colorIndex = 0;
-
-	LeapDataPlotter = function (options) {
-	  this.options = options || (options = {});
-	  this.seriesHash = {};
-	  this.series = [];
-	  this.init(options.el);
-	};
-
-	LeapDataPlotter.prototype.init = function (el) {
-
-	  if (el) {
-	    var canvas = el;
-	  } else {
-	    var canvas = document.createElement('canvas');
-	    canvas.className = "leap-data-plotter";
-	    document.body.appendChild(canvas);
-	  }
-
-	  this.canvas = canvas;
-	  this.context = canvas.getContext('2d');
-
-	  this.rescale();
-	};
-
-	// this method must be called any time the canvas changes size.
-	LeapDataPlotter.prototype.rescale = function () {
-	  var styles = getComputedStyle(this.canvas);
-	  var windowWidth = parseInt(styles.width, 10);
-	  var windowHeight = parseInt(styles.height, 10);
-	  this.width = windowWidth;
-	  this.height = windowHeight;
-
-	  var devicePixelRatio = window.devicePixelRatio || 1;
-	  var backingStoreRatio = this.context.webkitBackingStorePixelRatio || this.context.mozBackingStorePixelRatio || this.context.msBackingStorePixelRatio || this.context.oBackingStorePixelRatio || this.context.backingStorePixelRatio || 1;
-
-	  var ratio = devicePixelRatio / backingStoreRatio;
-	  if (devicePixelRatio !== backingStoreRatio) {
-
-	    var oldWidth = this.canvas.width;
-	    var oldHeight = this.canvas.height;
-
-	    this.canvas.width = oldWidth * ratio;
-	    this.canvas.height = oldHeight * ratio;
-
-	    this.canvas.style.width = oldWidth + 'px';
-	    this.canvas.style.height = oldHeight + 'px';
-
-	    this.context.scale(ratio, ratio);
-	  }
-
-	  this.clear();
-	  this.draw();
-	};
-
-	// pushes a data point on to the plot
-	// data can either be a number
-	// or an array [x,y,z], which will be plotted in three graphs.
-	// options:
-	// - y: the graph index on which to plot this datapoint
-	// - color: hex code
-	// - name: name of the plot
-	// - precision: how many decimals to show (for max, min, current value)
-	LeapDataPlotter.prototype.plot = function (id, data, opts) {
-	  //    console.assert(!isNaN(data), "No plotting data received");
-
-	  opts || (opts = {});
-
-	  if (data.length) {
-
-	    for (var i = 0, c = 120; i < data.length; i++, c = ++c > 122 ? 97 : c) {
-	      this.getTimeSeries(id + '.' + String.fromCharCode(c), opts).push(data[i], { pointColor: opts.pointColor });
-	    }
-	  } else {
-
-	    this.getTimeSeries(id, opts).push(data, { pointColor: opts.pointColor });
-	  }
-	};
-
-	LeapDataPlotter.prototype.getTimeSeries = function (id, opts) {
-	  var ts = this.seriesHash[id];
-
-	  if (!ts) {
-
-	    var defaultOpts = this.getOptions(id);
-	    for (var key in opts) {
-	      defaultOpts[key] = opts[key];
-	    }
-
-	    ts = new TimeSeries(defaultOpts);
-	    this.series.push(ts);
-	    this.seriesHash[id] = ts;
-	  }
-
-	  return ts;
-	};
-
-	LeapDataPlotter.prototype.getOptions = function (name) {
-	  var c = colorIndex;
-	  colorIndex = (colorIndex + 1) % colors.length;
-	  var len = this.series.length;
-	  var y = len ? this.series[len - 1].y + 50 : 0;
-	  return {
-	    y: y,
-	    width: this.width,
-	    color: colors[c],
-	    name: name
-	  };
-	};
-
-	LeapDataPlotter.prototype.clear = function () {
-	  this.context.clearRect(0, 0, this.width, this.height);
-	};
-
-	LeapDataPlotter.prototype.draw = function () {
-	  var context = this.context;
-	  this.series.forEach(function (s) {
-	    s.draw(context);
-	  });
-	};
-
-	LeapDataPlotter.prototype.update = function () {
-	  this.clear();
-	  this.draw();
-	};
-
-	TimeSeries = function (opts) {
-	  opts = opts || {};
-	  this.x = opts.x || 0;
-	  this.y = opts.y || 0;
-	  this.precision = opts.precision || 5;
-	  this.units = opts.units || '';
-	  this.width = opts.width || 1000;
-	  this.height = opts.height || 50;
-	  this.length = opts.length || 600;
-	  this.color = opts.color || '#000';
-	  this.name = opts.name || "";
-	  this.frameHandler = opts.frameHandler;
-	  this.userMax = opts.max;
-	  this.userMin = opts.min;
-
-	  this.max = -Infinity;
-	  this.min = Infinity;
-	  this.data = [];
-	  this.pointColors = [];
-	};
-
-	TimeSeries.prototype.push = function (value, opts) {
-	  this.data.push(value);
-
-	  if (this.data.length >= this.length) {
-	    this.data.shift();
-	  }
-
-	  if (opts && opts.pointColor) {
-	    this.pointColors.push(opts.pointColor);
-
-	    // note: this can get out of sync if a point color is not set for every point.
-	    if (this.pointColors.length >= this.length) {
-	      this.pointColors.shift();
-	    }
-	  }
-
-	  return this;
-	};
-
-	TimeSeries.prototype.draw = function (context) {
-	  var self = this;
-	  var xScale = (this.width - 10) / (this.length - 1);
-	  var yScale = -(this.height - 10) / (this.max - this.min);
-
-	  var padding = 5;
-	  var top = (this.max - this.min) * yScale + 10;
-
-	  context.save();
-	  context.strokeRect(this.x, this.y, this.width, this.height);
-	  context.translate(this.x, this.y + this.height - padding);
-	  context.strokeStyle = this.color;
-
-	  context.beginPath();
-
-	  var max = this.userMax != null ? this.userMax : -Infinity;
-	  var min = this.userMin != null ? this.userMin : Infinity;
-	  this.data.forEach(function (d, i) {
-	    if (self.userMax == null && d > max) max = d;
-	    if (self.userMin == null && d < min) min = d;
-
-	    if (isNaN(d)) {
-	      context.stroke();
-	      context.beginPath();
-	    } else {
-	      context.lineTo(i * xScale, (d - self.min) * yScale);
-	      if (self.pointColors[i] && self.pointColors[i] != self.pointColors[i - 1]) {
-	        context.stroke();
-	        context.strokeStyle = self.pointColors[i];
-	        context.beginPath();
-	        context.lineTo(i * xScale, (d - self.min) * yScale);
-	      }
-	    }
-	  });
-	  context.stroke();
-
-	  // draw labels
-	  context.fillText(this.name, padding, top);
-	  context.fillText(this.data[this.data.length - 1].toPrecision(this.precision) + this.units, padding, 0);
-
-	  context.textAlign = "end";
-	  context.fillText(this.min.toPrecision(this.precision) + this.units, this.width - padding, 0);
-	  context.fillText(this.max.toPrecision(this.precision) + this.units, this.width - padding, top);
-	  context.textAlign = "left";
-	  // end draw labels
-
-	  context.restore();
-	  this.min = min;
-	  this.max = max;
-	};
-
-	exports['default'] = LeapDataPlotter;
-	module.exports = exports['default'];
-
-/***/ },
-/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42423,17 +42117,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _leapjs = __webpack_require__(192);
+	var _toolsLeapController = __webpack_require__(192);
 
-	var _leapjs2 = _interopRequireDefault(_leapjs);
+	var _toolsLeapController2 = _interopRequireDefault(_toolsLeapController);
 
-	var _toolsLeapFps = __webpack_require__(216);
-
-	var _toolsLeapFps2 = _interopRequireDefault(_toolsLeapFps);
-
-	__webpack_require__(229);
-
-	__webpack_require__(238);
+	__webpack_require__(228);
 
 	var LeapHandsView = (function (_React$Component) {
 	  _inherits(LeapHandsView, _React$Component);
@@ -42447,45 +42135,16 @@
 	  _createClass(LeapHandsView, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      var fpsValue = _react2['default'].findDOMNode(this.refs.fpsValue);
-	      var leapFpsValue = _react2['default'].findDOMNode(this.refs.leapFpsValue);
-	      _leapjs2['default'].loop((function (frame) {
-	        // To do it "reactive" way should use state, but we also use 'shouldComponentUpdate = false' so we
-	        // don't mess up ThreeJS scene. That's why we need to update FPS readings manually.
-	        fpsValue.textContent = (0, _toolsLeapFps2['default'])().toFixed();
-	        leapFpsValue.textContent = frame.currentFrameRate.toFixed();
-	      }).bind(this)).use('boneHand', {
+	      _toolsLeapController2['default'].use('boneHand', {
 	        targetEl: _react2['default'].findDOMNode(this.refs.container),
 	        width: this.props.width,
 	        height: this.props.height
 	      });
 	    }
 	  }, {
-	    key: 'shouldComponentUpdate',
-	    value: function shouldComponentUpdate() {
-	      // Don't modify container so we don't break ThreeJS scene!
-	      return false;
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        { className: 'hands-view', ref: 'container' },
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'leap-fps' },
-	          _react2['default'].createElement(
-	            'div',
-	            null,
-	            'Frame rate: ',
-	            _react2['default'].createElement('span', { ref: 'fpsValue' }),
-	            ' (',
-	            _react2['default'].createElement('span', { ref: 'leapFpsValue' }),
-	            ')'
-	          )
-	        )
-	      );
+	      return _react2['default'].createElement('div', { className: 'hands-view', ref: 'container' });
 	    }
 	  }]);
 
@@ -42496,26 +42155,26 @@
 
 	LeapHandsView.defaultProps = {
 	  width: 299,
-	  height: 299
+	  height: 304
 	};
 	module.exports = exports['default'];
 
 /***/ },
-/* 229 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
-	Leap = __webpack_require__(192)
+	Leap = __webpack_require__(193)
+	__webpack_require__(229)
 	__webpack_require__(230)
 	__webpack_require__(231)
-	__webpack_require__(232)
-	__webpack_require__(234)
+	__webpack_require__(233)
+	__webpack_require__(235)
 	__webpack_require__(236)
-	__webpack_require__(237)
 	module.exports = true
 
 
 /***/ },
-/* 230 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
@@ -42588,7 +42247,7 @@
 
 
 /***/ },
-/* 231 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
@@ -42676,7 +42335,7 @@
 
 
 /***/ },
-/* 232 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/bone-hand/leap.bone-hand.coffee
@@ -42685,7 +42344,7 @@
 
 	  scope = null;
 
-	  THREE =  true ? __webpack_require__(233) : window.THREE;
+	  THREE =  true ? __webpack_require__(232) : window.THREE;
 
 	  initScene = function(targetEl, scale) {
 	    var camera, far, height, near, renderer, width;
@@ -43070,7 +42729,7 @@
 
 
 /***/ },
-/* 233 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var self = self || {};// File:src/Three.js
@@ -77819,7 +77478,7 @@
 
 
 /***/ },
-/* 234 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/*
@@ -79657,10 +79316,10 @@
 
 	}).call(this);
 	}( window ));
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(235)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(234)(module)))
 
 /***/ },
-/* 235 */
+/* 234 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -79676,7 +79335,7 @@
 
 
 /***/ },
-/* 236 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/screen-position/leap.screen-position.coffee
@@ -79766,7 +79425,7 @@
 
 
 /***/ },
-/* 237 */
+/* 236 */
 /***/ function(module, exports) {
 
 	//CoffeeScript generated from main/transform/leap.transform.coffee
@@ -79914,23 +79573,461 @@
 
 
 /***/ },
+/* 237 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = __webpack_require__(159)['default'];
+
+	var _inherits = __webpack_require__(173)['default'];
+
+	var _createClass = __webpack_require__(184)['default'];
+
+	var _classCallCheck = __webpack_require__(187)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _toolsLeapController = __webpack_require__(192);
+
+	var _toolsLeapController2 = _interopRequireDefault(_toolsLeapController);
+
+	var _toolsAvg = __webpack_require__(217);
+
+	var RUNNING_AVG_LEN = 20;
+
+	var LeapFrameRate = (function (_React$Component) {
+	  _inherits(LeapFrameRate, _React$Component);
+
+	  function LeapFrameRate(props) {
+	    _classCallCheck(this, LeapFrameRate);
+
+	    _get(Object.getPrototypeOf(LeapFrameRate.prototype), 'constructor', this).call(this, props);
+	    this.state = {
+	      fps: 60,
+	      leapFps: 0
+	    };
+	    this._prevTime = null;
+	    this._onFrame = this._onFrame.bind(this);
+	  }
+
+	  _createClass(LeapFrameRate, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      _toolsLeapController2['default'].on('frame', this._onFrame);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      _toolsLeapController2['default'].removeListener('frame', this._onFrame);
+	    }
+	  }, {
+	    key: '_onFrame',
+	    value: function _onFrame(frame) {
+	      var time = Date.now();
+	      if (this._prevTime) {
+	        var currentFps = 1000 / (time - this._prevTime);
+	        var avgFps = (0, _toolsAvg.rollingAvg)(currentFps, this.state.fps, RUNNING_AVG_LEN);
+	        this.setState({
+	          fps: avgFps.toFixed(),
+	          leapFps: frame.currentFrameRate.toFixed()
+	        });
+	      }
+	      this._prevTime = time;
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'leap-frame-rate' },
+	        _react2['default'].createElement(
+	          'div',
+	          null,
+	          'Frame rate: ',
+	          this.state.fps,
+	          ' (',
+	          this.state.leapFps,
+	          ')'
+	        )
+	      );
+	    }
+	  }]);
+
+	  return LeapFrameRate;
+	})(_react2['default'].Component);
+
+	exports['default'] = LeapFrameRate;
+	module.exports = exports['default'];
+
+/***/ },
 /* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = __webpack_require__(159)['default'];
+
+	var _inherits = __webpack_require__(173)['default'];
+
+	var _createClass = __webpack_require__(184)['default'];
+
+	var _classCallCheck = __webpack_require__(187)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _jquery = __webpack_require__(225);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _toolsLeapDataPlotter = __webpack_require__(239);
+
+	var _toolsLeapDataPlotter2 = _interopRequireDefault(_toolsLeapDataPlotter);
+
+	var DEFAULT_PLOT_OPTIONS = {
+	  precision: 2
+	};
+
+	var Plotter = (function (_React$Component) {
+	  _inherits(Plotter, _React$Component);
+
+	  function Plotter(props) {
+	    _classCallCheck(this, Plotter);
+
+	    _get(Object.getPrototypeOf(Plotter.prototype), 'constructor', this).call(this, props);
+	    this._$canvas = {};
+	    this._instance = {};
+	    this._activeInstance = null;
+	  }
+
+	  _createClass(Plotter, [{
+	    key: 'showCanvas',
+	    value: function showCanvas(canvasId) {
+	      if (this.props.hidden || this._activeInstance === canvasId) return;
+	      for (var id in this._instance) {
+	        if (this._instance.hasOwnProperty(id)) {
+	          if (id !== canvasId) {
+	            this._$canvas[id].hide();
+	          } else {
+	            this._$canvas[id].show();
+	          }
+	        }
+	      }
+	      this._activeInstance = canvasId;
+	    }
+	  }, {
+	    key: 'plot',
+	    value: function plot(id, data, opts) {
+	      if (this.props.hidden) return;
+	      if (!opts) {
+	        opts = DEFAULT_PLOT_OPTIONS;
+	      }
+	      this.getInstance(this._activeInstance).plot(id, data, opts);
+	    }
+	  }, {
+	    key: 'update',
+	    value: function update() {
+	      if (this.props.hidden) return;
+	      this.getInstance(this._activeInstance).update();
+	    }
+	  }, {
+	    key: 'getInstance',
+	    value: function getInstance(canvasId) {
+	      if (!this._instance[canvasId]) {
+	        this._$canvas[canvasId] = (0, _jquery2['default'])('<canvas>').attr('id', canvasId).attr('height', this.props.height).appendTo(_react2['default'].findDOMNode(this.refs.container));
+	        this._instance[canvasId] = new _toolsLeapDataPlotter2['default']({ el: this._$canvas[canvasId][0] });
+	      }
+	      return this._instance[canvasId];
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement('div', { className: 'plotter', ref: 'container', style: { display: this.props.hidden ? 'none' : '' } });
+	    }
+	  }]);
+
+	  return Plotter;
+	})(_react2['default'].Component);
+
+	exports['default'] = Plotter;
+
+	Plotter.defaultProps = {
+	  hidden: false,
+	  height: '150px'
+	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 239 */
+/***/ function(module, exports) {
+
+	// It's slightly modified version of the LeapDataPlotter (leap-plugins-utils).
+	// Based on the 0.1.11 version. Modifications:
+	// - ES6 export,
+	// - min and max options support (so autoscaling can be disabled).
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	var LeapDataPlotter, TimeSeries;
+
+	var colors = ['#900', '#090', '#009', '#990', '#909', '#099'];
+	var colorIndex = 0;
+
+	LeapDataPlotter = function (options) {
+	  this.options = options || (options = {});
+	  this.seriesHash = {};
+	  this.series = [];
+	  this.init(options.el);
+	};
+
+	LeapDataPlotter.prototype.init = function (el) {
+
+	  if (el) {
+	    var canvas = el;
+	  } else {
+	    var canvas = document.createElement('canvas');
+	    canvas.className = "leap-data-plotter";
+	    document.body.appendChild(canvas);
+	  }
+
+	  this.canvas = canvas;
+	  this.context = canvas.getContext('2d');
+
+	  this.rescale();
+	};
+
+	// this method must be called any time the canvas changes size.
+	LeapDataPlotter.prototype.rescale = function () {
+	  var styles = getComputedStyle(this.canvas);
+	  var windowWidth = parseInt(styles.width, 10);
+	  var windowHeight = parseInt(styles.height, 10);
+	  this.width = windowWidth;
+	  this.height = windowHeight;
+
+	  var devicePixelRatio = window.devicePixelRatio || 1;
+	  var backingStoreRatio = this.context.webkitBackingStorePixelRatio || this.context.mozBackingStorePixelRatio || this.context.msBackingStorePixelRatio || this.context.oBackingStorePixelRatio || this.context.backingStorePixelRatio || 1;
+
+	  var ratio = devicePixelRatio / backingStoreRatio;
+	  if (devicePixelRatio !== backingStoreRatio) {
+
+	    var oldWidth = this.canvas.width;
+	    var oldHeight = this.canvas.height;
+
+	    this.canvas.width = oldWidth * ratio;
+	    this.canvas.height = oldHeight * ratio;
+
+	    this.canvas.style.width = oldWidth + 'px';
+	    this.canvas.style.height = oldHeight + 'px';
+
+	    this.context.scale(ratio, ratio);
+	  }
+
+	  this.clear();
+	  this.draw();
+	};
+
+	// pushes a data point on to the plot
+	// data can either be a number
+	// or an array [x,y,z], which will be plotted in three graphs.
+	// options:
+	// - y: the graph index on which to plot this datapoint
+	// - color: hex code
+	// - name: name of the plot
+	// - precision: how many decimals to show (for max, min, current value)
+	LeapDataPlotter.prototype.plot = function (id, data, opts) {
+	  //    console.assert(!isNaN(data), "No plotting data received");
+
+	  opts || (opts = {});
+
+	  if (data.length) {
+
+	    for (var i = 0, c = 120; i < data.length; i++, c = ++c > 122 ? 97 : c) {
+	      this.getTimeSeries(id + '.' + String.fromCharCode(c), opts).push(data[i], { pointColor: opts.pointColor });
+	    }
+	  } else {
+
+	    this.getTimeSeries(id, opts).push(data, { pointColor: opts.pointColor });
+	  }
+	};
+
+	LeapDataPlotter.prototype.getTimeSeries = function (id, opts) {
+	  var ts = this.seriesHash[id];
+
+	  if (!ts) {
+
+	    var defaultOpts = this.getOptions(id);
+	    for (var key in opts) {
+	      defaultOpts[key] = opts[key];
+	    }
+
+	    ts = new TimeSeries(defaultOpts);
+	    this.series.push(ts);
+	    this.seriesHash[id] = ts;
+	  }
+
+	  return ts;
+	};
+
+	LeapDataPlotter.prototype.getOptions = function (name) {
+	  var c = colorIndex;
+	  colorIndex = (colorIndex + 1) % colors.length;
+	  var len = this.series.length;
+	  var y = len ? this.series[len - 1].y + 50 : 0;
+	  return {
+	    y: y,
+	    width: this.width,
+	    color: colors[c],
+	    name: name
+	  };
+	};
+
+	LeapDataPlotter.prototype.clear = function () {
+	  this.context.clearRect(0, 0, this.width, this.height);
+	};
+
+	LeapDataPlotter.prototype.draw = function () {
+	  var context = this.context;
+	  this.series.forEach(function (s) {
+	    s.draw(context);
+	  });
+	};
+
+	LeapDataPlotter.prototype.update = function () {
+	  this.clear();
+	  this.draw();
+	};
+
+	TimeSeries = function (opts) {
+	  opts = opts || {};
+	  this.x = opts.x || 0;
+	  this.y = opts.y || 0;
+	  this.precision = opts.precision || 5;
+	  this.units = opts.units || '';
+	  this.width = opts.width || 1000;
+	  this.height = opts.height || 50;
+	  this.length = opts.length || 600;
+	  this.color = opts.color || '#000';
+	  this.name = opts.name || "";
+	  this.frameHandler = opts.frameHandler;
+	  this.userMax = opts.max;
+	  this.userMin = opts.min;
+
+	  this.max = -Infinity;
+	  this.min = Infinity;
+	  this.data = [];
+	  this.pointColors = [];
+	};
+
+	TimeSeries.prototype.push = function (value, opts) {
+	  this.data.push(value);
+
+	  if (this.data.length >= this.length) {
+	    this.data.shift();
+	  }
+
+	  if (opts && opts.pointColor) {
+	    this.pointColors.push(opts.pointColor);
+
+	    // note: this can get out of sync if a point color is not set for every point.
+	    if (this.pointColors.length >= this.length) {
+	      this.pointColors.shift();
+	    }
+	  }
+
+	  return this;
+	};
+
+	TimeSeries.prototype.draw = function (context) {
+	  var self = this;
+	  var xScale = (this.width - 10) / (this.length - 1);
+	  var yScale = -(this.height - 10) / (this.max - this.min);
+
+	  var padding = 5;
+	  var top = (this.max - this.min) * yScale + 10;
+
+	  context.save();
+	  context.strokeRect(this.x, this.y, this.width, this.height);
+	  context.translate(this.x, this.y + this.height - padding);
+	  context.strokeStyle = this.color;
+
+	  context.beginPath();
+
+	  var max = this.userMax != null ? this.userMax : -Infinity;
+	  var min = this.userMin != null ? this.userMin : Infinity;
+	  this.data.forEach(function (d, i) {
+	    if (self.userMax == null && d > max) max = d;
+	    if (self.userMin == null && d < min) min = d;
+
+	    if (isNaN(d)) {
+	      context.stroke();
+	      context.beginPath();
+	    } else {
+	      context.lineTo(i * xScale, (d - self.min) * yScale);
+	      if (self.pointColors[i] && self.pointColors[i] != self.pointColors[i - 1]) {
+	        context.stroke();
+	        context.strokeStyle = self.pointColors[i];
+	        context.beginPath();
+	        context.lineTo(i * xScale, (d - self.min) * yScale);
+	      }
+	    }
+	  });
+	  context.stroke();
+
+	  // draw labels
+	  context.fillText(this.name, padding, top);
+	  context.fillText(this.data[this.data.length - 1].toPrecision(this.precision) + this.units, padding, 0);
+
+	  context.textAlign = "end";
+	  context.fillText(this.min.toPrecision(this.precision) + this.units, this.width - padding, 0);
+	  context.fillText(this.max.toPrecision(this.precision) + this.units, this.width - padding, top);
+	  context.textAlign = "left";
+	  // end draw labels
+
+	  context.restore();
+	  this.min = min;
+	  this.max = max;
+	};
+
+	exports['default'] = LeapDataPlotter;
+	module.exports = exports['default'];
+
+/***/ },
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(239);
+	var content = __webpack_require__(241);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(241)(content, {});
+	var update = __webpack_require__(243)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./leap-hands-view.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./leap-hands-view.css");
+			module.hot.accept("!!./../node_modules/css-loader/index.js!./basic-layout.css", function() {
+				var newContent = require("!!./../node_modules/css-loader/index.js!./basic-layout.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -79940,21 +80037,21 @@
 	}
 
 /***/ },
-/* 239 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(240)();
+	exports = module.exports = __webpack_require__(242)();
 	// imports
 
 
 	// module
-	exports.push([module.id, ".hands-view {\n  position: relative;\n}\n.leap-fps {\n  position: absolute;\n  top: 3px;\n  left: 145px;\n}", ""]);
+	exports.push([module.id, "body {\n  font-family: Helvetica, Arial, sans-serif;\n}\n.hands-view {\n  background-color: #EAEAEA;\n  border-radius: 5px;\n  display: inline-block;\n  vertical-align: top;\n  margin-left: 5px;\n}\n.state-msg {\n  width: 300px;\n  height: 125px;\n  background-color: #EAEAEA;\n  padding: 5px;\n  border-radius: 5px;\n  margin: 0;\n}\n.state-msg p {\n  margin: 0 0 0 5px;\n}\n.status-box {\n  background-color: #EAEAEA;\n  border-radius: 5px;\n  margin-top: 5px;\n  padding: 5px;\n}\n.status-box label {\n  font-size: 0.8em;\n  vertical-align: middle;\n  margin-bottom: 5px;\n}\n.status-box > div {\n  margin-top: 5px;\n}\n.state-and-plotter {\n  display: inline-block;\n}\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 240 */
+/* 242 */
 /***/ function(module, exports) {
 
 	/*
@@ -80010,7 +80107,7 @@
 
 
 /***/ },
-/* 241 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -80232,46 +80329,6 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
-
-
-/***/ },
-/* 242 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(243);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(241)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./basic-layout.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./basic-layout.css");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 243 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(240)();
-	// imports
-
-
-	// module
-	exports.push([module.id, "body {\n  font-family: Helvetica, Arial, sans-serif;\n}\n.hands-view {\n  background-color: #EAEAEA;\n  border-radius: 5px;\n  display: inline-block;\n  vertical-align: top;\n  margin-left: 5px;\n}\n.state-msg {\n  width: 300px;\n  height: 125px;\n  background-color: #EAEAEA;\n  padding: 5px;\n  border-radius: 5px;\n  margin: 0;\n}\n.state-msg p {\n  margin: 0 0 0 5px;\n}\n.plotter {\n  background-color: #EAEAEA;\n  border-radius: 5px;\n  margin-top: 5px;\n}\n.plotter canvas {\n  margin: 5px;\n}\n.state-and-plotter {\n  display: inline-block;\n}\n", ""]);
-
-	// exports
 
 
 /***/ }
