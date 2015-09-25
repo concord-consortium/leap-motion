@@ -21483,7 +21483,15 @@
 	  },
 
 	  componentDidMount: function componentDidMount() {
-	    _toolsLeapController2['default'].on('frame', (function () {
+	    this.leapConnect();
+	  },
+
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.leapDisconnect();
+	  },
+
+	  leapConnect: function leapConnect() {
+	    this._onFrameCallback = (function () {
 	      var lastFrame = _toolsLeapController2['default'].frame(0);
 	      if (prevFrameId === lastFrame.id) return;
 	      var framesToProcess = Math.min(1, lastFrame.id - prevFrameId);
@@ -21492,7 +21500,15 @@
 	        this.handleLeapState('initial', _toolsLeapController2['default'].frame(framesToProcess));
 	      }
 	      prevFrameId = lastFrame.id;
-	    }).bind(this));
+	    }).bind(this);
+	    _toolsLeapController2['default'].on('frame', this._onFrameCallback);
+	  },
+
+	  leapDisconnect: function leapDisconnect() {
+	    if (this._onFrameCallback) {
+	      _toolsLeapController2['default'].removeListener('frame', this._onFrameCallback);
+	      this._onFrameCallback = null;
+	    }
 	  },
 
 	  handleLeapState: function handleLeapState(stateId, frame, data) {

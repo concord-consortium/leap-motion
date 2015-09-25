@@ -52,7 +52,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentsLabPressureEquilibriumJsx = __webpack_require__(244);
+	var _componentsLabPressureEquilibriumJsx = __webpack_require__(245);
 
 	var _componentsLabPressureEquilibriumJsx2 = _interopRequireDefault(_componentsLabPressureEquilibriumJsx);
 
@@ -21285,7 +21285,15 @@
 	  },
 
 	  componentDidMount: function componentDidMount() {
-	    _toolsLeapController2['default'].on('frame', (function () {
+	    this.leapConnect();
+	  },
+
+	  componentWillUnmount: function componentWillUnmount() {
+	    this.leapDisconnect();
+	  },
+
+	  leapConnect: function leapConnect() {
+	    this._onFrameCallback = (function () {
 	      var lastFrame = _toolsLeapController2['default'].frame(0);
 	      if (prevFrameId === lastFrame.id) return;
 	      var framesToProcess = Math.min(1, lastFrame.id - prevFrameId);
@@ -21294,7 +21302,15 @@
 	        this.handleLeapState('initial', _toolsLeapController2['default'].frame(framesToProcess));
 	      }
 	      prevFrameId = lastFrame.id;
-	    }).bind(this));
+	    }).bind(this);
+	    _toolsLeapController2['default'].on('frame', this._onFrameCallback);
+	  },
+
+	  leapDisconnect: function leapDisconnect() {
+	    if (this._onFrameCallback) {
+	      _toolsLeapController2['default'].removeListener('frame', this._onFrameCallback);
+	      this._onFrameCallback = null;
+	    }
 	  },
 
 	  handleLeapState: function handleLeapState(stateId, frame, data) {
@@ -80143,7 +80159,8 @@
 
 
 /***/ },
-/* 244 */
+/* 244 */,
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -80174,7 +80191,7 @@
 
 	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
 
-	var _gesturesFistBump = __webpack_require__(245);
+	var _gesturesFistBump = __webpack_require__(246);
 
 	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
 
@@ -80190,7 +80207,7 @@
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
 
-	var _iframePhone = __webpack_require__(246);
+	var _iframePhone = __webpack_require__(247);
 
 	var _iframePhone2 = _interopRequireDefault(_iframePhone);
 
@@ -80378,7 +80395,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 245 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -80506,32 +80523,32 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 246 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
 	  /**
 	   * Allows to communicate with an iframe.
 	   */
-	  ParentEndpoint:  __webpack_require__(247),
+	  ParentEndpoint:  __webpack_require__(248),
 	  /**
 	   * Allows to communicate with a parent page.
 	   * IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
 	   */
-	  getIFrameEndpoint: __webpack_require__(249),
-	  structuredClone: __webpack_require__(248),
+	  getIFrameEndpoint: __webpack_require__(250),
+	  structuredClone: __webpack_require__(249),
 
 	  // TODO: May be misnamed
-	  IframePhoneRpcEndpoint: __webpack_require__(250)
+	  IframePhoneRpcEndpoint: __webpack_require__(251)
 
 	};
 
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(248);
+	var structuredClone = __webpack_require__(249);
 
 	/**
 	  Call as:
@@ -80705,7 +80722,7 @@
 
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports) {
 
 	var featureSupported = false;
@@ -80747,10 +80764,10 @@
 
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(248);
+	var structuredClone = __webpack_require__(249);
 	var HELLO_INTERVAL_LENGTH = 200;
 	var HELLO_TIMEOUT_LENGTH = 60000;
 
@@ -80900,13 +80917,13 @@
 	};
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var ParentEndpoint = __webpack_require__(247);
-	var getIFrameEndpoint = __webpack_require__(249);
+	var ParentEndpoint = __webpack_require__(248);
+	var getIFrameEndpoint = __webpack_require__(250);
 
 	// Not a real UUID as there's an RFC for that (needed for proper distributed computing).
 	// But in this fairly parochial situation, we just need to be fairly sure to avoid repeats.

@@ -10,7 +10,15 @@ export default {
   },
 
   componentDidMount: function () {
-    leapController.on('frame', function () {
+    this.leapConnect();
+  },
+
+  componentWillUnmount: function () {
+    this.leapDisconnect();
+  },
+
+  leapConnect: function () {
+    this._onFrameCallback = function () {
       let lastFrame = leapController.frame(0);
       if (prevFrameId === lastFrame.id) return;
       let framesToProcess = Math.min(1, lastFrame.id - prevFrameId);
@@ -19,7 +27,15 @@ export default {
         this.handleLeapState('initial', leapController.frame(framesToProcess));
       }
       prevFrameId = lastFrame.id;
-    }.bind(this));
+    }.bind(this);
+    leapController.on('frame', this._onFrameCallback);
+  },
+
+  leapDisconnect: function () {
+    if (this._onFrameCallback) {
+      leapController.removeListener('frame', this._onFrameCallback);
+      this._onFrameCallback = null;
+    }
   },
 
   handleLeapState: function (stateId, frame, data) {
