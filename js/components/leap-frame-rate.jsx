@@ -7,16 +7,21 @@ const RUNNING_AVG_LEN = 20;
 export default class LeapFrameRate extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      fps: 60,
-      leapFps: 0
-    };
+    this.fps = 60;
+    this.leapFps = 0;
     this._prevTime = null;
+    this._prevDOMUpdateTime = -Infinity;
     this._onFrame = this._onFrame.bind(this);
+  }
+
+  shouldComponentUpdate() {
+    return false;
   }
 
   componentDidMount() {
     leapController.on('frame', this._onFrame);
+    this._fpsSpan = React.findDOMNode(this.refs.fps);
+    this._leapFpsSpan = React.findDOMNode(this.refs.leapFps);
   }
 
   componentWillUnmount() {
@@ -24,22 +29,26 @@ export default class LeapFrameRate extends React.Component {
   }
 
   _onFrame(frame) {
-    let time = Date.now();
+    let time = performance.now();
     if (this._prevTime) {
       let currentFps = 1000 / (time - this._prevTime);
-      let avgFps = rollingAvg(currentFps, this.state.fps, RUNNING_AVG_LEN);
-      this.setState({
-        fps: avgFps.toFixed(),
-        leapFps: frame.currentFrameRate.toFixed()
-      });
+      this.fps = rollingAvg(currentFps, this.fps, RUNNING_AVG_LEN);
     }
     this._prevTime = time;
+    // Manual DOM update. Looks like an anti-pattern, but using component state
+    // and render method would trigger the whole React machinery. It was too time
+    // consuming. In this case a manual update seems to be justified.
+    if (time - this._prevDOMUpdateTime > 500) {
+      this._fpsSpan.textContent = this.fps.toFixed();
+      this._leapFpsSpan.textContent = frame.currentFrameRate.toFixed();
+      this._prevDOMUpdateTime = time;
+    }
   }
 
   render() {
     return (
       <div className='leap-frame-rate'>
-        <div>Frame rate: {this.state.fps} ({this.state.leapFps})</div>
+        <div>Frame rate: <span ref='fps'/> (<span ref='leapFps'/>)</div>
       </div>
     )
   }

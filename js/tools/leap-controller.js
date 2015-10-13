@@ -1,6 +1,8 @@
 import Leap from 'leapjs';
 
-let controller = new Leap.Controller();
+let controller = new Leap.Controller({
+  background: true
+});
 controller.connect();
 
 controller.on('connect', function () {

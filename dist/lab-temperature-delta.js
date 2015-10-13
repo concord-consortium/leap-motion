@@ -52,7 +52,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentsLabTemperatureDeltaJsx = __webpack_require__(253);
+	var _componentsLabTemperatureDeltaJsx = __webpack_require__(254);
 
 	var _componentsLabTemperatureDeltaJsx2 = _interopRequireDefault(_componentsLabTemperatureDeltaJsx);
 
@@ -21330,7 +21330,9 @@
 	  },
 
 	  setActiveState: function setActiveState(stateId) {
-	    this.setState({ leapState: stateId });
+	    if (stateId !== this.state.leapState) {
+	      this.setState({ leapState: stateId });
+	    }
 	  }
 	};
 	module.exports = exports['default'];
@@ -21351,7 +21353,9 @@
 
 	var _leapjs2 = _interopRequireDefault(_leapjs);
 
-	var controller = new _leapjs2['default'].Controller();
+	var controller = new _leapjs2['default'].Controller({
+	  background: true
+	});
 	controller.connect();
 
 	controller.on('connect', function () {
@@ -79334,18 +79338,24 @@
 	    _classCallCheck(this, LeapFrameRate);
 
 	    _get(Object.getPrototypeOf(LeapFrameRate.prototype), 'constructor', this).call(this, props);
-	    this.state = {
-	      fps: 60,
-	      leapFps: 0
-	    };
+	    this.fps = 60;
+	    this.leapFps = 0;
 	    this._prevTime = null;
+	    this._prevDOMUpdateTime = -Infinity;
 	    this._onFrame = this._onFrame.bind(this);
 	  }
 
 	  _createClass(LeapFrameRate, [{
+	    key: 'shouldComponentUpdate',
+	    value: function shouldComponentUpdate() {
+	      return false;
+	    }
+	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
 	      _toolsLeapController2['default'].on('frame', this._onFrame);
+	      this._fpsSpan = _react2['default'].findDOMNode(this.refs.fps);
+	      this._leapFpsSpan = _react2['default'].findDOMNode(this.refs.leapFps);
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
@@ -79355,16 +79365,20 @@
 	  }, {
 	    key: '_onFrame',
 	    value: function _onFrame(frame) {
-	      var time = Date.now();
+	      var time = performance.now();
 	      if (this._prevTime) {
 	        var currentFps = 1000 / (time - this._prevTime);
-	        var avgFps = (0, _toolsAvg.rollingAvg)(currentFps, this.state.fps, RUNNING_AVG_LEN);
-	        this.setState({
-	          fps: avgFps.toFixed(),
-	          leapFps: frame.currentFrameRate.toFixed()
-	        });
+	        this.fps = (0, _toolsAvg.rollingAvg)(currentFps, this.fps, RUNNING_AVG_LEN);
 	      }
 	      this._prevTime = time;
+	      // Manual DOM update. Looks like an anti-pattern, but using component state
+	      // and render method would trigger the whole React machinery. It was too time
+	      // consuming. In this case a manual update seems to be justified.
+	      if (time - this._prevDOMUpdateTime > 500) {
+	        this._fpsSpan.textContent = this.fps.toFixed();
+	        this._leapFpsSpan.textContent = frame.currentFrameRate.toFixed();
+	        this._prevDOMUpdateTime = time;
+	      }
 	    }
 	  }, {
 	    key: 'render',
@@ -79376,9 +79390,9 @@
 	          'div',
 	          null,
 	          'Frame rate: ',
-	          this.state.fps,
+	          _react2['default'].createElement('span', { ref: 'fps' }),
 	          ' (',
-	          this.state.leapFps,
+	          _react2['default'].createElement('span', { ref: 'leapFps' }),
 	          ')'
 	        )
 	      );
@@ -80057,7 +80071,8 @@
 /***/ },
 /* 244 */,
 /* 245 */,
-/* 246 */
+/* 246 */,
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -80185,32 +80200,32 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 247 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
 	  /**
 	   * Allows to communicate with an iframe.
 	   */
-	  ParentEndpoint:  __webpack_require__(248),
+	  ParentEndpoint:  __webpack_require__(249),
 	  /**
 	   * Allows to communicate with a parent page.
 	   * IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
 	   */
-	  getIFrameEndpoint: __webpack_require__(250),
-	  structuredClone: __webpack_require__(249),
+	  getIFrameEndpoint: __webpack_require__(251),
+	  structuredClone: __webpack_require__(250),
 
 	  // TODO: May be misnamed
-	  IframePhoneRpcEndpoint: __webpack_require__(251)
+	  IframePhoneRpcEndpoint: __webpack_require__(252)
 
 	};
 
 
 /***/ },
-/* 248 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(249);
+	var structuredClone = __webpack_require__(250);
 
 	/**
 	  Call as:
@@ -80384,7 +80399,7 @@
 
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports) {
 
 	var featureSupported = false;
@@ -80426,10 +80441,10 @@
 
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(249);
+	var structuredClone = __webpack_require__(250);
 	var HELLO_INTERVAL_LENGTH = 200;
 	var HELLO_TIMEOUT_LENGTH = 60000;
 
@@ -80579,13 +80594,13 @@
 	};
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var ParentEndpoint = __webpack_require__(248);
-	var getIFrameEndpoint = __webpack_require__(250);
+	var ParentEndpoint = __webpack_require__(249);
+	var getIFrameEndpoint = __webpack_require__(251);
 
 	// Not a real UUID as there's an RFC for that (needed for proper distributed computing).
 	// But in this fairly parochial situation, we just need to be fairly sure to avoid repeats.
@@ -80675,8 +80690,8 @@
 
 
 /***/ },
-/* 252 */,
-/* 253 */
+/* 253 */,
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -80707,7 +80722,7 @@
 
 	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
 
-	var _gesturesFistBump = __webpack_require__(246);
+	var _gesturesFistBump = __webpack_require__(247);
 
 	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
 
@@ -80715,7 +80730,7 @@
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
 
-	var _iframePhone = __webpack_require__(247);
+	var _iframePhone = __webpack_require__(248);
 
 	var _iframePhone2 = _interopRequireDefault(_iframePhone);
 

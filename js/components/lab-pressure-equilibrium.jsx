@@ -10,8 +10,8 @@ import iframePhone from 'iframe-phone';
 
 export default class LabPressureEquilibrium extends React.Component {
   componentDidMount() {
-    this.fistBump = new FistBump(this.props.handBumpConfig, this.fistBumpDetected.bind(this),this.plotter);
-    this.addRmObj = new AddRmObj(this.props.addRmAtomConfig, this.addRmAtomDetected.bind(this),this.plotter);
+    this.fistBump = new FistBump(this.props.handBumpConfig, this.fistBumpDetected.bind(this), this.plotter);
+    this.addRmObj = new AddRmObj(this.props.addRmAtomConfig, this.addRmAtomDetected.bind(this), this.plotter);
     this.setupLabCommunication();
   }
   

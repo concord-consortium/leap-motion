@@ -55,6 +55,8 @@ export default {
   },
 
   setActiveState: function (stateId) {
-    this.setState({leapState: stateId});
+    if (stateId !== this.state.leapState) {
+      this.setState({leapState: stateId});
+    }
   }
 }
