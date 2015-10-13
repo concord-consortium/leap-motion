@@ -1,4 +1,5 @@
 var path = require('path');
+var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 module.exports = {
   entry: {
     'lab-temperature-test': './js/pages/lab-temperature-test.jsx',
@@ -23,5 +24,8 @@ module.exports = {
         loader: 'style-loader!css-loader'
       }
     ]
-  }
+  },
+  plugins: [
+    new CommonsChunkPlugin("commons.js")
+  ]
 };
