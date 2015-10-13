@@ -31,7 +31,7 @@ export default class LabTemperatureDelta extends React.Component {
     }, 500);
 
     this.labTemperature = null;
-    this.labPhone = new iframePhone.ParentEndpoint(React.findDOMNode(this.refs.labModel));
+    this.labPhone = new iframePhone.ParentEndpoint(this.refs.labModel);
 
     this.labPhone.addListener('modelLoaded', function () {
       this.labPhone.post('play');

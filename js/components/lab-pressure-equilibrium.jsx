@@ -30,7 +30,7 @@ export default class LabPressureEquilibrium extends React.Component {
     this.purpleAtomsCount = null;
     this.yellowAtomTemperature = null;
     this.yellowAtomsCount = null;
-    this.labPhone = new iframePhone.ParentEndpoint(React.findDOMNode(this.refs.labModel));
+    this.labPhone = new iframePhone.ParentEndpoint(this.refs.labModel);
 
     this.labPhone.addListener('modelLoaded', function () {
       this.labPhone.post('play');

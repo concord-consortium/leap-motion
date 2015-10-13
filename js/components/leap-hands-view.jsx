@@ -5,7 +5,7 @@ import 'leapjs-plugins';
 export default class LeapHandsView extends React.Component {
   componentDidMount() {
     leapController.use('boneHand', {
-      targetEl: React.findDOMNode(this.refs.container),
+      targetEl: this.refs.container,
       width: this.props.width,
       height: this.props.height
     });

@@ -20,8 +20,8 @@ export default class LeapFrameRate extends React.Component {
 
   componentDidMount() {
     leapController.on('frame', this._onFrame);
-    this._fpsSpan = React.findDOMNode(this.refs.fps);
-    this._leapFpsSpan = React.findDOMNode(this.refs.leapFps);
+    this._fpsSpan = this.refs.fps;
+    this._leapFpsSpan = this.refs.leapFps;
   }
 
   componentWillUnmount() {

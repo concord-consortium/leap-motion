@@ -46,7 +46,7 @@ export default class Plotter extends React.Component {
       this._$canvas[canvasId] = $('<canvas>')
         .attr('id', canvasId)
         .attr('height', this.props.height)
-        .appendTo(React.findDOMNode(this.refs.container));
+        .appendTo(this.refs.container);
       this._instance[canvasId] = new LeapDataPlotter({el: this._$canvas[canvasId][0]});
     }
     return this._instance[canvasId];
