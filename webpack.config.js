@@ -7,7 +7,8 @@ module.exports = {
     'lab-temperature-absolute': './js/pages/lab-temperature-absolute.jsx',
     'lab-add-rm-atom-test': './js/pages/lab-add-rm-atom-test.jsx',
     'lab-add-rm-atom-test-swipe': './js/pages/lab-add-rm-atom-test-swipe.jsx',
-    'lab-pressure-equilibrium': './js/pages/lab-pressure-equilibrium.jsx'
+    'lab-pressure-equilibrium': './js/pages/lab-pressure-equilibrium.jsx',
+    'seasons-sunray-angle': './js/pages/seasons-sunray-angle.jsx'
   },
   output: {
     path: path.join(__dirname, 'dist'),

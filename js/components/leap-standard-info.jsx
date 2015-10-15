@@ -22,7 +22,7 @@ export default class LeapStandardInfo extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className='leap-standard-info'>
         <div className='state-and-plotter'>
           <div className='state-msg'>{this.props.stateMsg}</div>
           <div className='status-box'>
