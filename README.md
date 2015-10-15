@@ -8,6 +8,7 @@ Experiments related to the gesture detection.
 - http://concord-consortium.github.io/leap-motion/examples/lab-add-rm-atom-test.html
 - http://concord-consortium.github.io/leap-motion/examples/lab-add-rm-atom-test-swipe.html
 - http://concord-consortium.github.io/leap-motion/examples/lab-pressure-equilibrium.html
+- http://concord-consortium.github.io/leap-motion/examples/seasons-sunray-angle.html
 
 ## Development
 
