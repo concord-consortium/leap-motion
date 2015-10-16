@@ -24,24 +24,10 @@ export default class LabTemperatureDelta extends React.Component {
   }
 
   setupLabCommunication() {
-    // Leap works only when window is active.
-    // We can easily loose focus when when user interacts with Lab model.
-    setInterval(function () {
-      window.focus();
-    }, 500);
-
-    this.labTemperature = null;
     this.labPhone = new iframePhone.ParentEndpoint(this.refs.labModel);
-
+    this.labTemperature = 460;
     this.labPhone.addListener('modelLoaded', function () {
       this.labPhone.post('play');
-      this.labPhone.post('observe', 'targetTemperature');
-    }.bind(this));
-
-    this.labPhone.addListener('propertyValue', function (data) {
-      if (data.name == 'targetTemperature') {
-        this.labTemperature = data.value;
-      }
     }.bind(this));
   }
 
@@ -50,16 +36,17 @@ export default class LabTemperatureDelta extends React.Component {
     let maxVelAvg = avg.getAvg('maxVel');
     let newTemp = null;
     if (maxVelAvg > this.props.tempIncreaseVel) {
-      newTemp = Math.min(5000, this.labTemperature + 10);
+      newTemp = Math.min(5000, this.labTemperature + 7);
       this.setState({tempChange: 'increasing'});
     } else if (maxVelAvg < this.props.tempDecreaseVel) {
-      newTemp = Math.max(0, this.labTemperature - 10);
+      newTemp = Math.max(0, this.labTemperature - 7);
       this.setState({tempChange: 'decreasing'});
     } else {
       this.setState({tempChange: 'none'});
     }
     if (newTemp) {
       this.labPhone.post('set', { name: 'targetTemperature', value: newTemp });
+      this.labTemperature = newTemp;
     }
     this.plotter.showCanvas('gesture-detected');
     this.plotter.plot('max velocity avg', maxVelAvg, {min: 0, max: 1500, precision: 2});

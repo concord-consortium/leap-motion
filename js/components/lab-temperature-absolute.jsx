@@ -17,24 +17,9 @@ export default class LabTemperatureAbsolute extends React.Component {
   }
 
   setupLabCommunication() {
-    // Leap works only when window is active.
-    // We can easily loose focus when when user interacts with Lab model.
-    setInterval(function () {
-      window.focus();
-    }, 500);
-
-    this.labTemperature = null;
     this.labPhone = new iframePhone.ParentEndpoint(this.refs.labModel);
-    
     this.labPhone.addListener('modelLoaded', function () {
       this.labPhone.post('play');
-      this.labPhone.post('observe', 'targetTemperature');
-    }.bind(this));
-
-    this.labPhone.addListener('propertyValue', function (data) {
-      if (data.name == 'targetTemperature') {
-        this.labTemperature = data.value;
-      }
     }.bind(this));
   }
 

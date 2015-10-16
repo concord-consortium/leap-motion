@@ -20,36 +20,11 @@ export default class LabPressureEquilibrium extends React.Component {
   }
 
   setupLabCommunication() {
-    // Leap works only when window is active.
-    // We can easily loose focus when when user interacts with Lab model.
-    setInterval(function () {
-      window.focus();
-    }, 500);
-
-    this.purpleAtomTemperature = null;
-    this.purpleAtomsCount = null;
-    this.yellowAtomTemperature = null;
-    this.yellowAtomsCount = null;
+    this.purpleAtomsCount = 30;
+    this.yellowAtomsCount = 30;
     this.labPhone = new iframePhone.ParentEndpoint(this.refs.labModel);
-
     this.labPhone.addListener('modelLoaded', function () {
       this.labPhone.post('play');
-      this.labPhone.post('observe', 'purpleAtomTemperature');
-      this.labPhone.post('observe', 'purpleAtomsCount');
-      this.labPhone.post('observe', 'yellowAtomTemperature');
-      this.labPhone.post('observe', 'yellowAtomsCount');
-    }.bind(this));
-
-    this.labPhone.addListener('propertyValue', function (data) {
-      if (data.name == 'purpleAtomTemperature') {
-        this.purpleAtomTemperature = data.value;
-      } else if (data.name == 'purpleAtomsCount') {
-        this.purpleAtomsCount = data.value;
-      } else if (data.name == 'yellowAtomTemperature') {
-        this.yellowAtomTemperature = data.value;
-      } else if (data.name == 'yellowAtomsCount') {
-        this.yellowAtomsCount = data.value;
-      }
     }.bind(this));
   }
 
@@ -72,13 +47,17 @@ export default class LabPressureEquilibrium extends React.Component {
 
   addRmAtomDetected(data) {
     if (data.removed && data.handType === 'left') {
-      this.labPhone.post('set', { name: 'purpleAtomsCount', value: this.purpleAtomsCount - 5 });
+      this.purpleAtomsCount -= 5;
+      this.labPhone.post('set', { name: 'purpleAtomsCount', value: this.purpleAtomsCount });
     } else if (data.removed && data.handType === 'right') {
-      this.labPhone.post('set', { name: 'yellowAtomsCount', value: this.yellowAtomsCount - 5 });
+      this.yellowAtomsCount -= 5;
+      this.labPhone.post('set', { name: 'yellowAtomsCount', value: this.yellowAtomsCount });
     } else if (data.added && data.handType === 'left') {
-      this.labPhone.post('set', { name: 'purpleAtomsCount', value: this.purpleAtomsCount + 5 });
+      this.purpleAtomsCount += 5;
+      this.labPhone.post('set', { name: 'purpleAtomsCount', value: this.purpleAtomsCount });
     } else if (data.added && data.handType === 'right') {
-      this.labPhone.post('set', { name: 'yellowAtomsCount', value: this.yellowAtomsCount + 5 });
+      this.yellowAtomsCount += 5;
+      this.labPhone.post('set', { name: 'yellowAtomsCount', value: this.yellowAtomsCount });
     }
   }
 
