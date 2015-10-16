@@ -1,4 +1,4 @@
-webpackJsonp([2],{
+webpackJsonp([6],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
@@ -15,119 +15,13 @@ webpackJsonp([2],{
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsLabPressureEquilibriumJsx = __webpack_require__(247);
+	var _componentsLabVolumePressureJsx = __webpack_require__(257);
 
-	var _componentsLabPressureEquilibriumJsx2 = _interopRequireDefault(_componentsLabPressureEquilibriumJsx);
+	var _componentsLabVolumePressureJsx2 = _interopRequireDefault(_componentsLabVolumePressureJsx);
 
 	__webpack_require__(241);
 
-	_reactDom2['default'].render(_react2['default'].createElement(_componentsLabPressureEquilibriumJsx2['default'], null), document.getElementById('app'));
-
-/***/ },
-
-/***/ 219:
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = __webpack_require__(185)['default'];
-
-	var _classCallCheck = __webpack_require__(188)['default'];
-
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _toolsAvg = __webpack_require__(218);
-
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
-
-	var _howler = __webpack_require__(220);
-
-	var _toolsDirectionChange = __webpack_require__(221);
-
-	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
-
-	var AddRmObj = (function () {
-	  function AddRmObj(config, callback, plotter) {
-	    _classCallCheck(this, AddRmObj);
-
-	    this.config = config;
-	    this.callback = callback;
-	    this.plotter = plotter;
-	    // State
-	    this.initialPos = null;
-	    this.initialTime = null;
-	    this.isClosed = false;
-
-	    this.addSound = new _howler.Howl({
-	      urls: ['add.wav']
-	    });
-	    this.rmSound = new _howler.Howl({
-	      urls: ['remove.wav']
-	    });
-	  }
-
-	  _createClass(AddRmObj, [{
-	    key: 'nextLeapState',
-	    value: function nextLeapState(stateId, frame, data) {
-	      var stateFuncName = 'state_' + stateId;
-	      return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
-	    }
-
-	    // State definitions:
-
-	  }, {
-	    key: 'state_initial',
-	    value: function state_initial(frame, data) {
-	      if (frame.hands.length === 1) {
-	        return 'oneHandDetected';
-	      }
-	      // Hide debug data.
-	      this.plotter.showCanvas(null);
-	      return null;
-	    }
-	  }, {
-	    key: 'state_oneHandDetected',
-	    value: function state_oneHandDetected(frame, data) {
-	      var config = this.config;
-	      var hand = frame.hands[0];
-	      if (hand.grabStrength > config.closedGrabStrength) {
-	        // Closed hand.
-	        if (!this.isClosed) {
-	          this.initialPos = hand.stabilizedPalmPosition[1];
-	          this.initialTime = Date.now();
-	          this.isClosed = true;
-	        }
-	      } else {
-	        // Open hand.
-	        var posDelta = hand.stabilizedPalmPosition[1] - this.initialPos;
-	        var timeDelta = Date.now() - this.initialTime;
-	        if (this.isClosed && timeDelta < config.maxTime && posDelta > config.minAmplitude) {
-	          this.rmSound.play();
-	          this.callback({ removed: true, handType: hand.type });
-	        } else if (this.isClosed && timeDelta < config.maxTime && posDelta < -config.minAmplitude) {
-	          this.addSound.play();
-	          this.callback({ added: true, handType: hand.type });
-	        }
-	        this.isClosed = false;
-	        this.initialPos = null;
-	      }
-	      this.plotter.showCanvas('one-hand-detected');
-	      this.plotter.plot('grab strength', hand.grabStrength);
-	      this.plotter.plot('hand Y pos', hand.stabilizedPalmPosition[1]);
-	      this.plotter.update();
-	      return null;
-	    }
-	  }]);
-
-	  return AddRmObj;
-	})();
-
-	exports['default'] = AddRmObj;
-	module.exports = exports['default'];
+	_reactDom2['default'].render(_react2['default'].createElement(_componentsLabVolumePressureJsx2['default'], null), document.getElementById('app'));
 
 /***/ },
 
@@ -1648,221 +1542,6 @@ webpackJsonp([2],{
 
 /***/ },
 
-/***/ 247:
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _get = __webpack_require__(160)['default'];
-
-	var _inherits = __webpack_require__(174)['default'];
-
-	var _createClass = __webpack_require__(185)['default'];
-
-	var _classCallCheck = __webpack_require__(188)['default'];
-
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactMixin = __webpack_require__(189);
-
-	var _reactMixin2 = _interopRequireDefault(_reactMixin);
-
-	var _mixinsLeapStateHandling = __webpack_require__(192);
-
-	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
-
-	var _gesturesFistBump = __webpack_require__(248);
-
-	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
-
-	var _gesturesAddRmObj = __webpack_require__(219);
-
-	var _gesturesAddRmObj2 = _interopRequireDefault(_gesturesAddRmObj);
-
-	var _leapStandardInfoJsx = __webpack_require__(227);
-
-	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
-
-	var _toolsAvg = __webpack_require__(218);
-
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
-
-	var _iframePhone = __webpack_require__(249);
-
-	var _iframePhone2 = _interopRequireDefault(_iframePhone);
-
-	var LabPressureEquilibrium = (function (_React$Component) {
-	  _inherits(LabPressureEquilibrium, _React$Component);
-
-	  function LabPressureEquilibrium() {
-	    _classCallCheck(this, LabPressureEquilibrium);
-
-	    _get(Object.getPrototypeOf(LabPressureEquilibrium.prototype), 'constructor', this).apply(this, arguments);
-	  }
-
-	  _createClass(LabPressureEquilibrium, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.fistBump = new _gesturesFistBump2['default'](this.props.handBumpConfig, this.fistBumpDetected.bind(this), this.plotter);
-	      this.addRmObj = new _gesturesAddRmObj2['default'](this.props.addRmAtomConfig, this.addRmAtomDetected.bind(this), this.plotter);
-	      this.setupLabCommunication();
-	    }
-	  }, {
-	    key: 'setupLabCommunication',
-	    value: function setupLabCommunication() {
-	      this.purpleAtomsCount = 30;
-	      this.yellowAtomsCount = 30;
-	      this.labPhone = new _iframePhone2['default'].ParentEndpoint(this.refs.labModel);
-	      this.labPhone.addListener('modelLoaded', (function () {
-	        this.labPhone.post('play');
-	      }).bind(this));
-	    }
-	  }, {
-	    key: 'fistBumpDetected',
-	    value: function fistBumpDetected() {
-	      var maxVelAvg = 0;
-	      if (this.fistBump.hand.type === 'left') {
-	        _toolsAvg2['default'].addSample('maxVelLeft', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
-	        maxVelAvg = _toolsAvg2['default'].getAvg('maxVelLeft');
-	        this.labPhone.post('set', { name: 'purpleAtomTemperature', value: 1 + maxVelAvg * this.props.tempMult });
-	      } else {
-	        _toolsAvg2['default'].addSample('maxVelRight', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
-	        maxVelAvg = _toolsAvg2['default'].getAvg('maxVelRight');
-	        this.labPhone.post('set', { name: 'yellowAtomTemperature', value: 1 + maxVelAvg * this.props.tempMult });
-	      }
-	      this.plotter.showCanvas('gesture-detected');
-	      this.plotter.plot('max velocity avg', maxVelAvg, { min: 0, max: 1500, precision: 2 });
-	      this.plotter.plot('velocity', this.fistBump.hand.palmVelocity[0]);
-	      this.plotter.update();
-	    }
-	  }, {
-	    key: 'addRmAtomDetected',
-	    value: function addRmAtomDetected(data) {
-	      if (data.removed && data.handType === 'left') {
-	        this.purpleAtomsCount -= 5;
-	        this.labPhone.post('set', { name: 'purpleAtomsCount', value: this.purpleAtomsCount });
-	      } else if (data.removed && data.handType === 'right') {
-	        this.yellowAtomsCount -= 5;
-	        this.labPhone.post('set', { name: 'yellowAtomsCount', value: this.yellowAtomsCount });
-	      } else if (data.added && data.handType === 'left') {
-	        this.purpleAtomsCount += 5;
-	        this.labPhone.post('set', { name: 'purpleAtomsCount', value: this.purpleAtomsCount });
-	      } else if (data.added && data.handType === 'right') {
-	        this.yellowAtomsCount += 5;
-	        this.labPhone.post('set', { name: 'yellowAtomsCount', value: this.yellowAtomsCount });
-	      }
-	    }
-	  }, {
-	    key: 'nextLeapState',
-	    value: function nextLeapState(stateId, frame, data) {
-	      return this.fistBump.nextLeapState(stateId, frame, data) || this.addRmObj.nextLeapState(stateId, frame, data);
-	    }
-	  }, {
-	    key: 'getStateMsg',
-	    value: function getStateMsg() {
-	      switch (this.state.leapState) {
-	        case 'initial':
-	          return 'Use one hand to add or remove atoms, use two hands to heat up or cool down atoms.';
-	        case 'oneHandDetected':
-	          return _react2['default'].createElement(
-	            'div',
-	            null,
-	            _react2['default'].createElement(
-	              'p',
-	              null,
-	              'Close your hand, move it ',
-	              _react2['default'].createElement(
-	                'b',
-	                null,
-	                'up'
-	              ),
-	              ' and open to ',
-	              _react2['default'].createElement(
-	                'b',
-	                null,
-	                'remove'
-	              ),
-	              ' an atom.'
-	            ),
-	            _react2['default'].createElement(
-	              'p',
-	              null,
-	              'Close your hand, move it ',
-	              _react2['default'].createElement(
-	                'b',
-	                null,
-	                'down'
-	              ),
-	              ' and open to ',
-	              _react2['default'].createElement(
-	                'b',
-	                null,
-	                'add'
-	              ),
-	              ' an atom.'
-	            )
-	          );
-	        case 'twoHandsDetected':
-	          return 'Close one fist and twist the other hand.';
-	        case 'gestureDetected':
-	          return 'Move your closed fist towards open palm and back rapidly.';
-	      }
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        null,
-	        _react2['default'].createElement(
-	          'div',
-	          null,
-	          _react2['default'].createElement('iframe', { ref: 'labModel', width: '610px', height: '350px', frameBorder: '0', src: 'http://lab.concord.org/embeddable.html#interactives/grasp/pressure-equilibrium.json' })
-	        ),
-	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
-	      );
-	    }
-	  }, {
-	    key: 'plotter',
-	    get: function get() {
-	      return this.refs.leapInfo.plotter;
-	    }
-	  }]);
-
-	  return LabPressureEquilibrium;
-	})(_react2['default'].Component);
-
-	exports['default'] = LabPressureEquilibrium;
-
-	LabPressureEquilibrium.defaultProps = {
-	  tempMult: 6, // max velocity avg * temp mult = new target temperature
-	  maxVelAvg: 120,
-	  handBumpConfig: {
-	    closedGrabStrength: 0.4,
-	    openGrabStrength: 0.7,
-	    handTwistTolerance: 0.7,
-	    minAmplitude: 5
-	  },
-	  addRmAtomConfig: {
-	    closedGrabStrength: 0.8,
-	    minAmplitude: 50, // mm
-	    maxTime: 2000 // ms
-	  }
-	};
-
-	_reactMixin2['default'].onClass(LabPressureEquilibrium, _mixinsLeapStateHandling2['default']);
-	module.exports = exports['default'];
-
-/***/ },
-
 /***/ 248:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -2484,6 +2163,158 @@ webpackJsonp([2],{
 	    this.disconnect = disconnect.bind(this);
 	};
 
+
+/***/ },
+
+/***/ 257:
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = __webpack_require__(160)['default'];
+
+	var _inherits = __webpack_require__(174)['default'];
+
+	var _createClass = __webpack_require__(185)['default'];
+
+	var _classCallCheck = __webpack_require__(188)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactMixin = __webpack_require__(189);
+
+	var _reactMixin2 = _interopRequireDefault(_reactMixin);
+
+	var _mixinsLeapStateHandling = __webpack_require__(192);
+
+	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
+
+	var _gesturesFistBump = __webpack_require__(248);
+
+	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
+
+	var _toolsAvg = __webpack_require__(218);
+
+	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+
+	var _iframePhone = __webpack_require__(249);
+
+	var _iframePhone2 = _interopRequireDefault(_iframePhone);
+
+	var _leapStandardInfoJsx = __webpack_require__(227);
+
+	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
+
+	var MAX_VOL = 0.82;
+	var MIN_VOL = 0.1;
+
+	var LabVolumePressure = (function (_React$Component) {
+	  _inherits(LabVolumePressure, _React$Component);
+
+	  function LabVolumePressure() {
+	    _classCallCheck(this, LabVolumePressure);
+
+	    _get(Object.getPrototypeOf(LabVolumePressure.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(LabVolumePressure, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.fistBump = new _gesturesFistBump2['default'](this.props.handBumpConfig, this.gestureDetected.bind(this), this.plotter);
+	      this.setupLabCommunication();
+	      this.volume = MAX_VOL;
+	      this.volumeUpdateIntID = setInterval((function () {
+	        this.labPhone.post('set', { name: 'volume', value: this.volume });
+	      }).bind(this), 75);
+	    }
+	  }, {
+	    key: 'componentWillUnmount',
+	    value: function componentWillUnmount() {
+	      this.labPhone.disconnect();
+	      clearInterval(this.volumeUpdateIntID);
+	    }
+	  }, {
+	    key: 'setupLabCommunication',
+	    value: function setupLabCommunication() {
+	      this.labPhone = new _iframePhone2['default'].ParentEndpoint(this.refs.labModel);
+	      this.labPhone.addListener('modelLoaded', (function () {
+	        this.labPhone.post('play');
+	      }).bind(this));
+	    }
+	  }, {
+	    key: 'gestureDetected',
+	    value: function gestureDetected() {
+	      _toolsAvg2['default'].addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
+	      var maxVelAvg = _toolsAvg2['default'].getAvg('maxVel') || 0;
+	      this.volume = Math.max(MIN_VOL, Math.min(MAX_VOL, MAX_VOL - this.props.volumeMult * maxVelAvg));
+	      this.plotter.showCanvas('gesture-detected');
+	      this.plotter.plot('max velocity avg', maxVelAvg, { min: 0, max: 1500, precision: 2 });
+	      this.plotter.update();
+	    }
+	  }, {
+	    key: 'nextLeapState',
+	    value: function nextLeapState(stateId, frame, data) {
+	      return this.fistBump.nextLeapState(stateId, frame, data);
+	    }
+	  }, {
+	    key: 'getStateMsg',
+	    value: function getStateMsg() {
+	      switch (this.state.leapState) {
+	        case 'initial':
+	          return 'Please keep your hands steady above the Leap device.';
+	        case 'twoHandsDetected':
+	          return 'Close one fist and twist the other hand.';
+	        case 'gestureDetected':
+	          return 'Move your closed fist towards open palm and back rapidly.';
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        null,
+	        _react2['default'].createElement(
+	          'div',
+	          null,
+	          _react2['default'].createElement('iframe', { ref: 'labModel', width: '610px', height: '350px', frameBorder: '0', src: 'http://lab.concord.org/embeddable.html#interactives/grasp/volume-pressure-relationship.json' })
+	        ),
+	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
+	      );
+	    }
+	  }, {
+	    key: 'plotter',
+	    get: function get() {
+	      return this.refs.leapInfo.plotter;
+	    }
+	  }]);
+
+	  return LabVolumePressure;
+	})(_react2['default'].Component);
+
+	exports['default'] = LabVolumePressure;
+
+	LabVolumePressure.defaultProps = {
+	  volumeMult: 0.0009,
+	  maxVelAvg: 120,
+	  handBumpConfig: {
+	    closedGrabStrength: 0.4,
+	    openGrabStrength: 0.7,
+	    handTwistTolerance: 0.7,
+	    minAmplitude: 5
+	  }
+	};
+
+	_reactMixin2['default'].onClass(LabVolumePressure, _mixinsLeapStateHandling2['default']);
+	module.exports = exports['default'];
 
 /***/ }
 
