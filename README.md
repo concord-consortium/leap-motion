@@ -2,13 +2,19 @@
 
 Experiments related to the gesture detection.
 
+####Lab
+- http://concord-consortium.github.io/leap-motion/examples/lab-temperature-absolute.html
+- http://concord-consortium.github.io/leap-motion/examples/lab-pressure-equilibrium.html
+- http://concord-consortium.github.io/leap-motion/examples/lab-volume-pressure.html
+
+####Seasons
+- http://concord-consortium.github.io/leap-motion/examples/seasons-sunray-angle.html
+
+####Tests
 - http://concord-consortium.github.io/leap-motion/examples/lab-temperature-test.html
 - http://concord-consortium.github.io/leap-motion/examples/lab-temperature-delta.html
-- http://concord-consortium.github.io/leap-motion/examples/lab-temperature-absolute.html
 - http://concord-consortium.github.io/leap-motion/examples/lab-add-rm-atom-test.html
 - http://concord-consortium.github.io/leap-motion/examples/lab-add-rm-atom-test-swipe.html
-- http://concord-consortium.github.io/leap-motion/examples/lab-pressure-equilibrium.html
-- http://concord-consortium.github.io/leap-motion/examples/seasons-sunray-angle.html
 
 ## Development
 
