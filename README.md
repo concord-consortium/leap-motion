@@ -6,6 +6,7 @@ Experiments related to the gesture detection.
 - http://concord-consortium.github.io/leap-motion/examples/lab-temperature-absolute.html
 - http://concord-consortium.github.io/leap-motion/examples/lab-pressure-equilibrium.html
 - http://concord-consortium.github.io/leap-motion/examples/lab-volume-pressure.html
+- http://concord-consortium.github.io/leap-motion/examples/lab-heat-transfer.html
 
 ####Seasons
 - http://concord-consortium.github.io/leap-motion/examples/seasons-sunray-angle.html
