@@ -9,7 +9,6 @@ export default class FistBump {
     this.plotter = plotter;
     // Outputs:
     this.freq = 0;
-    this.maxVel = 0;
     this.hand = null;
     this._setupDirectionChangeAlg();
   }
@@ -22,7 +21,7 @@ export default class FistBump {
       minAmplitude: this.config.minAmplitude,
       onDirChange: function (data) {
         if (this.hand && ((this.hand.type === 'right' && data.type === DirectionChange.LEFT_TO_RIGHT) ||
-                          (this.hand.type === 'left' && data.type === DirectionChange.RIGHT_TO_LEFT))) {
+          (this.hand.type === 'left' && data.type === DirectionChange.RIGHT_TO_LEFT))) {
           // Sound effect!
           sound.play();
         }
@@ -38,43 +37,29 @@ export default class FistBump {
   // State definitions:
 
   state_initial(frame, data) {
-    if (frame.hands.length === 2) {
-      return 'twoHandsDetected';
+    if (frame.hands.length === 1) {
+      return 'oneHandDetected';
     }
     // Hide debug data.
     this.plotter.showCanvas(null);
     return null;
   }
 
-  state_twoHandsDetected(frame, data) {
-    let config = this.config;
-    function condition(closedHandIdx, openHandIdx) {
-      let closedHand = frame.hands[closedHandIdx];
-      let openHand = frame.hands[openHandIdx];
-      if (closedHand.grabStrength > config.closedGrabStrength && openHand.grabStrength < config.openGrabStrength &&
-          Math.abs(Math.abs(openHand.roll()) - Math.PI / 2) < config.handTwistTolerance) {
-        return true;
-      }
-      return false;
-    }
-    if (condition(0, 1)) {
-      return {stateId: 'gestureDetected', data: {closedHand: frame.hands[0], openHand: frame.hands[1]}};
-    } else if (condition(1, 0)) {
-      return {stateId: 'gestureDetected', data: {closedHand: frame.hands[1], openHand: frame.hands[0]}};
+  state_oneHandDetected(frame, data) {
+    if (frame.hands[0].grabStrength > this.config.closedGrabStrength) {
+      return 'gestureDetected';
     } else {
-      this.plotter.showCanvas('two-hands-detected');
-      this.plotter.plot('hand 0 roll', frame.hands[0].roll());
-      this.plotter.plot('hand 1 grab strength', frame.hands[1].grabStrength);
+      this.plotter.showCanvas('one-hand-detected');
+      this.plotter.plot('grab strength', frame.hands[0].grabStrength);
       this.plotter.update();
       return null;
     }
   }
   
   state_gestureDetected(frame, data) {
-    this.hand = data.closedHand;
+    this.hand = frame.hands[0];
     this.freqCalc.addSample(this.hand.palmVelocity[0]);
     this.freq = this.freqCalc.frequency;
-    this.maxVel = this.freqCalc.halfPeriodMaxVel;
     this.callback();
     return null;
   }

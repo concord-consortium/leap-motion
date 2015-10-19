@@ -1,4 +1,4 @@
-webpackJsonp([3],{
+webpackJsonp([2],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
@@ -15,119 +15,13 @@ webpackJsonp([3],{
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsLabPressureEquilibriumJsx = __webpack_require__(254);
+	var _componentsLabHeatTransferJsx = __webpack_require__(247);
 
-	var _componentsLabPressureEquilibriumJsx2 = _interopRequireDefault(_componentsLabPressureEquilibriumJsx);
+	var _componentsLabHeatTransferJsx2 = _interopRequireDefault(_componentsLabHeatTransferJsx);
 
 	__webpack_require__(241);
 
-	_reactDom2['default'].render(_react2['default'].createElement(_componentsLabPressureEquilibriumJsx2['default'], null), document.getElementById('app'));
-
-/***/ },
-
-/***/ 219:
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = __webpack_require__(185)['default'];
-
-	var _classCallCheck = __webpack_require__(188)['default'];
-
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _toolsAvg = __webpack_require__(218);
-
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
-
-	var _howler = __webpack_require__(220);
-
-	var _toolsDirectionChange = __webpack_require__(221);
-
-	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
-
-	var AddRmObj = (function () {
-	  function AddRmObj(config, callback, plotter) {
-	    _classCallCheck(this, AddRmObj);
-
-	    this.config = config;
-	    this.callback = callback;
-	    this.plotter = plotter;
-	    // State
-	    this.initialPos = null;
-	    this.initialTime = null;
-	    this.isClosed = false;
-
-	    this.addSound = new _howler.Howl({
-	      urls: ['add.wav']
-	    });
-	    this.rmSound = new _howler.Howl({
-	      urls: ['remove.wav']
-	    });
-	  }
-
-	  _createClass(AddRmObj, [{
-	    key: 'nextLeapState',
-	    value: function nextLeapState(stateId, frame, data) {
-	      var stateFuncName = 'state_' + stateId;
-	      return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
-	    }
-
-	    // State definitions:
-
-	  }, {
-	    key: 'state_initial',
-	    value: function state_initial(frame, data) {
-	      if (frame.hands.length === 1) {
-	        return 'oneHandDetected';
-	      }
-	      // Hide debug data.
-	      this.plotter.showCanvas(null);
-	      return null;
-	    }
-	  }, {
-	    key: 'state_oneHandDetected',
-	    value: function state_oneHandDetected(frame, data) {
-	      var config = this.config;
-	      var hand = frame.hands[0];
-	      if (hand.grabStrength > config.closedGrabStrength) {
-	        // Closed hand.
-	        if (!this.isClosed) {
-	          this.initialPos = hand.stabilizedPalmPosition[1];
-	          this.initialTime = Date.now();
-	          this.isClosed = true;
-	        }
-	      } else {
-	        // Open hand.
-	        var posDelta = hand.stabilizedPalmPosition[1] - this.initialPos;
-	        var timeDelta = Date.now() - this.initialTime;
-	        if (this.isClosed && timeDelta < config.maxTime && posDelta > config.minAmplitude) {
-	          this.rmSound.play();
-	          this.callback({ removed: true, handType: hand.type });
-	        } else if (this.isClosed && timeDelta < config.maxTime && posDelta < -config.minAmplitude) {
-	          this.addSound.play();
-	          this.callback({ added: true, handType: hand.type });
-	        }
-	        this.isClosed = false;
-	        this.initialPos = null;
-	      }
-	      this.plotter.showCanvas('one-hand-detected');
-	      this.plotter.plot('grab strength', hand.grabStrength);
-	      this.plotter.plot('hand Y pos', hand.stabilizedPalmPosition[1]);
-	      this.plotter.update();
-	      return null;
-	    }
-	  }]);
-
-	  return AddRmObj;
-	})();
-
-	exports['default'] = AddRmObj;
-	module.exports = exports['default'];
+	_reactDom2['default'].render(_react2['default'].createElement(_componentsLabHeatTransferJsx2['default'], null), document.getElementById('app'));
 
 /***/ },
 
@@ -1659,6 +1553,263 @@ webpackJsonp([3],{
 
 /***/ },
 
+/***/ 247:
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = __webpack_require__(160)['default'];
+
+	var _inherits = __webpack_require__(174)['default'];
+
+	var _createClass = __webpack_require__(185)['default'];
+
+	var _classCallCheck = __webpack_require__(188)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactMixin = __webpack_require__(189);
+
+	var _reactMixin2 = _interopRequireDefault(_reactMixin);
+
+	var _mixinsLeapStateHandling = __webpack_require__(192);
+
+	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
+
+	var _gesturesFistShake = __webpack_require__(248);
+
+	var _gesturesFistShake2 = _interopRequireDefault(_gesturesFistShake);
+
+	var _toolsAvg = __webpack_require__(218);
+
+	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+
+	var _iframePhone = __webpack_require__(249);
+
+	var _iframePhone2 = _interopRequireDefault(_iframePhone);
+
+	var _leapStandardInfoJsx = __webpack_require__(227);
+
+	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
+
+	var LabHeatTransfer = (function (_React$Component) {
+	  _inherits(LabHeatTransfer, _React$Component);
+
+	  function LabHeatTransfer() {
+	    _classCallCheck(this, LabHeatTransfer);
+
+	    _get(Object.getPrototypeOf(LabHeatTransfer.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(LabHeatTransfer, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      this.fistShake = new _gesturesFistShake2['default'](this.props.handShakeConfig, this.gestureDetected.bind(this), this.plotter);
+	      this.setupLabCommunication();
+	    }
+	  }, {
+	    key: 'setupLabCommunication',
+	    value: function setupLabCommunication() {
+	      this.labPhone = new _iframePhone2['default'].ParentEndpoint(this.refs.labModel);
+	      this.labPhone.addListener('modelLoaded', (function () {
+	        this.labPhone.post('play');
+	      }).bind(this));
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate(prevProps, prevState) {
+	      if (this.state.leapState === 'gestureDetected') {
+	        this.labPhone.post('set', { name: 'markedBlock', value: this.fistShake.hand.type });
+	      } else {
+	        this.labPhone.post('set', { name: 'markedBlock', value: 'none' });
+	      }
+	    }
+	  }, {
+	    key: 'gestureDetected',
+	    value: function gestureDetected() {
+	      var freq = undefined;
+	      if (this.fistShake.hand.type === 'left') {
+	        _toolsAvg2['default'].addSample('freqLeft', this.fistShake.freq, Math.round(this.props.freqAvg));
+	        freq = _toolsAvg2['default'].getAvg('freqLeft');
+	        this.labPhone.post('set', { name: 'leftAtomsTargetTemp', value: freq * this.props.tempMult });
+	      } else {
+	        _toolsAvg2['default'].addSample('freqRight', this.fistShake.freq, Math.round(this.props.freqAvg));
+	        freq = _toolsAvg2['default'].getAvg('freqRight');
+	        this.labPhone.post('set', { name: 'rightAtomsTargetTemp', value: freq * this.props.tempMult });
+	      }
+	      this.plotter.showCanvas('gesture-detected');
+	      this.plotter.plot('frequency', freq, { min: 0, max: 9, precision: 2 });
+	      this.plotter.update();
+	    }
+	  }, {
+	    key: 'nextLeapState',
+	    value: function nextLeapState(stateId, frame, data) {
+	      return this.fistShake.nextLeapState(stateId, frame, data);
+	    }
+	  }, {
+	    key: 'getStateMsg',
+	    value: function getStateMsg() {
+	      switch (this.state.leapState) {
+	        case 'initial':
+	          return 'Please keep you hand (left or right) steady above the Leap device.';
+	        case 'oneHandDetected':
+	          return 'Close your fist.';
+	        case 'gestureDetected':
+	          return 'Shake your hand.';
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        null,
+	        _react2['default'].createElement(
+	          'div',
+	          null,
+	          _react2['default'].createElement('iframe', { ref: 'labModel', width: '610px', height: '350px', frameBorder: '0', src: 'http://lab.concord.org/embeddable.html#interactives/grasp/heat-transfer.json' })
+	        ),
+	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
+	      );
+	    }
+	  }, {
+	    key: 'plotter',
+	    get: function get() {
+	      return this.refs.leapInfo.plotter;
+	    }
+	  }]);
+
+	  return LabHeatTransfer;
+	})(_react2['default'].Component);
+
+	exports['default'] = LabHeatTransfer;
+
+	LabHeatTransfer.defaultProps = {
+	  tempMult: 115, // freq * temp mult = new target temperature
+	  freqAvg: 120,
+	  handShakeConfig: {
+	    closedGrabStrength: 0.7,
+	    minAmplitude: 20
+	  }
+	};
+
+	_reactMixin2['default'].onClass(LabHeatTransfer, _mixinsLeapStateHandling2['default']);
+	module.exports = exports['default'];
+
+/***/ },
+
+/***/ 248:
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = __webpack_require__(185)['default'];
+
+	var _classCallCheck = __webpack_require__(188)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _toolsAvg = __webpack_require__(218);
+
+	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+
+	var _howler = __webpack_require__(220);
+
+	var _toolsDirectionChange = __webpack_require__(221);
+
+	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
+
+	var FistBump = (function () {
+	  function FistBump(config, callback, plotter) {
+	    _classCallCheck(this, FistBump);
+
+	    this.config = config;
+	    this.callback = callback;
+	    this.plotter = plotter;
+	    // Outputs:
+	    this.freq = 0;
+	    this.hand = null;
+	    this._setupDirectionChangeAlg();
+	  }
+
+	  _createClass(FistBump, [{
+	    key: '_setupDirectionChangeAlg',
+	    value: function _setupDirectionChangeAlg() {
+	      var sound = new _howler.Howl({
+	        urls: ['tap.wav']
+	      });
+	      this.freqCalc = new _toolsDirectionChange2['default']({
+	        minAmplitude: this.config.minAmplitude,
+	        onDirChange: (function (data) {
+	          if (this.hand && (this.hand.type === 'right' && data.type === _toolsDirectionChange2['default'].LEFT_TO_RIGHT || this.hand.type === 'left' && data.type === _toolsDirectionChange2['default'].RIGHT_TO_LEFT)) {
+	            // Sound effect!
+	            sound.play();
+	          }
+	        }).bind(this)
+	      });
+	    }
+	  }, {
+	    key: 'nextLeapState',
+	    value: function nextLeapState(stateId, frame, data) {
+	      var stateFuncName = 'state_' + stateId;
+	      return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
+	    }
+
+	    // State definitions:
+
+	  }, {
+	    key: 'state_initial',
+	    value: function state_initial(frame, data) {
+	      if (frame.hands.length === 1) {
+	        return 'oneHandDetected';
+	      }
+	      // Hide debug data.
+	      this.plotter.showCanvas(null);
+	      return null;
+	    }
+	  }, {
+	    key: 'state_oneHandDetected',
+	    value: function state_oneHandDetected(frame, data) {
+	      if (frame.hands[0].grabStrength > this.config.closedGrabStrength) {
+	        return 'gestureDetected';
+	      } else {
+	        this.plotter.showCanvas('one-hand-detected');
+	        this.plotter.plot('grab strength', frame.hands[0].grabStrength);
+	        this.plotter.update();
+	        return null;
+	      }
+	    }
+	  }, {
+	    key: 'state_gestureDetected',
+	    value: function state_gestureDetected(frame, data) {
+	      this.hand = frame.hands[0];
+	      this.freqCalc.addSample(this.hand.palmVelocity[0]);
+	      this.freq = this.freqCalc.frequency;
+	      this.callback();
+	      return null;
+	    }
+	  }]);
+
+	  return FistBump;
+	})();
+
+	exports['default'] = FistBump;
+	module.exports = exports['default'];
+
+/***/ },
+
 /***/ 249:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -2151,339 +2302,6 @@ webpackJsonp([3],{
 	    this.disconnect = disconnect.bind(this);
 	};
 
-
-/***/ },
-
-/***/ 254:
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _get = __webpack_require__(160)['default'];
-
-	var _inherits = __webpack_require__(174)['default'];
-
-	var _createClass = __webpack_require__(185)['default'];
-
-	var _classCallCheck = __webpack_require__(188)['default'];
-
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _react = __webpack_require__(2);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactMixin = __webpack_require__(189);
-
-	var _reactMixin2 = _interopRequireDefault(_reactMixin);
-
-	var _mixinsLeapStateHandling = __webpack_require__(192);
-
-	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
-
-	var _gesturesFistBump = __webpack_require__(255);
-
-	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
-
-	var _gesturesAddRmObj = __webpack_require__(219);
-
-	var _gesturesAddRmObj2 = _interopRequireDefault(_gesturesAddRmObj);
-
-	var _leapStandardInfoJsx = __webpack_require__(227);
-
-	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
-
-	var _toolsAvg = __webpack_require__(218);
-
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
-
-	var _iframePhone = __webpack_require__(249);
-
-	var _iframePhone2 = _interopRequireDefault(_iframePhone);
-
-	var LabPressureEquilibrium = (function (_React$Component) {
-	  _inherits(LabPressureEquilibrium, _React$Component);
-
-	  function LabPressureEquilibrium() {
-	    _classCallCheck(this, LabPressureEquilibrium);
-
-	    _get(Object.getPrototypeOf(LabPressureEquilibrium.prototype), 'constructor', this).apply(this, arguments);
-	  }
-
-	  _createClass(LabPressureEquilibrium, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      this.fistBump = new _gesturesFistBump2['default'](this.props.handBumpConfig, this.fistBumpDetected.bind(this), this.plotter);
-	      this.addRmObj = new _gesturesAddRmObj2['default'](this.props.addRmAtomConfig, this.addRmAtomDetected.bind(this), this.plotter);
-	      this.setupLabCommunication();
-	    }
-	  }, {
-	    key: 'setupLabCommunication',
-	    value: function setupLabCommunication() {
-	      this.purpleAtomsCount = 30;
-	      this.yellowAtomsCount = 30;
-	      this.labPhone = new _iframePhone2['default'].ParentEndpoint(this.refs.labModel);
-	      this.labPhone.addListener('modelLoaded', (function () {
-	        this.labPhone.post('play');
-	      }).bind(this));
-	    }
-	  }, {
-	    key: 'fistBumpDetected',
-	    value: function fistBumpDetected() {
-	      var freq = 0;
-	      if (this.fistBump.hand.type === 'left') {
-	        _toolsAvg2['default'].addSample('freqLeft', this.fistBump.freq, Math.round(this.props.freqAvg));
-	        freq = _toolsAvg2['default'].getAvg('freqLeft');
-	        this.labPhone.post('set', { name: 'purpleAtomTemperature', value: 1 + freq * this.props.tempMult });
-	      } else {
-	        _toolsAvg2['default'].addSample('freqRight', this.fistBump.freq, Math.round(this.props.freqAvg));
-	        freq = _toolsAvg2['default'].getAvg('freqRight');
-	        this.labPhone.post('set', { name: 'yellowAtomTemperature', value: 1 + freq * this.props.tempMult });
-	      }
-	      this.plotter.showCanvas('gesture-detected');
-	      this.plotter.plot('frequency', freq, { min: 0, max: 9, precision: 2 });
-	      this.plotter.plot('velocity', this.fistBump.hand.palmVelocity[0]);
-	      this.plotter.update();
-	    }
-	  }, {
-	    key: 'addRmAtomDetected',
-	    value: function addRmAtomDetected(data) {
-	      if (data.removed && data.handType === 'left') {
-	        this.purpleAtomsCount -= 5;
-	        this.labPhone.post('set', { name: 'purpleAtomsCount', value: this.purpleAtomsCount });
-	      } else if (data.removed && data.handType === 'right') {
-	        this.yellowAtomsCount -= 5;
-	        this.labPhone.post('set', { name: 'yellowAtomsCount', value: this.yellowAtomsCount });
-	      } else if (data.added && data.handType === 'left') {
-	        this.purpleAtomsCount += 5;
-	        this.labPhone.post('set', { name: 'purpleAtomsCount', value: this.purpleAtomsCount });
-	      } else if (data.added && data.handType === 'right') {
-	        this.yellowAtomsCount += 5;
-	        this.labPhone.post('set', { name: 'yellowAtomsCount', value: this.yellowAtomsCount });
-	      }
-	    }
-	  }, {
-	    key: 'nextLeapState',
-	    value: function nextLeapState(stateId, frame, data) {
-	      return this.fistBump.nextLeapState(stateId, frame, data) || this.addRmObj.nextLeapState(stateId, frame, data);
-	    }
-	  }, {
-	    key: 'getStateMsg',
-	    value: function getStateMsg() {
-	      switch (this.state.leapState) {
-	        case 'initial':
-	          return 'Use one hand to add or remove atoms, use two hands to heat up or cool down atoms.';
-	        case 'oneHandDetected':
-	          return _react2['default'].createElement(
-	            'div',
-	            null,
-	            _react2['default'].createElement(
-	              'p',
-	              null,
-	              'Close your hand, move it ',
-	              _react2['default'].createElement(
-	                'b',
-	                null,
-	                'up'
-	              ),
-	              ' and open to ',
-	              _react2['default'].createElement(
-	                'b',
-	                null,
-	                'remove'
-	              ),
-	              ' an atom.'
-	            ),
-	            _react2['default'].createElement(
-	              'p',
-	              null,
-	              'Close your hand, move it ',
-	              _react2['default'].createElement(
-	                'b',
-	                null,
-	                'down'
-	              ),
-	              ' and open to ',
-	              _react2['default'].createElement(
-	                'b',
-	                null,
-	                'add'
-	              ),
-	              ' an atom.'
-	            )
-	          );
-	        case 'twoHandsDetected':
-	          return 'Close one fist and twist the other hand.';
-	        case 'gestureDetected':
-	          return 'Move your closed fist towards open palm and back rapidly.';
-	      }
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        null,
-	        _react2['default'].createElement(
-	          'div',
-	          null,
-	          _react2['default'].createElement('iframe', { ref: 'labModel', width: '610px', height: '350px', frameBorder: '0', src: 'http://lab.concord.org/embeddable.html#interactives/grasp/pressure-equilibrium.json' })
-	        ),
-	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
-	      );
-	    }
-	  }, {
-	    key: 'plotter',
-	    get: function get() {
-	      return this.refs.leapInfo.plotter;
-	    }
-	  }]);
-
-	  return LabPressureEquilibrium;
-	})(_react2['default'].Component);
-
-	exports['default'] = LabPressureEquilibrium;
-
-	LabPressureEquilibrium.defaultProps = {
-	  tempMult: 850, // freq * temp mult = new target temperature
-	  freqAvg: 120,
-	  handBumpConfig: {
-	    closedGrabStrength: 0.4,
-	    openGrabStrength: 0.7,
-	    handTwistTolerance: 0.7,
-	    minAmplitude: 20
-	  },
-	  addRmAtomConfig: {
-	    closedGrabStrength: 0.8,
-	    minAmplitude: 50, // mm
-	    maxTime: 2000 // ms
-	  }
-	};
-
-	_reactMixin2['default'].onClass(LabPressureEquilibrium, _mixinsLeapStateHandling2['default']);
-	module.exports = exports['default'];
-
-/***/ },
-
-/***/ 255:
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = __webpack_require__(185)['default'];
-
-	var _classCallCheck = __webpack_require__(188)['default'];
-
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _toolsAvg = __webpack_require__(218);
-
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
-
-	var _howler = __webpack_require__(220);
-
-	var _toolsDirectionChange = __webpack_require__(221);
-
-	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
-
-	var FistBump = (function () {
-	  function FistBump(config, callback, plotter) {
-	    _classCallCheck(this, FistBump);
-
-	    this.config = config;
-	    this.callback = callback;
-	    this.plotter = plotter;
-	    // Outputs:
-	    this.freq = 0;
-	    this.maxVel = 0;
-	    this.hand = null;
-	    this._setupDirectionChangeAlg();
-	  }
-
-	  _createClass(FistBump, [{
-	    key: '_setupDirectionChangeAlg',
-	    value: function _setupDirectionChangeAlg() {
-	      var sound = new _howler.Howl({
-	        urls: ['tap.wav']
-	      });
-	      this.freqCalc = new _toolsDirectionChange2['default']({
-	        minAmplitude: this.config.minAmplitude,
-	        onDirChange: (function (data) {
-	          if (this.hand && (this.hand.type === 'right' && data.type === _toolsDirectionChange2['default'].LEFT_TO_RIGHT || this.hand.type === 'left' && data.type === _toolsDirectionChange2['default'].RIGHT_TO_LEFT)) {
-	            // Sound effect!
-	            sound.play();
-	          }
-	        }).bind(this)
-	      });
-	    }
-	  }, {
-	    key: 'nextLeapState',
-	    value: function nextLeapState(stateId, frame, data) {
-	      var stateFuncName = 'state_' + stateId;
-	      return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
-	    }
-
-	    // State definitions:
-
-	  }, {
-	    key: 'state_initial',
-	    value: function state_initial(frame, data) {
-	      if (frame.hands.length === 2) {
-	        return 'twoHandsDetected';
-	      }
-	      // Hide debug data.
-	      this.plotter.showCanvas(null);
-	      return null;
-	    }
-	  }, {
-	    key: 'state_twoHandsDetected',
-	    value: function state_twoHandsDetected(frame, data) {
-	      var config = this.config;
-	      function condition(closedHandIdx, openHandIdx) {
-	        var closedHand = frame.hands[closedHandIdx];
-	        var openHand = frame.hands[openHandIdx];
-	        if (closedHand.grabStrength > config.closedGrabStrength && openHand.grabStrength < config.openGrabStrength && Math.abs(Math.abs(openHand.roll()) - Math.PI / 2) < config.handTwistTolerance) {
-	          return true;
-	        }
-	        return false;
-	      }
-	      if (condition(0, 1)) {
-	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[0], openHand: frame.hands[1] } };
-	      } else if (condition(1, 0)) {
-	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[1], openHand: frame.hands[0] } };
-	      } else {
-	        this.plotter.showCanvas('two-hands-detected');
-	        this.plotter.plot('hand 0 roll', frame.hands[0].roll());
-	        this.plotter.plot('hand 1 grab strength', frame.hands[1].grabStrength);
-	        this.plotter.update();
-	        return null;
-	      }
-	    }
-	  }, {
-	    key: 'state_gestureDetected',
-	    value: function state_gestureDetected(frame, data) {
-	      this.hand = data.closedHand;
-	      this.freqCalc.addSample(this.hand.palmVelocity[0]);
-	      this.freq = this.freqCalc.frequency;
-	      this.maxVel = this.freqCalc.halfPeriodMaxVel;
-	      this.callback();
-	      return null;
-	    }
-	  }]);
-
-	  return FistBump;
-	})();
-
-	exports['default'] = FistBump;
-	module.exports = exports['default'];
 
 /***/ }
 

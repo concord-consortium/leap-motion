@@ -6,6 +6,7 @@ module.exports = {
     'lab-temperature-delta': './js/pages/lab-temperature-delta.jsx',
     'lab-temperature-absolute': './js/pages/lab-temperature-absolute.jsx',
     'lab-volume-pressure': './js/pages/lab-volume-pressure.jsx',
+    'lab-heat-transfer': './js/pages/lab-heat-transfer.jsx',
     'lab-add-rm-atom-test': './js/pages/lab-add-rm-atom-test.jsx',
     'lab-add-rm-atom-test-swipe': './js/pages/lab-add-rm-atom-test-swipe.jsx',
     'lab-pressure-equilibrium': './js/pages/lab-pressure-equilibrium.jsx',

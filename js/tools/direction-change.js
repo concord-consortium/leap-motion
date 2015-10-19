@@ -9,7 +9,11 @@ class DirectionChange {
   constructor(options) {
     this.options = $.extend({}, DEFAULT_OPTIONS, options);
     this._vel = [];
-    this.halfPeriodMaxVel = -Infinity;
+    this._halfPeriodMaxVel = -Infinity;
+    this._lastDirChange = null;
+    // Outputs:
+    this.frequency = 0;
+    this.halfPeriodMaxVel = 0;
   }
 
   addSample(vel) {
@@ -35,12 +39,10 @@ class DirectionChange {
     for (let i = 0; i < len; i++) {
       currentMax = Math.max(currentMax, Math.abs(v[i]));
       bufferMax = Math.max(bufferMax, currentMax);
-      // Max velocity within half-period (between direction changes) is provided to options.onDirChange callback.
-      this.halfPeriodMaxVel = Math.max(this.halfPeriodMaxVel, currentMax);
+      this._halfPeriodMaxVel = Math.max(this._halfPeriodMaxVel, currentMax);
       // Note that if the sign has changed 2 or 4 times, in fact it means it hasn't changed. That's why we test % 2.
       if (currentMax >= minAmp && initialMax >= minAmp && signChangeCount % 2 === 1) {
         this._directionChanged({
-          maxVelocity: this.halfPeriodMaxVel,
           type: v[i] > 0 ? DirectionChange.RIGHT_TO_LEFT : DirectionChange.LEFT_TO_RIGHT
         });
         return;
@@ -62,14 +64,29 @@ class DirectionChange {
   }
 
   _directionChanged(data) {
+    let timestamp = performance.now();
+    if (this._lastDirChange) {
+      // Calculate outputs.
+      this.frequency = 0.5 * 1000 / (timestamp - this._lastDirChange);
+      this.halfPeriodMaxVel = this._halfPeriodMaxVel;
+    }
+    this._lastDirChange = timestamp;
+
+    this._vel.length = 1;
+    this._halfPeriodMaxVel = -Infinity;
+
     if (this.options.onDirChange) {
       this.options.onDirChange(data);
     }
-    this._vel.length = 1;
-    this.halfPeriodMaxVel = -Infinity;
   }
 
   _stopped() {
+    // Calculate outputs.
+    this.frequency = 0;
+    this.halfPeriodMaxVel = 0;
+
+    this._lastDirChange = performance.now();
+
     if (this.options.onStop) {
       this.options.onStop();
     }

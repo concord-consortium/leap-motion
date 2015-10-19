@@ -1,4 +1,4 @@
-webpackJsonp([6],{
+webpackJsonp([7],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
@@ -15,7 +15,7 @@ webpackJsonp([6],{
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsLabVolumePressureJsx = __webpack_require__(257);
+	var _componentsLabVolumePressureJsx = __webpack_require__(259);
 
 	var _componentsLabVolumePressureJsx2 = _interopRequireDefault(_componentsLabVolumePressureJsx);
 
@@ -1417,7 +1417,11 @@ webpackJsonp([6],{
 
 	    this.options = _jquery2['default'].extend({}, DEFAULT_OPTIONS, options);
 	    this._vel = [];
-	    this.halfPeriodMaxVel = -Infinity;
+	    this._halfPeriodMaxVel = -Infinity;
+	    this._lastDirChange = null;
+	    // Outputs:
+	    this.frequency = 0;
+	    this.halfPeriodMaxVel = 0;
 	  }
 
 	  _createClass(DirectionChange, [{
@@ -1447,12 +1451,10 @@ webpackJsonp([6],{
 	      for (var i = 0; i < len; i++) {
 	        currentMax = Math.max(currentMax, Math.abs(v[i]));
 	        bufferMax = Math.max(bufferMax, currentMax);
-	        // Max velocity within half-period (between direction changes) is provided to options.onDirChange callback.
-	        this.halfPeriodMaxVel = Math.max(this.halfPeriodMaxVel, currentMax);
+	        this._halfPeriodMaxVel = Math.max(this._halfPeriodMaxVel, currentMax);
 	        // Note that if the sign has changed 2 or 4 times, in fact it means it hasn't changed. That's why we test % 2.
 	        if (currentMax >= minAmp && initialMax >= minAmp && signChangeCount % 2 === 1) {
 	          this._directionChanged({
-	            maxVelocity: this.halfPeriodMaxVel,
 	            type: v[i] > 0 ? DirectionChange.RIGHT_TO_LEFT : DirectionChange.LEFT_TO_RIGHT
 	          });
 	          return;
@@ -1475,15 +1477,30 @@ webpackJsonp([6],{
 	  }, {
 	    key: '_directionChanged',
 	    value: function _directionChanged(data) {
+	      var timestamp = performance.now();
+	      if (this._lastDirChange) {
+	        // Calculate outputs.
+	        this.frequency = 0.5 * 1000 / (timestamp - this._lastDirChange);
+	        this.halfPeriodMaxVel = this._halfPeriodMaxVel;
+	      }
+	      this._lastDirChange = timestamp;
+
+	      this._vel.length = 1;
+	      this._halfPeriodMaxVel = -Infinity;
+
 	      if (this.options.onDirChange) {
 	        this.options.onDirChange(data);
 	      }
-	      this._vel.length = 1;
-	      this.halfPeriodMaxVel = -Infinity;
 	    }
 	  }, {
 	    key: '_stopped',
 	    value: function _stopped() {
+	      // Calculate outputs.
+	      this.frequency = 0;
+	      this.halfPeriodMaxVel = 0;
+
+	      this._lastDirChange = performance.now();
+
 	      if (this.options.onStop) {
 	        this.options.onStop();
 	      }
@@ -1533,134 +1550,6 @@ webpackJsonp([6],{
 	module.exports = Math.sign || function sign(x){
 	  return (x = +x) == 0 || x != x ? x : x < 0 ? -1 : 1;
 	};
-
-/***/ },
-
-/***/ 248:
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = __webpack_require__(185)['default'];
-
-	var _classCallCheck = __webpack_require__(188)['default'];
-
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _toolsAvg = __webpack_require__(218);
-
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
-
-	var _howler = __webpack_require__(220);
-
-	var _toolsDirectionChange = __webpack_require__(221);
-
-	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
-
-	var FistBump = (function () {
-	  function FistBump(config, callback, plotter) {
-	    _classCallCheck(this, FistBump);
-
-	    this.config = config;
-	    this.callback = callback;
-	    this.plotter = plotter;
-	    // Outputs:
-	    this.freq = 0;
-	    this.maxVel = 0;
-	    this.hand = null;
-	    this._setupDirectionChangeAlg();
-	  }
-
-	  _createClass(FistBump, [{
-	    key: '_setupDirectionChangeAlg',
-	    value: function _setupDirectionChangeAlg() {
-	      var lastDirChange = null;
-	      var sound = new _howler.Howl({
-	        urls: ['tap.wav']
-	      });
-	      this.freqCalc = new _toolsDirectionChange2['default']({
-	        minAmplitude: this.config.minAmplitude,
-	        onDirChange: (function (data) {
-	          var timestamp = Date.now();
-	          if (lastDirChange) {
-	            this.freq = 0.5 * 1000 / (timestamp - lastDirChange);
-	            this.maxVel = data.maxVelocity;
-	          }
-	          lastDirChange = timestamp;
-	          if (this.hand && (this.hand.type === 'right' && data.type === _toolsDirectionChange2['default'].LEFT_TO_RIGHT || this.hand.type === 'left' && data.type === _toolsDirectionChange2['default'].RIGHT_TO_LEFT)) {
-	            // Sound effect!
-	            sound.play();
-	          }
-	        }).bind(this),
-	        onStop: (function () {
-	          lastDirChange = Date.now();
-	          this.freq = 0;
-	          this.maxVel = 0;
-	        }).bind(this)
-	      });
-	    }
-	  }, {
-	    key: 'nextLeapState',
-	    value: function nextLeapState(stateId, frame, data) {
-	      var stateFuncName = 'state_' + stateId;
-	      return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
-	    }
-
-	    // State definitions:
-
-	  }, {
-	    key: 'state_initial',
-	    value: function state_initial(frame, data) {
-	      if (frame.hands.length === 2) {
-	        return 'twoHandsDetected';
-	      }
-	      // Hide debug data.
-	      this.plotter.showCanvas(null);
-	      return null;
-	    }
-	  }, {
-	    key: 'state_twoHandsDetected',
-	    value: function state_twoHandsDetected(frame, data) {
-	      var config = this.config;
-	      function condition(closedHandIdx, openHandIdx) {
-	        var closedHand = frame.hands[closedHandIdx];
-	        var openHand = frame.hands[openHandIdx];
-	        if (closedHand.grabStrength > config.closedGrabStrength && openHand.grabStrength < config.openGrabStrength && Math.abs(Math.abs(openHand.roll()) - Math.PI / 2) < config.handTwistTolerance) {
-	          return true;
-	        }
-	        return false;
-	      }
-	      if (condition(0, 1)) {
-	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[0], openHand: frame.hands[1] } };
-	      } else if (condition(1, 0)) {
-	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[1], openHand: frame.hands[0] } };
-	      } else {
-	        this.plotter.showCanvas('two-hands-detected');
-	        this.plotter.plot('hand 0 roll', frame.hands[0].roll());
-	        this.plotter.plot('hand 1 grab strength', frame.hands[1].grabStrength);
-	        this.plotter.update();
-	        return null;
-	      }
-	    }
-	  }, {
-	    key: 'state_gestureDetected',
-	    value: function state_gestureDetected(frame, data) {
-	      this.hand = data.closedHand;
-	      this.freqCalc.addSample(this.hand.palmVelocity[0]);
-	      this.callback();
-	      return null;
-	    }
-	  }]);
-
-	  return FistBump;
-	})();
-
-	exports['default'] = FistBump;
-	module.exports = exports['default'];
 
 /***/ },
 
@@ -2159,7 +2048,125 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 257:
+/***/ 255:
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = __webpack_require__(185)['default'];
+
+	var _classCallCheck = __webpack_require__(188)['default'];
+
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _toolsAvg = __webpack_require__(218);
+
+	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+
+	var _howler = __webpack_require__(220);
+
+	var _toolsDirectionChange = __webpack_require__(221);
+
+	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
+
+	var FistBump = (function () {
+	  function FistBump(config, callback, plotter) {
+	    _classCallCheck(this, FistBump);
+
+	    this.config = config;
+	    this.callback = callback;
+	    this.plotter = plotter;
+	    // Outputs:
+	    this.freq = 0;
+	    this.maxVel = 0;
+	    this.hand = null;
+	    this._setupDirectionChangeAlg();
+	  }
+
+	  _createClass(FistBump, [{
+	    key: '_setupDirectionChangeAlg',
+	    value: function _setupDirectionChangeAlg() {
+	      var sound = new _howler.Howl({
+	        urls: ['tap.wav']
+	      });
+	      this.freqCalc = new _toolsDirectionChange2['default']({
+	        minAmplitude: this.config.minAmplitude,
+	        onDirChange: (function (data) {
+	          if (this.hand && (this.hand.type === 'right' && data.type === _toolsDirectionChange2['default'].LEFT_TO_RIGHT || this.hand.type === 'left' && data.type === _toolsDirectionChange2['default'].RIGHT_TO_LEFT)) {
+	            // Sound effect!
+	            sound.play();
+	          }
+	        }).bind(this)
+	      });
+	    }
+	  }, {
+	    key: 'nextLeapState',
+	    value: function nextLeapState(stateId, frame, data) {
+	      var stateFuncName = 'state_' + stateId;
+	      return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
+	    }
+
+	    // State definitions:
+
+	  }, {
+	    key: 'state_initial',
+	    value: function state_initial(frame, data) {
+	      if (frame.hands.length === 2) {
+	        return 'twoHandsDetected';
+	      }
+	      // Hide debug data.
+	      this.plotter.showCanvas(null);
+	      return null;
+	    }
+	  }, {
+	    key: 'state_twoHandsDetected',
+	    value: function state_twoHandsDetected(frame, data) {
+	      var config = this.config;
+	      function condition(closedHandIdx, openHandIdx) {
+	        var closedHand = frame.hands[closedHandIdx];
+	        var openHand = frame.hands[openHandIdx];
+	        if (closedHand.grabStrength > config.closedGrabStrength && openHand.grabStrength < config.openGrabStrength && Math.abs(Math.abs(openHand.roll()) - Math.PI / 2) < config.handTwistTolerance) {
+	          return true;
+	        }
+	        return false;
+	      }
+	      if (condition(0, 1)) {
+	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[0], openHand: frame.hands[1] } };
+	      } else if (condition(1, 0)) {
+	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[1], openHand: frame.hands[0] } };
+	      } else {
+	        this.plotter.showCanvas('two-hands-detected');
+	        this.plotter.plot('hand 0 roll', frame.hands[0].roll());
+	        this.plotter.plot('hand 1 grab strength', frame.hands[1].grabStrength);
+	        this.plotter.update();
+	        return null;
+	      }
+	    }
+	  }, {
+	    key: 'state_gestureDetected',
+	    value: function state_gestureDetected(frame, data) {
+	      this.hand = data.closedHand;
+	      this.freqCalc.addSample(this.hand.palmVelocity[0]);
+	      this.freq = this.freqCalc.frequency;
+	      this.maxVel = this.freqCalc.halfPeriodMaxVel;
+	      this.callback();
+	      return null;
+	    }
+	  }]);
+
+	  return FistBump;
+	})();
+
+	exports['default'] = FistBump;
+	module.exports = exports['default'];
+
+/***/ },
+
+/***/ 259:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2190,7 +2197,7 @@ webpackJsonp([6],{
 
 	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
 
-	var _gesturesFistBump = __webpack_require__(248);
+	var _gesturesFistBump = __webpack_require__(255);
 
 	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
 

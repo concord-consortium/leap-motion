@@ -1,4 +1,4 @@
-webpackJsonp([5],{
+webpackJsonp([6],{
 
 /***/ 0:
 /***/ function(module, exports, __webpack_require__) {
@@ -15,7 +15,7 @@ webpackJsonp([5],{
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsLabTemperatureTestJsx = __webpack_require__(256);
+	var _componentsLabTemperatureTestJsx = __webpack_require__(258);
 
 	var _componentsLabTemperatureTestJsx2 = _interopRequireDefault(_componentsLabTemperatureTestJsx);
 
@@ -1417,7 +1417,11 @@ webpackJsonp([5],{
 
 	    this.options = _jquery2['default'].extend({}, DEFAULT_OPTIONS, options);
 	    this._vel = [];
-	    this.halfPeriodMaxVel = -Infinity;
+	    this._halfPeriodMaxVel = -Infinity;
+	    this._lastDirChange = null;
+	    // Outputs:
+	    this.frequency = 0;
+	    this.halfPeriodMaxVel = 0;
 	  }
 
 	  _createClass(DirectionChange, [{
@@ -1447,12 +1451,10 @@ webpackJsonp([5],{
 	      for (var i = 0; i < len; i++) {
 	        currentMax = Math.max(currentMax, Math.abs(v[i]));
 	        bufferMax = Math.max(bufferMax, currentMax);
-	        // Max velocity within half-period (between direction changes) is provided to options.onDirChange callback.
-	        this.halfPeriodMaxVel = Math.max(this.halfPeriodMaxVel, currentMax);
+	        this._halfPeriodMaxVel = Math.max(this._halfPeriodMaxVel, currentMax);
 	        // Note that if the sign has changed 2 or 4 times, in fact it means it hasn't changed. That's why we test % 2.
 	        if (currentMax >= minAmp && initialMax >= minAmp && signChangeCount % 2 === 1) {
 	          this._directionChanged({
-	            maxVelocity: this.halfPeriodMaxVel,
 	            type: v[i] > 0 ? DirectionChange.RIGHT_TO_LEFT : DirectionChange.LEFT_TO_RIGHT
 	          });
 	          return;
@@ -1475,15 +1477,30 @@ webpackJsonp([5],{
 	  }, {
 	    key: '_directionChanged',
 	    value: function _directionChanged(data) {
+	      var timestamp = performance.now();
+	      if (this._lastDirChange) {
+	        // Calculate outputs.
+	        this.frequency = 0.5 * 1000 / (timestamp - this._lastDirChange);
+	        this.halfPeriodMaxVel = this._halfPeriodMaxVel;
+	      }
+	      this._lastDirChange = timestamp;
+
+	      this._vel.length = 1;
+	      this._halfPeriodMaxVel = -Infinity;
+
 	      if (this.options.onDirChange) {
 	        this.options.onDirChange(data);
 	      }
-	      this._vel.length = 1;
-	      this.halfPeriodMaxVel = -Infinity;
 	    }
 	  }, {
 	    key: '_stopped',
 	    value: function _stopped() {
+	      // Calculate outputs.
+	      this.frequency = 0;
+	      this.halfPeriodMaxVel = 0;
+
+	      this._lastDirChange = performance.now();
+
 	      if (this.options.onStop) {
 	        this.options.onStop();
 	      }
@@ -1536,7 +1553,7 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 248:
+/***/ 255:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1578,28 +1595,16 @@ webpackJsonp([5],{
 	  _createClass(FistBump, [{
 	    key: '_setupDirectionChangeAlg',
 	    value: function _setupDirectionChangeAlg() {
-	      var lastDirChange = null;
 	      var sound = new _howler.Howl({
 	        urls: ['tap.wav']
 	      });
 	      this.freqCalc = new _toolsDirectionChange2['default']({
 	        minAmplitude: this.config.minAmplitude,
 	        onDirChange: (function (data) {
-	          var timestamp = Date.now();
-	          if (lastDirChange) {
-	            this.freq = 0.5 * 1000 / (timestamp - lastDirChange);
-	            this.maxVel = data.maxVelocity;
-	          }
-	          lastDirChange = timestamp;
 	          if (this.hand && (this.hand.type === 'right' && data.type === _toolsDirectionChange2['default'].LEFT_TO_RIGHT || this.hand.type === 'left' && data.type === _toolsDirectionChange2['default'].RIGHT_TO_LEFT)) {
 	            // Sound effect!
 	            sound.play();
 	          }
-	        }).bind(this),
-	        onStop: (function () {
-	          lastDirChange = Date.now();
-	          this.freq = 0;
-	          this.maxVel = 0;
 	        }).bind(this)
 	      });
 	    }
@@ -1651,6 +1656,8 @@ webpackJsonp([5],{
 	    value: function state_gestureDetected(frame, data) {
 	      this.hand = data.closedHand;
 	      this.freqCalc.addSample(this.hand.palmVelocity[0]);
+	      this.freq = this.freqCalc.frequency;
+	      this.maxVel = this.freqCalc.halfPeriodMaxVel;
 	      this.callback();
 	      return null;
 	    }
@@ -1664,7 +1671,7 @@ webpackJsonp([5],{
 
 /***/ },
 
-/***/ 256:
+/***/ 258:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1699,7 +1706,7 @@ webpackJsonp([5],{
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
 
-	var _gesturesFistBump = __webpack_require__(248);
+	var _gesturesFistBump = __webpack_require__(255);
 
 	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
 
