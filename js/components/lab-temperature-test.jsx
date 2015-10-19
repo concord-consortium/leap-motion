@@ -19,7 +19,7 @@ export default class LabTemperatureTest extends React.Component {
     avg.addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
     this.plotter.showCanvas('gesture-detected');
     this.plotter.plot('max velocity avg', avg.getAvg('maxVel'), {min: 0, max: 1500, precision: 2});
-    this.plotter.plot('frequency', avg.getAvg('newFreq'), {min: 0, max: 6, precision: 2});
+    this.plotter.plot('frequency', avg.getAvg('newFreq'), {min: 0, max: 9, precision: 2});
     this.plotter.update();
   }
 
@@ -52,7 +52,7 @@ LabTemperatureTest.defaultProps = {
     closedGrabStrength: 0.4,
     openGrabStrength: 0.7,
     handTwistTolerance: 0.7,
-    minAmplitude: 5
+    minAmplitude: 20
   }
 };
 

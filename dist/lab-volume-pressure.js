@@ -1408,7 +1408,7 @@ webpackJsonp([6],{
 
 	var DEFAULT_OPTIONS = {
 	  bufferLength: 30, // around 0.5s in practice, as Leap Motion is providing ~60 samples per second
-	  minAmplitude: 10 // mm
+	  minAmplitude: 20
 	};
 
 	var DirectionChange = (function () {
@@ -1417,63 +1417,58 @@ webpackJsonp([6],{
 
 	    this.options = _jquery2['default'].extend({}, DEFAULT_OPTIONS, options);
 	    this._vel = [];
-	    this._pos = [];
+	    this.halfPeriodMaxVel = -Infinity;
 	  }
 
 	  _createClass(DirectionChange, [{
 	    key: 'addSample',
-	    value: function addSample(vel, pos) {
+	    value: function addSample(vel) {
 	      this._vel.unshift(vel);
-	      this._pos.unshift(pos);
 	      if (this._vel.length > this.options.bufferLength) {
 	        this._vel.length = this.options.bufferLength;
-	        this._pos.length = this.options.bufferLength;
 	      }
 	      this._check();
 	    }
 
 	    // We assume that direction has changed when velocity changes its sign and:
-	    //  1. position diff (amplitude) before the sign change is greater than options.minAmplitude
+	    //  max velocity before the sign change is greater than options.minAmplitude
 	    //  AND
-	    //   2a. position diff (amplitude) after the sign change is greater than options.minAmplitude
-	    //   OR
-	    //   2b. position diff (amplitude) after the sign change is smaller than options.minAmplitude AND
-	    //       that lasts for more that 50% of samples (it means that motion has stopped).
+	    //  max velocity after the sign change is greater than options.minAmplitude
 	  }, {
 	    key: '_check',
 	    value: function _check() {
 	      var v = this._vel;
-	      var p = this._pos;
 	      var len = v.length;
 	      var minAmp = this.options.minAmplitude;
 	      var signChangeCount = 0;
-	      var initialPos = p[0];
-	      var initialAmp = 0;
-	      var currentAmp = 0;
-	      var maxAmp = -Infinity;
-	      for (var i = 0; i < len - 1; i++) {
+	      var initialMax = -Infinity;
+	      var currentMax = -Infinity;
+	      var bufferMax = -Infinity;
+	      for (var i = 0; i < len; i++) {
+	        currentMax = Math.max(currentMax, Math.abs(v[i]));
+	        bufferMax = Math.max(bufferMax, currentMax);
 	        // Max velocity within half-period (between direction changes) is provided to options.onDirChange callback.
-	        this._maxVel = Math.max(this._maxVel, Math.abs(v[i]));
-	        currentAmp = Math.abs(initialPos - p[i]);
-	        maxAmp = Math.max(maxAmp, currentAmp);
+	        this.halfPeriodMaxVel = Math.max(this.halfPeriodMaxVel, currentMax);
 	        // Note that if the sign has changed 2 or 4 times, in fact it means it hasn't changed. That's why we test % 2.
-	        if (currentAmp >= minAmp && (initialAmp >= minAmp || i > len / 2) && signChangeCount % 2 === 1) {
+	        if (currentMax >= minAmp && initialMax >= minAmp && signChangeCount % 2 === 1) {
 	          this._directionChanged({
-	            maxVelocity: this._maxVel,
+	            maxVelocity: this.halfPeriodMaxVel,
 	            type: v[i] > 0 ? DirectionChange.RIGHT_TO_LEFT : DirectionChange.LEFT_TO_RIGHT
 	          });
 	          return;
 	        }
-	        if (_Math$sign(v[i]) !== _Math$sign(v[i + 1])) {
-	          if (signChangeCount === 0) {
-	            // Save amplitude before the fist sign change.
-	            initialAmp = currentAmp;
+	        if (i + 1 < len) {
+	          if (_Math$sign(v[i]) !== _Math$sign(v[i + 1])) {
+	            if (signChangeCount === 0) {
+	              // Save the max velocity before the fist sign change.
+	              initialMax = currentMax;
+	            }
+	            signChangeCount += 1;
+	            currentMax = -Infinity;
 	          }
-	          signChangeCount += 1;
-	          initialPos = p[i + 1];
 	        }
 	      }
-	      if (len === this.options.bufferLength && maxAmp < minAmp) {
+	      if (len === this.options.bufferLength && bufferMax < minAmp) {
 	        this._stopped();
 	      }
 	    }
@@ -1483,9 +1478,8 @@ webpackJsonp([6],{
 	      if (this.options.onDirChange) {
 	        this.options.onDirChange(data);
 	      }
-	      this._vel.length = 0;
-	      this._pos.length = 0;
-	      this._maxVel = -Infinity;
+	      this._vel.length = 1;
+	      this.halfPeriodMaxVel = -Infinity;
 	    }
 	  }, {
 	    key: '_stopped',
@@ -1656,8 +1650,7 @@ webpackJsonp([6],{
 	    key: 'state_gestureDetected',
 	    value: function state_gestureDetected(frame, data) {
 	      this.hand = data.closedHand;
-	      _toolsAvg2['default'].addSample('fistXVel', this.hand.palmVelocity[0], 6);
-	      this.freqCalc.addSample(_toolsAvg2['default'].getAvg('fistXVel'), this.hand.palmPosition[0]);
+	      this.freqCalc.addSample(this.hand.palmVelocity[0]);
 	      this.callback();
 	      return null;
 	    }
@@ -2252,11 +2245,11 @@ webpackJsonp([6],{
 	  }, {
 	    key: 'gestureDetected',
 	    value: function gestureDetected() {
-	      _toolsAvg2['default'].addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
-	      var maxVelAvg = _toolsAvg2['default'].getAvg('maxVel') || 0;
-	      this.volume = Math.max(MIN_VOL, Math.min(MAX_VOL, MAX_VOL - this.props.volumeMult * maxVelAvg));
+	      _toolsAvg2['default'].addSample('freq', this.fistBump.freq, Math.round(this.props.freqAvg));
+	      var freq = _toolsAvg2['default'].getAvg('freq');
+	      this.volume = Math.max(MIN_VOL, Math.min(MAX_VOL, MAX_VOL - this.props.volumeMult * freq));
 	      this.plotter.showCanvas('gesture-detected');
-	      this.plotter.plot('max velocity avg', maxVelAvg, { min: 0, max: 1500, precision: 2 });
+	      this.plotter.plot('frequency', freq, { min: 0, max: 9, precision: 2 });
 	      this.plotter.update();
 	    }
 	  }, {
@@ -2303,13 +2296,13 @@ webpackJsonp([6],{
 	exports['default'] = LabVolumePressure;
 
 	LabVolumePressure.defaultProps = {
-	  volumeMult: 0.0009,
+	  volumeMult: 0.11,
 	  maxVelAvg: 120,
 	  handBumpConfig: {
 	    closedGrabStrength: 0.4,
 	    openGrabStrength: 0.7,
 	    handTwistTolerance: 0.7,
-	    minAmplitude: 5
+	    minAmplitude: 20
 	  }
 	};
 

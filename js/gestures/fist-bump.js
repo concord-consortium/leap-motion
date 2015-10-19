@@ -84,8 +84,7 @@ export default class FistBump {
   
   state_gestureDetected(frame, data) {
     this.hand = data.closedHand;
-    avg.addSample('fistXVel', this.hand.palmVelocity[0], 6);
-    this.freqCalc.addSample(avg.getAvg('fistXVel'), this.hand.palmPosition[0]);
+    this.freqCalc.addSample(this.hand.palmVelocity[0]);
     this.callback();
     return null;
   }

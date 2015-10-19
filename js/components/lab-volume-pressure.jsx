@@ -36,11 +36,11 @@ export default class LabVolumePressure extends React.Component {
   }
 
   gestureDetected() {
-    avg.addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
-    let maxVelAvg = avg.getAvg('maxVel') || 0;
-    this.volume = Math.max(MIN_VOL, Math.min(MAX_VOL, MAX_VOL - this.props.volumeMult * maxVelAvg));
+    avg.addSample('freq', this.fistBump.freq, Math.round(this.props.freqAvg));
+    let freq = avg.getAvg('freq');
+    this.volume = Math.max(MIN_VOL, Math.min(MAX_VOL, MAX_VOL - this.props.volumeMult * freq));
     this.plotter.showCanvas('gesture-detected');
-    this.plotter.plot('max velocity avg', maxVelAvg, {min: 0, max: 1500, precision: 2});
+    this.plotter.plot('frequency', freq, {min: 0, max: 9, precision: 2});
     this.plotter.update();
   }
 
@@ -72,13 +72,13 @@ export default class LabVolumePressure extends React.Component {
 }
 
 LabVolumePressure.defaultProps = {
-  volumeMult: 0.0009,
+  volumeMult: 0.11,
   maxVelAvg: 120,
   handBumpConfig: {
     closedGrabStrength: 0.4,
     openGrabStrength: 0.7,
     handTwistTolerance: 0.7,
-    minAmplitude: 5
+    minAmplitude: 20
   }
 };
 

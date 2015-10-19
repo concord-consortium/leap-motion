@@ -32,13 +32,13 @@ export default class LabTemperatureDelta extends React.Component {
   }
 
   gestureDetected() {
-    avg.addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
-    let maxVelAvg = avg.getAvg('maxVel');
+    avg.addSample('freq', this.fistBump.freq, Math.round(this.props.freqAvg));
+    let freq = avg.getAvg('freq');
     let newTemp = null;
-    if (maxVelAvg > this.props.tempIncreaseVel) {
+    if (freq > this.props.tempIncreaseFreq) {
       newTemp = Math.min(5000, this.labTemperature + 7);
       this.setState({tempChange: 'increasing'});
-    } else if (maxVelAvg < this.props.tempDecreaseVel) {
+    } else if (freq < this.props.tempDecreaseFreq) {
       newTemp = Math.max(0, this.labTemperature - 7);
       this.setState({tempChange: 'decreasing'});
     } else {
@@ -49,7 +49,7 @@ export default class LabTemperatureDelta extends React.Component {
       this.labTemperature = newTemp;
     }
     this.plotter.showCanvas('gesture-detected');
-    this.plotter.plot('max velocity avg', maxVelAvg, {min: 0, max: 1500, precision: 2});
+    this.plotter.plot('frequency', freq, {min: 0, max: 9, precision: 2});
     this.plotter.update();
   }
 
@@ -67,15 +67,15 @@ export default class LabTemperatureDelta extends React.Component {
         if (this.state.tempChange === 'none')
           return (
             <p>
-              Move your closed fist towards open palm and back rapidly to increase the temperature (velocity
-              > { Math.round(this.props.tempIncreaseVel) }). Do it slowly to decrease the temperature
-              (velocity &lt; { Math.round(this.props.tempDecreaseVel) }).
+              Move your closed fist towards open palm and back rapidly to increase the temperature (frequency
+              > { Math.round(this.props.tempIncreaseFreq) }). Do it slowly to decrease the temperature
+              (frequency &lt; { Math.round(this.props.tempDecreaseFreq) }).
             </p>
           );
         if (this.state.tempChange === 'increasing')
-          return 'Temperature is increasing (velocity > ' + Math.round(this.props.tempIncreaseVel) + ').';
+          return 'Temperature is increasing (frequency > ' + Math.round(this.props.tempIncreaseFreq) + ').';
         if (this.state.tempChange === 'decreasing')
-          return 'Temperature is decreasing (velocity < ' + Math.round(this.props.tempDecreaseVel) + ').';
+          return 'Temperature is decreasing (frequency < ' + Math.round(this.props.tempDecreaseFreq) + ').';
     }
   }
 
@@ -92,14 +92,14 @@ export default class LabTemperatureDelta extends React.Component {
 }
 
 LabTemperatureDelta.defaultProps = {
-  tempIncreaseVel: 600,
-  tempDecreaseVel: 400,
+  tempIncreaseFreq: 4,
+  tempDecreaseFreq: 2,
   maxVelAvg: 120,
   handBumpConfig: {
     closedGrabStrength: 0.4,
     openGrabStrength: 0.7,
     handTwistTolerance: 0.7,
-    minAmplitude: 5
+    minAmplitude: 20
   }
 };
 

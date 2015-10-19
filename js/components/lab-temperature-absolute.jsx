@@ -24,11 +24,12 @@ export default class LabTemperatureAbsolute extends React.Component {
   }
 
   gestureDetected() {
-    avg.addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
-    let maxVelAvg = avg.getAvg('maxVel');
-    this.labPhone.post('set', { name: 'targetTemperature', value: maxVelAvg * this.props.tempMult });
+    avg.addSample('freq', this.fistBump.freq, Math.round(this.props.freqAvg));
+    let freq = avg.getAvg('freq');
+    this.labPhone.post('set', { name: 'targetTemperature', value: freq * this.props.tempMult });
     this.plotter.showCanvas('gesture-detected');
-    this.plotter.plot('max velocity avg', maxVelAvg, {min: 0, max: 1500, precision: 2});
+    this.plotter.plot('frequency', freq, {min: 0, max: 9, precision: 2});
+    this.plotter.plot('velocity', this.fistBump.hand.palmVelocity[0]);
     this.plotter.update();
   }
 
@@ -60,13 +61,13 @@ export default class LabTemperatureAbsolute extends React.Component {
 }
 
 LabTemperatureAbsolute.defaultProps = {
-  tempMult: 4.4, // max velocity avg * temp mult = new target temperature
-  maxVelAvg: 120,
+  tempMult: 850, // freq * temp mult = new target temperature
+  freqAvg: 120,
   handBumpConfig: {
     closedGrabStrength: 0.4,
     openGrabStrength: 0.7,
     handTwistTolerance: 0.7,
-    minAmplitude: 5
+    minAmplitude: 20
   }
 };
 

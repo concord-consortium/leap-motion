@@ -29,18 +29,18 @@ export default class LabPressureEquilibrium extends React.Component {
   }
 
   fistBumpDetected() {
-    let maxVelAvg = 0;
+    let freq = 0;
     if (this.fistBump.hand.type === 'left') {
-      avg.addSample('maxVelLeft', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
-      maxVelAvg = avg.getAvg('maxVelLeft');
-      this.labPhone.post('set', { name: 'purpleAtomTemperature', value: 1 + maxVelAvg * this.props.tempMult });
+      avg.addSample('freqLeft', this.fistBump.freq, Math.round(this.props.freqAvg));
+      freq = avg.getAvg('freqLeft');
+      this.labPhone.post('set', { name: 'purpleAtomTemperature', value: 1 + freq * this.props.tempMult });
     } else {
-      avg.addSample('maxVelRight', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
-      maxVelAvg = avg.getAvg('maxVelRight');
-      this.labPhone.post('set', { name: 'yellowAtomTemperature', value: 1 + maxVelAvg * this.props.tempMult });
+      avg.addSample('freqRight', this.fistBump.freq, Math.round(this.props.freqAvg));
+      freq = avg.getAvg('freqRight');
+      this.labPhone.post('set', { name: 'yellowAtomTemperature', value: 1 + freq * this.props.tempMult });
     }
    this.plotter.showCanvas('gesture-detected');
-   this.plotter.plot('max velocity avg', maxVelAvg, {min: 0, max: 1500, precision: 2});
+   this.plotter.plot('frequency', freq, {min: 0, max: 9, precision: 2});
    this.plotter.plot('velocity', this.fistBump.hand.palmVelocity[0]);
    this.plotter.update();
   }
@@ -96,13 +96,13 @@ export default class LabPressureEquilibrium extends React.Component {
 }
 
 LabPressureEquilibrium.defaultProps = {
-  tempMult: 6, // max velocity avg * temp mult = new target temperature
-  maxVelAvg: 120,
+  tempMult: 850, // freq * temp mult = new target temperature
+  freqAvg: 120,
   handBumpConfig: {
     closedGrabStrength: 0.4,
     openGrabStrength: 0.7,
     handTwistTolerance: 0.7,
-    minAmplitude: 5
+    minAmplitude: 20
   },
   addRmAtomConfig: {
     closedGrabStrength: 0.8,
