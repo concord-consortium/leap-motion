@@ -1402,9 +1402,9 @@ webpackJsonp([7],{
 	  value: true
 	});
 
-	var _jquery = __webpack_require__(226);
+	var _extend = __webpack_require__(226);
 
-	var _jquery2 = _interopRequireDefault(_jquery);
+	var _extend2 = _interopRequireDefault(_extend);
 
 	var DEFAULT_OPTIONS = {
 	  bufferLength: 30, // around 0.5s in practice, as Leap Motion is providing ~60 samples per second
@@ -1415,7 +1415,7 @@ webpackJsonp([7],{
 	  function DirectionChange(options) {
 	    _classCallCheck(this, DirectionChange);
 
-	    this.options = _jquery2['default'].extend({}, DEFAULT_OPTIONS, options);
+	    this.options = (0, _extend2['default'])({}, DEFAULT_OPTIONS, options);
 	    this._vel = [];
 	    this._halfPeriodMaxVel = -Infinity;
 	    this._lastDirChange = null;
@@ -1480,7 +1480,8 @@ webpackJsonp([7],{
 	      var timestamp = performance.now();
 	      if (this._lastDirChange) {
 	        // Calculate outputs.
-	        this.frequency = 0.5 * 1000 / (timestamp - this._lastDirChange);
+	        // Limit frequency to 10Hz, bigger values aren't likely and are probably caused by erroneous data.
+	        this.frequency = Math.min(10, 0.5 * 1000 / (timestamp - this._lastDirChange));
 	        this.halfPeriodMaxVel = this._halfPeriodMaxVel;
 	      }
 	      this._lastDirChange = timestamp;
@@ -1550,6 +1551,26 @@ webpackJsonp([7],{
 	module.exports = Math.sign || function sign(x){
 	  return (x = +x) == 0 || x != x ? x : x < 0 ? -1 : 1;
 	};
+
+/***/ },
+
+/***/ 226:
+/***/ function(module, exports) {
+
+	// Similar to jQuery.extend.
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports["default"] = extend;
+
+	function extend() {
+	  for (var i = 1; i < arguments.length; i++) for (var key in arguments[i]) if (arguments[i].hasOwnProperty(key)) arguments[0][key] = arguments[i][key];
+	  return arguments[0];
+	}
+
+	module.exports = exports["default"];
 
 /***/ },
 
@@ -2073,17 +2094,35 @@ webpackJsonp([7],{
 
 	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
 
+	var _toolsExtend = __webpack_require__(226);
+
+	var _toolsExtend2 = _interopRequireDefault(_toolsExtend);
+
+	var DEFAULT_OPTIONS = {
+	  closedGrabStrength: 0.4,
+	  openGrabStrength: 0.7,
+	  handTwistTolerance: 0.7,
+	  minAmplitude: 20,
+	  allowedHand: {
+	    left: true,
+	    right: true
+	  },
+	  maxKnockDist: 150
+	};
+
 	var FistBump = (function () {
 	  function FistBump(config, callback, plotter) {
 	    _classCallCheck(this, FistBump);
 
-	    this.config = config;
+	    this.config = (0, _toolsExtend2['default'])({}, DEFAULT_OPTIONS, config);
 	    this.callback = callback;
 	    this.plotter = plotter;
 	    // Outputs:
 	    this.freq = 0;
 	    this.maxVel = 0;
 	    this.hand = null;
+	    this.openHand = null;
+	    this.active = false;
 	    this._setupDirectionChangeAlg();
 	  }
 
@@ -2097,8 +2136,13 @@ webpackJsonp([7],{
 	        minAmplitude: this.config.minAmplitude,
 	        onDirChange: (function (data) {
 	          if (this.hand && (this.hand.type === 'right' && data.type === _toolsDirectionChange2['default'].LEFT_TO_RIGHT || this.hand.type === 'left' && data.type === _toolsDirectionChange2['default'].RIGHT_TO_LEFT)) {
-	            // Sound effect!
-	            sound.play();
+	            if (this.handsWithinKnockDistance()) {
+	              // Sound effect!
+	              sound.play();
+	              this.active = true;
+	            } else {
+	              this.active = false;
+	            }
 	          }
 	        }).bind(this)
 	      });
@@ -2108,6 +2152,11 @@ webpackJsonp([7],{
 	    value: function nextLeapState(stateId, frame, data) {
 	      var stateFuncName = 'state_' + stateId;
 	      return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
+	    }
+	  }, {
+	    key: 'handsWithinKnockDistance',
+	    value: function handsWithinKnockDistance() {
+	      return Math.abs(this.hand.palmPosition[0] - this.openHand.palmPosition[0]) < this.config.maxKnockDist;
 	    }
 
 	    // State definitions:
@@ -2134,9 +2183,9 @@ webpackJsonp([7],{
 	        }
 	        return false;
 	      }
-	      if (condition(0, 1)) {
+	      if (condition(0, 1) && this.config.allowedHand[frame.hands[0].type]) {
 	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[0], openHand: frame.hands[1] } };
-	      } else if (condition(1, 0)) {
+	      } else if (condition(1, 0) && this.config.allowedHand[frame.hands[1].type]) {
 	        return { stateId: 'gestureDetected', data: { closedHand: frame.hands[1], openHand: frame.hands[0] } };
 	      } else {
 	        this.plotter.showCanvas('two-hands-detected');
@@ -2150,10 +2199,13 @@ webpackJsonp([7],{
 	    key: 'state_gestureDetected',
 	    value: function state_gestureDetected(frame, data) {
 	      this.hand = data.closedHand;
+	      this.openHand = data.openHand;
 	      this.freqCalc.addSample(this.hand.palmVelocity[0]);
 	      this.freq = this.freqCalc.frequency;
 	      this.maxVel = this.freqCalc.halfPeriodMaxVel;
-	      this.callback();
+	      if (this.active) {
+	        this.callback();
+	      }
 	      return null;
 	    }
 	  }]);
@@ -2271,7 +2323,7 @@ webpackJsonp([7],{
 	        case 'initial':
 	          return 'Please keep your hands steady above the Leap device.';
 	        case 'twoHandsDetected':
-	          return 'Close one fist and twist the other hand.';
+	          return 'Close left fist and twist the right hand.';
 	        case 'gestureDetected':
 	          return 'Move your closed fist towards open palm and back rapidly.';
 	      }
@@ -2306,10 +2358,11 @@ webpackJsonp([7],{
 	  volumeMult: 0.11,
 	  maxVelAvg: 120,
 	  handBumpConfig: {
-	    closedGrabStrength: 0.4,
-	    openGrabStrength: 0.7,
-	    handTwistTolerance: 0.7,
-	    minAmplitude: 20
+	    // Limit bumping only to the left hand, as wall is always on the right side.
+	    allowedHand: {
+	      left: true,
+	      right: false
+	    }
 	  }
 	};
 

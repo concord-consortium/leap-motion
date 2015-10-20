@@ -1,4 +1,4 @@
-import $ from 'jquery';
+import extend from './extend';
 
 const DEFAULT_OPTIONS = {
   bufferLength: 30, // around 0.5s in practice, as Leap Motion is providing ~60 samples per second
@@ -7,7 +7,7 @@ const DEFAULT_OPTIONS = {
 
 class DirectionChange {
   constructor(options) {
-    this.options = $.extend({}, DEFAULT_OPTIONS, options);
+    this.options = extend({}, DEFAULT_OPTIONS, options);
     this._vel = [];
     this._halfPeriodMaxVel = -Infinity;
     this._lastDirChange = null;
@@ -67,7 +67,8 @@ class DirectionChange {
     let timestamp = performance.now();
     if (this._lastDirChange) {
       // Calculate outputs.
-      this.frequency = 0.5 * 1000 / (timestamp - this._lastDirChange);
+      // Limit frequency to 10Hz, bigger values aren't likely and are probably caused by erroneous data.
+      this.frequency = Math.min(10, 0.5 * 1000 / (timestamp - this._lastDirChange));
       this.halfPeriodMaxVel = this._halfPeriodMaxVel;
     }
     this._lastDirChange = timestamp;

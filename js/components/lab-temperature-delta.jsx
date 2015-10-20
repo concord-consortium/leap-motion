@@ -96,10 +96,7 @@ LabTemperatureDelta.defaultProps = {
   tempDecreaseFreq: 2,
   maxVelAvg: 120,
   handBumpConfig: {
-    closedGrabStrength: 0.4,
-    openGrabStrength: 0.7,
-    handTwistTolerance: 0.7,
-    minAmplitude: 20
+    // use defaults
   }
 };
 

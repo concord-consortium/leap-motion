@@ -1,16 +1,31 @@
 import avg from '../tools/avg';
 import {Howl} from 'howler';
 import DirectionChange from '../tools/direction-change';
+import extend from '../tools/extend';
+
+const DEFAULT_OPTIONS = {
+  closedGrabStrength: 0.4,
+  openGrabStrength: 0.7,
+  handTwistTolerance: 0.7,
+  minAmplitude: 20,
+  allowedHand: {
+    left: true,
+    right: true
+  },
+  maxKnockDist: 150
+};
 
 export default class FistBump {
   constructor(config, callback, plotter) {
-    this.config = config;
+    this.config = extend({}, DEFAULT_OPTIONS, config);
     this.callback = callback;
     this.plotter = plotter;
     // Outputs:
     this.freq = 0;
     this.maxVel = 0;
     this.hand = null;
+    this.openHand = null;
+    this.active = false;
     this._setupDirectionChangeAlg();
   }
 
@@ -23,8 +38,13 @@ export default class FistBump {
       onDirChange: function (data) {
         if (this.hand && ((this.hand.type === 'right' && data.type === DirectionChange.LEFT_TO_RIGHT) ||
                           (this.hand.type === 'left' && data.type === DirectionChange.RIGHT_TO_LEFT))) {
-          // Sound effect!
-          sound.play();
+          if (this.handsWithinKnockDistance()) {
+            // Sound effect!
+            sound.play();
+            this.active = true;
+          } else {
+            this.active = false;
+          }
         }
       }.bind(this)
     });
@@ -33,6 +53,10 @@ export default class FistBump {
   nextLeapState(stateId, frame, data) {
     let stateFuncName = 'state_' + stateId;
     return this[stateFuncName] ? this[stateFuncName](frame, data) : null;
+  }
+
+  handsWithinKnockDistance() {
+    return Math.abs(this.hand.palmPosition[0] - this.openHand.palmPosition[0]) < this.config.maxKnockDist;
   }
 
   // State definitions:
@@ -57,9 +81,9 @@ export default class FistBump {
       }
       return false;
     }
-    if (condition(0, 1)) {
+    if (condition(0, 1) && this.config.allowedHand[frame.hands[0].type]) {
       return {stateId: 'gestureDetected', data: {closedHand: frame.hands[0], openHand: frame.hands[1]}};
-    } else if (condition(1, 0)) {
+    } else if (condition(1, 0) && this.config.allowedHand[frame.hands[1].type]) {
       return {stateId: 'gestureDetected', data: {closedHand: frame.hands[1], openHand: frame.hands[0]}};
     } else {
       this.plotter.showCanvas('two-hands-detected');
@@ -72,10 +96,13 @@ export default class FistBump {
   
   state_gestureDetected(frame, data) {
     this.hand = data.closedHand;
+    this.openHand = data.openHand;
     this.freqCalc.addSample(this.hand.palmVelocity[0]);
     this.freq = this.freqCalc.frequency;
     this.maxVel = this.freqCalc.halfPeriodMaxVel;
-    this.callback();
+    if (this.active) {
+      this.callback();
+    }
     return null;
   }
 }

@@ -14,6 +14,10 @@ export default class LabTemperatureTest extends React.Component {
     return this.refs.leapInfo.plotter;
   }
 
+  handleGestureConfigChange(event) {
+    this.fistBump.config[event.target.name] = event.target.value;
+  }
+
   gestureDetected() {
     avg.addSample('newFreq', this.fistBump.freq, Math.round(this.props.freqAvg));
     avg.addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
@@ -40,7 +44,14 @@ export default class LabTemperatureTest extends React.Component {
 
   render() {
     return (
-      <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
+      <div>
+        <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
+        <p>
+          Max distance between hands during knocking: <input type='text' name='maxKnockDist'
+                                                             defaultValue={this.props.handBumpConfig.maxKnockDist}
+                                                             onChange={this.handleGestureConfigChange.bind(this)}/>
+        </p>
+      </div>
     )
   }
 }
@@ -49,10 +60,7 @@ LabTemperatureTest.defaultProps = {
   maxVelAvg: 120,
   freqAvg: 120,
   handBumpConfig: {
-    closedGrabStrength: 0.4,
-    openGrabStrength: 0.7,
-    handTwistTolerance: 0.7,
-    minAmplitude: 20
+    maxKnockDist: 150
   }
 };
 

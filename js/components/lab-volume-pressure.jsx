@@ -53,7 +53,7 @@ export default class LabVolumePressure extends React.Component {
       case 'initial':
         return 'Please keep your hands steady above the Leap device.';
       case 'twoHandsDetected':
-        return 'Close one fist and twist the other hand.';
+        return 'Close left fist and twist the right hand.';
       case 'gestureDetected':
         return 'Move your closed fist towards open palm and back rapidly.';
     }
@@ -75,10 +75,11 @@ LabVolumePressure.defaultProps = {
   volumeMult: 0.11,
   maxVelAvg: 120,
   handBumpConfig: {
-    closedGrabStrength: 0.4,
-    openGrabStrength: 0.7,
-    handTwistTolerance: 0.7,
-    minAmplitude: 20
+    // Limit bumping only to the left hand, as wall is always on the right side.
+    allowedHand: {
+      left: true,
+      right: false
+    }
   }
 };
 

@@ -99,10 +99,7 @@ LabPressureEquilibrium.defaultProps = {
   tempMult: 850, // freq * temp mult = new target temperature
   freqAvg: 120,
   handBumpConfig: {
-    closedGrabStrength: 0.4,
-    openGrabStrength: 0.7,
-    handTwistTolerance: 0.7,
-    minAmplitude: 20
+    // use defaults
   },
   addRmAtomConfig: {
     closedGrabStrength: 0.8,
