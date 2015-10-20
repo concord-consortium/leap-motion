@@ -1614,6 +1614,7 @@ webpackJsonp([2],{
 	    value: function componentDidMount() {
 	      this.fistShake = new _gesturesFistShake2['default'](this.props.handShakeConfig, this.gestureDetected.bind(this), this.plotter);
 	      this.setupLabCommunication();
+	      this.handType = null;
 	    }
 	  }, {
 	    key: 'setupLabCommunication',
@@ -1627,16 +1628,25 @@ webpackJsonp([2],{
 	    key: 'componentDidUpdate',
 	    value: function componentDidUpdate(prevProps, prevState) {
 	      if (this.state.leapState === 'gestureDetected') {
-	        this.labPhone.post('set', { name: 'markedBlock', value: this.fistShake.hand.type });
+	        this.labPhone.post('set', { name: 'markedBlock', value: this.handType });
 	      } else {
 	        this.labPhone.post('set', { name: 'markedBlock', value: 'none' });
+	        this.handType = null;
 	      }
 	    }
 	  }, {
 	    key: 'gestureDetected',
 	    value: function gestureDetected() {
+	      if (!this.handType) {
+	        // Save hand type at the beginning of gesture. Leap seems to be struggling with hand type
+	        // detection once fist is closed and sometimes erroneously switches reported type.
+	        // At this point hand type should be still reliable and we make sure that it'll be consistent
+	        // while user is shaking his hand.
+	        this.handType = this.fistShake.hand.type;
+	      }
+
 	      var freq = undefined;
-	      if (this.fistShake.hand.type === 'left') {
+	      if (this.handType === 'left') {
 	        _toolsAvg2['default'].addSample('freqLeft', this.fistShake.freq, Math.round(this.props.freqAvg));
 	        freq = _toolsAvg2['default'].getAvg('freqLeft');
 	        this.labPhone.post('set', { name: 'leftAtomsTargetTemp', value: freq * this.props.tempMult });

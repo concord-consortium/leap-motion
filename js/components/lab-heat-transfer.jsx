@@ -10,6 +10,7 @@ export default class LabHeatTransfer extends React.Component {
   componentDidMount() {
     this.fistShake = new FistShake(this.props.handShakeConfig, this.gestureDetected.bind(this), this.plotter);
     this.setupLabCommunication();
+    this.handType = null;
   }
 
   get plotter() {
@@ -25,15 +26,24 @@ export default class LabHeatTransfer extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.state.leapState === 'gestureDetected') {
-      this.labPhone.post('set', { name: 'markedBlock', value: this.fistShake.hand.type });
+      this.labPhone.post('set', { name: 'markedBlock', value: this.handType });
     } else {
       this.labPhone.post('set', { name: 'markedBlock', value: 'none' });
+      this.handType = null;
     }
   }
 
   gestureDetected() {
+    if (!this.handType) {
+      // Save hand type at the beginning of gesture. Leap seems to be struggling with hand type
+      // detection once fist is closed and sometimes erroneously switches reported type.
+      // At this point hand type should be still reliable and we make sure that it'll be consistent
+      // while user is shaking his hand.
+      this.handType = this.fistShake.hand.type;
+    }
+
     let freq;
-    if (this.fistShake.hand.type === 'left') {
+    if (this.handType === 'left') {
       avg.addSample('freqLeft', this.fistShake.freq, Math.round(this.props.freqAvg));
       freq = avg.getAvg('freqLeft');
       this.labPhone.post('set', { name: 'leftAtomsTargetTemp', value: freq * this.props.tempMult });
