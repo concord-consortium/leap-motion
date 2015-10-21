@@ -591,7 +591,9 @@ webpackJsonp([8],{
 	        case 'initial':
 	          return 'Please keep you hand (left or right) steady above the Leap device.';
 	        case 'oneHandDetected':
-	          return 'One hand detected, you can rotate it now.';
+	          return 'Please keep you hand (left or right) steady above the Leap device.';
+	        case 'gestureDetected':
+	          return 'Rotate your hand to set the sun angle.';
 	      }
 	    }
 	  }, {
@@ -623,10 +625,14 @@ webpackJsonp([8],{
 
 	_reactMixin2['default'].onClass(SeasonsSunrayAngle, _mixinsLeapStateHandling2['default']);
 
-	// Logic related to Seasons model:
+	// Logic related to Seasons model.
+	// IMPORTANT! Note that words "winter", "summer", "fall" and "spring" are used
+	// in the context of the northern hemisphere! It let's us unambiguously define time of the year.
+	// Some method names may initially look strange, e.g. "summerPolarNight" or "winterPolarNight".
 
 	var ANGLE_THRESHOLD = 20;
-	var DAY_THRESHOLD = 25;
+	var MIN_ANGLE_DIFF = 0.1;
+	var POLAR_NIGHT_ANIM_SPEED = 0.9;
 	var SUNRAY_HIGHLIGHT_COLOR = 'orange';
 	var SUNRAY_ERROR_COLOR = 'red';
 	var EARTH_TILT = 0.41;
@@ -705,53 +711,132 @@ webpackJsonp([8],{
 	  }, {
 	    key: 'updateTargetAngle',
 	    value: function updateTargetAngle(newAngle) {
-	      if (Math.abs(newAngle - this.targetAngle) < 0.1) return;
-	      var maxAngle = this.sunrayAngle(SUMMER_SOLSTICE);
-	      var minAngle = this.sunrayAngle(WINTER_SOLSTICE);
-	      if (newAngle >= maxAngle && !this.outOfRange) {
-	        this.prevDay = this.seasonsState.day;
-	        this.outOfRange = true;
-	        this.seasonsState.day = SUMMER_SOLSTICE;
-	        this.targetAngle = maxAngle;
-	        this.phone.post('setSimState', { day: SUMMER_SOLSTICE, sunrayColor: SUNRAY_ERROR_COLOR });
-	        return;
-	      } else if (newAngle <= minAngle && !this.outOfRange) {
-	        this.prevDay = this.seasonsState.day;
-	        this.outOfRange = true;
-	        this.seasonsState.day = WINTER_SOLSTICE;
-	        this.targetAngle = minAngle;
-	        this.phone.post('setSimState', { day: WINTER_SOLSTICE, sunrayColor: SUNRAY_ERROR_COLOR });
-	        return;
-	      } else if (newAngle >= maxAngle || newAngle <= minAngle) {
+	      // Handle "winter" polar night special case.
+	      if (newAngle === 0 && this.targetAngle === 0) {
+	        return this.winterPolarNightHandler();
+	      }
+	      // Handle "summer" polar night special case.
+	      if (newAngle === 180 && this.targetAngle === 180) {
+	        return this.summerPolarNightHandler();
+	      }
+	      if (Math.abs(newAngle - this.targetAngle) < MIN_ANGLE_DIFF) {
+	        // Do nothing, user probably is trying to keep his hand still.
 	        return;
 	      }
+	      // Limit angles to [0, 180] range.
+	      var maxAngle = Math.min(180, this.sunrayAngle(SUMMER_SOLSTICE));
+	      var minAngle = Math.max(0, this.sunrayAngle(WINTER_SOLSTICE));
+	      if (newAngle >= maxAngle - MIN_ANGLE_DIFF && !this.outOfRange) {
+	        return this.summerSolsticeReachedHandler(maxAngle);
+	      }
+	      if (newAngle <= minAngle + MIN_ANGLE_DIFF && !this.outOfRange) {
+	        return this.winterSolsticeReachedHandler(minAngle);
+	      }
+	      if (newAngle >= maxAngle || newAngle <= minAngle) {
+	        // Do nothing, summer/winterSolsticeReachedHandler has been already called (as .outOfRange is set to true).
+	        // Wait till user changes angle.
+	        return;
+	      }
+	      // Now we are sure that angle is correct (between min and max allowed angle for given latitude).
 	      this.outOfRange = false;
 	      var newDay = this.angleToDay(newAngle);
 	      var currentDay = this.seasonsState.day;
 	      if (currentDay === SUMMER_SOLSTICE) {
-	        if (this.prevDay > SUMMER_SOLSTICE) {
+	        // Special case - we're at summer solstice and need to change direction.
+	        if (this.summerOrFall(this.prevDay)) {
 	          // Go backwards.
-	          newDay = newDay.day1;
+	          newDay = newDay.inWinterOrSpring;
 	        } else {
 	          // Go forward.
-	          newDay = newDay.day2;
+	          newDay = newDay.inSummerOrFall;
 	        }
 	      } else if (currentDay === WINTER_SOLSTICE) {
-	        if (this.prevDay > WINTER_SOLSTICE || this.prevDay < SUMMER_SOLSTICE) {
-	          // Go backwards.
-	          newDay = newDay.day2;
-	        } else {
+	        // Special case - we're at winter solstice and need to change direction.
+	        if (this.summerOrFall(this.prevDay)) {
 	          // Go forward.
-	          newDay = newDay.day1;
+	          newDay = newDay.inWinterOrSpring;
+	        } else {
+	          // Go backwards.
+	          newDay = newDay.inSummerOrFall;
 	        }
-	      } else if (currentDay > SUMMER_SOLSTICE && currentDay < WINTER_SOLSTICE) {
-	        newDay = newDay.day2;
+	      } else if (this.summerOrFall(currentDay)) {
+	        newDay = newDay.inSummerOrFall;
 	      } else {
-	        newDay = newDay.day1;
+	        newDay = newDay.inWinterOrSpring;
 	      }
 	      this.phone.post('setSimState', { day: newDay, sunrayColor: SUNRAY_HIGHLIGHT_COLOR });
 	      this.seasonsState.day = newDay;
 	      this.targetAngle = newAngle;
+	    }
+
+	    // Just increase / decrease day number. User will see animation.
+	  }, {
+	    key: 'summerPolarNightHandler',
+	    value: function summerPolarNightHandler() {
+	      var diff = this.summerOrFall(this.prevDay) ? -POLAR_NIGHT_ANIM_SPEED : POLAR_NIGHT_ANIM_SPEED;
+	      this.seasonsState.day = (this.seasonsState.day + diff + 365) % 365;
+	      this.targetAngle = Math.min(180, this.sunrayAngle(this.seasonsState.day));
+	      this.phone.post('setSimState', { day: this.seasonsState.day });
+	    }
+
+	    // Just increase / decrease day number. User will see animation.
+	  }, {
+	    key: 'winterPolarNightHandler',
+	    value: function winterPolarNightHandler() {
+	      var diff = this.summerOrFall(this.prevDay) ? POLAR_NIGHT_ANIM_SPEED : -POLAR_NIGHT_ANIM_SPEED;
+	      this.seasonsState.day = (this.seasonsState.day + diff + 365) % 365;
+	      this.targetAngle = Math.max(0, this.sunrayAngle(this.seasonsState.day));
+	      this.phone.post('setSimState', { day: this.seasonsState.day });
+	    }
+
+	    // Called when user defines angle which is very close to summer solstice sunray angle.
+	  }, {
+	    key: 'summerSolsticeReachedHandler',
+	    value: function summerSolsticeReachedHandler(maxAngle) {
+	      this.prevDay = this.seasonsState.day;
+	      this.outOfRange = true;
+	      this.seasonsState.day = SUMMER_SOLSTICE;
+	      this.targetAngle = maxAngle;
+	      if (!this.summerPolarNight()) {
+	        this.seasonsState.day = SUMMER_SOLSTICE;
+	      } else {
+	        var newDay = this.angleToDay(180);
+	        // Set the first day which has angle equal to 180.
+	        this.seasonsState.day = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
+	      }
+	      this.phone.post('setSimState', { day: this.seasonsState.day, sunrayColor: SUNRAY_ERROR_COLOR });
+	    }
+
+	    // Called when user defines angle which is very close to winter solstice sunray angle.
+	  }, {
+	    key: 'winterSolsticeReachedHandler',
+	    value: function winterSolsticeReachedHandler(minAngle) {
+	      this.prevDay = this.seasonsState.day;
+	      this.outOfRange = true;
+	      this.targetAngle = minAngle;
+	      if (!this.winterPolarNight()) {
+	        this.seasonsState.day = WINTER_SOLSTICE;
+	      } else {
+	        var newDay = this.angleToDay(0);
+	        // Set the first day which has angle equal to 0.
+	        this.seasonsState.day = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
+	      }
+	      this.phone.post('setSimState', { day: this.seasonsState.day, sunrayColor: SUNRAY_ERROR_COLOR });
+	    }
+	  }, {
+	    key: 'summerOrFall',
+	    value: function summerOrFall(day) {
+	      return day > SUMMER_SOLSTICE && day < WINTER_SOLSTICE;
+	    }
+	  }, {
+	    key: 'winterPolarNight',
+	    value: function winterPolarNight() {
+	      return this.sunrayAngle(WINTER_SOLSTICE) < 0;
+	    }
+	  }, {
+	    key: 'summerPolarNight',
+	    value: function summerPolarNight() {
+	      return this.sunrayAngle(SUMMER_SOLSTICE) > 180;
 	    }
 
 	    // WARNING: both functions are strictly related to logic in GRASP Seasons model.
@@ -769,23 +854,24 @@ webpackJsonp([8],{
 	      var effectiveTiltDegrees = -Math.cos(tiltAxisZRadians) * orbitalTiltDegrees;
 	      return 90 - (this.seasonsState.lat + effectiveTiltDegrees);
 	    }
+
+	    // Returns two day numbers when the sun shines at given angle.
+	    // IMPORTANT:
+	    // Results consists of two days: {inWinterOrSpring: <...>, inSummerOrFall: <...>}
+	    // .inWinterOrSpring is always between WINTER_SOLSTICE and SUMMER_SOLSTICE (northern winter and spring).
+	    // .inSummerOrFall is always between SUMMER_SOLSTICE and WINTER_SOLSTICE (northern summer and fall).
 	  }, {
 	    key: 'angleToDay',
 	    value: function angleToDay(angle) {
-	      // Inverse sunrayAngle function.
-	      // If you write out math equation, you can convert sunrayAngle to formula below:
-	      // angle = 90 - lat + Math.cos(2 * Math.PI * (day - SUMMER_SOLSTICE) / 365) * orbitalTiltDegrees
-	      // (angle - 90 + lat) / orbitalTiltDegrees = Math.cos(2 * Math.PI * (day - SUMMER_SOLSTICE) / 365)
-	      // Math.acos((angle - 90 + lat) / orbitalTiltDegrees)) = 2 * Math.PI * (day - SUMMER_SOLSTICE) / 365
-	      // 365 * Math.acos((angle - 90 + lat) / orbitalTiltDegrees)) = 2 * Math.PI * (day - SUMMER_SOLSTICE)
-	      // day - SUMMER_SOLSTICE = 365 * Math.acos((angle - 90 + lat) / orbitalTiltDegrees)) / (2 * Math.PI)
+	      // Inverse of the sunrayAngle function.
+	      // If you write out math equation, you can convert #sunrayAngle to formula below:
 	      var orbitalTiltDegrees = this.seasonsState.earthTilt ? EARTH_TILT * RAD_2_DEG : 0;
 	      var distFromSolstice = 365 * Math.acos((angle - 90 + this.seasonsState.lat) / orbitalTiltDegrees) / (2 * Math.PI);
 	      if (isNaN(distFromSolstice)) {
 	        return null;
 	      }
-	      var result = { day1: SUMMER_SOLSTICE - distFromSolstice, day2: SUMMER_SOLSTICE + distFromSolstice };
-	      if (result.day1 < 0) result.day1 += 365;
+	      var result = { inWinterOrSpring: SUMMER_SOLSTICE - distFromSolstice, inSummerOrFall: SUMMER_SOLSTICE + distFromSolstice };
+	      if (result.inWinterOrSpring < 0) result.inWinterOrSpring += 365;
 	      return result;
 	    }
 	  }]);
@@ -809,6 +895,7 @@ webpackJsonp([8],{
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
+	var MAX_VELOCITY = 100;
 
 	var SunrayAngle = (function () {
 	  function SunrayAngle(callback, plotter) {
@@ -840,6 +927,16 @@ webpackJsonp([8],{
 	  }, {
 	    key: 'state_oneHandDetected',
 	    value: function state_oneHandDetected(frame, data) {
+	      var v = frame.hands[0].palmVelocity;
+	      var velocity = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+	      if (velocity < MAX_VELOCITY) {
+	        return 'gestureDetected';
+	      }
+	      return null;
+	    }
+	  }, {
+	    key: 'state_gestureDetected',
+	    value: function state_gestureDetected(frame, data) {
 	      var config = this.config;
 	      var hand = frame.hands[0];
 	      var angle = hand.roll() * 180 / Math.PI;
@@ -858,7 +955,7 @@ webpackJsonp([8],{
 	          angle = 0;
 	        }
 	      }
-	      this.plotter.showCanvas('one-hand-detected');
+	      this.plotter.showCanvas('gesture-detected');
 	      this.plotter.plot('angle', angle);
 	      this.plotter.update();
 

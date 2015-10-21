@@ -1,3 +1,5 @@
+const MAX_VELOCITY = 100;
+
 export default class SunrayAngle {
   constructor(callback, plotter) {
     this.callback = callback;
@@ -21,6 +23,15 @@ export default class SunrayAngle {
   }
 
   state_oneHandDetected(frame, data) {
+    let v = frame.hands[0].palmVelocity;
+    let velocity = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    if (velocity < MAX_VELOCITY) {
+      return 'gestureDetected';
+    }
+    return null;
+  }
+
+  state_gestureDetected(frame, data) {
     let config = this.config;
     let hand = frame.hands[0];
     let angle = hand.roll() * 180 / Math.PI;
@@ -39,7 +50,7 @@ export default class SunrayAngle {
         angle = 0;
       }
     }
-    this.plotter.showCanvas('one-hand-detected');
+    this.plotter.showCanvas('gesture-detected');
     this.plotter.plot('angle', angle);
     this.plotter.update();
 

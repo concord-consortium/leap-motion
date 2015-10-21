@@ -1708,9 +1708,9 @@ webpackJsonp([0],{
 	  value: true
 	});
 
-	var _jquery = __webpack_require__(226);
+	var _extend = __webpack_require__(226);
 
-	var _jquery2 = _interopRequireDefault(_jquery);
+	var _extend2 = _interopRequireDefault(_extend);
 
 	var DEFAULT_OPTIONS = {
 	  bufferLength: 30, // around 0.5s in practice, as Leap Motion is providing ~60 samples per second
@@ -1721,7 +1721,7 @@ webpackJsonp([0],{
 	  function DirectionChange(options) {
 	    _classCallCheck(this, DirectionChange);
 
-	    this.options = _jquery2['default'].extend({}, DEFAULT_OPTIONS, options);
+	    this.options = (0, _extend2['default'])({}, DEFAULT_OPTIONS, options);
 	    this._vel = [];
 	    this._halfPeriodMaxVel = -Infinity;
 	    this._lastDirChange = null;
@@ -1786,7 +1786,8 @@ webpackJsonp([0],{
 	      var timestamp = performance.now();
 	      if (this._lastDirChange) {
 	        // Calculate outputs.
-	        this.frequency = 0.5 * 1000 / (timestamp - this._lastDirChange);
+	        // Limit frequency to 10Hz, bigger values aren't likely and are probably caused by erroneous data.
+	        this.frequency = Math.min(10, 0.5 * 1000 / (timestamp - this._lastDirChange));
 	        this.halfPeriodMaxVel = this._halfPeriodMaxVel;
 	      }
 	      this._lastDirChange = timestamp;
@@ -1856,6 +1857,26 @@ webpackJsonp([0],{
 	module.exports = Math.sign || function sign(x){
 	  return (x = +x) == 0 || x != x ? x : x < 0 ? -1 : 1;
 	};
+
+/***/ },
+
+/***/ 226:
+/***/ function(module, exports) {
+
+	// Similar to jQuery.extend.
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports["default"] = extend;
+
+	function extend() {
+	  for (var i = 1; i < arguments.length; i++) for (var key in arguments[i]) if (arguments[i].hasOwnProperty(key)) arguments[0][key] = arguments[i][key];
+	  return arguments[0];
+	}
+
+	module.exports = exports["default"];
 
 /***/ }
 
