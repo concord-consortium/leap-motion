@@ -585,6 +585,15 @@ webpackJsonp([8],{
 	      return this.sunrayAngle.nextLeapState(stateId, frame, data);
 	    }
 	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      if (this.state.leapState !== 'initial') {
+	        this.modelController.setAnimButtonsDisabled(true);
+	      } else {
+	        this.modelController.setAnimButtonsDisabled(false);
+	      }
+	    }
+	  }, {
 	    key: 'getStateMsg',
 	    value: function getStateMsg() {
 	      switch (this.state.leapState) {
@@ -630,7 +639,7 @@ webpackJsonp([8],{
 	// in the context of the northern hemisphere! It let's us unambiguously define time of the year.
 	// Some method names may initially look strange, e.g. "summerPolarNight" or "winterPolarNight".
 
-	var ANGLE_THRESHOLD = 20;
+	var ANGLE_THRESHOLD = 15;
 	var MIN_ANGLE_DIFF = 0.1;
 	var POLAR_NIGHT_ANIM_SPEED = 0.9;
 	var SUNRAY_HIGHLIGHT_COLOR = 'orange';
@@ -639,6 +648,8 @@ webpackJsonp([8],{
 	var RAD_2_DEG = 180 / Math.PI;
 	var SUMMER_SOLSTICE = 171; // 171 day of year
 	var WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
+
+	var OBSERVED_SIM_STATE_KEYS = ['day', 'earthTitl', 'lat'];
 
 	var ModelController = (function () {
 	  function ModelController() {
@@ -672,6 +683,12 @@ webpackJsonp([8],{
 	      this.phone.post('observeSimState');
 	    }
 	  }, {
+	    key: 'setAnimButtonsDisabled',
+	    value: function setAnimButtonsDisabled(v) {
+	      this.phone.post('setPlayBtnDisabled', v);
+	      this.phone.post('setRotatingBtnDisabled', v);
+	    }
+	  }, {
 	    key: 'setHandAngle',
 	    value: function setHandAngle(angle) {
 	      if (Math.abs(angle - this.targetAngle) < ANGLE_THRESHOLD) {
@@ -693,10 +710,6 @@ webpackJsonp([8],{
 	      this.seasonsState = state;
 	      this.targetAngle = this.sunrayAngle(this.seasonsState.day);
 	      this.resetInteractionState();
-	      // Save default / initial sunray color.
-	      if (!this.defaultSunrayColor) {
-	        this.defaultSunrayColor = state.sunrayColor;
-	      }
 	    }
 	  }, {
 	    key: 'targetAngleReached',

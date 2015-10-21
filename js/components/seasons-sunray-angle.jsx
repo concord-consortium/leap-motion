@@ -20,6 +20,14 @@ export default class SeasonsSunrayAngle extends React.Component {
     return this.sunrayAngle.nextLeapState(stateId, frame, data);
   }
 
+  componentDidUpdate() {
+    if (this.state.leapState !== 'initial') {
+      this.modelController.setAnimButtonsDisabled(true);
+    } else {
+      this.modelController.setAnimButtonsDisabled(false);
+    }
+  }
+
   getStateMsg() {
     switch(this.state.leapState) {
       case 'initial':
@@ -52,7 +60,7 @@ reactMixin.onClass(SeasonsSunrayAngle, leapStateHandling);
 // in the context of the northern hemisphere! It let's us unambiguously define time of the year.
 // Some method names may initially look strange, e.g. "summerPolarNight" or "winterPolarNight".
 
-const ANGLE_THRESHOLD = 20;
+const ANGLE_THRESHOLD = 15;
 const MIN_ANGLE_DIFF = 0.1;
 const POLAR_NIGHT_ANIM_SPEED = 0.9;
 const SUNRAY_HIGHLIGHT_COLOR = 'orange';
@@ -61,6 +69,8 @@ const EARTH_TILT = 0.41;
 const RAD_2_DEG = 180 / Math.PI;
 const SUMMER_SOLSTICE = 171; // 171 day of year
 const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
+
+const OBSERVED_SIM_STATE_KEYS = ['day', 'earthTitl', 'lat'];
 
 class ModelController {
   constructor() {
@@ -89,6 +99,11 @@ class ModelController {
     this.phone.post('observeSimState');
   }
 
+  setAnimButtonsDisabled(v) {
+    this.phone.post('setPlayBtnDisabled', v);
+    this.phone.post('setRotatingBtnDisabled', v);
+  }
+
   setHandAngle(angle) {
     if (Math.abs(angle - this.targetAngle) < ANGLE_THRESHOLD) {
       if (!this.withinTargetAngle) {
@@ -108,10 +123,6 @@ class ModelController {
     this.seasonsState = state;
     this.targetAngle = this.sunrayAngle(this.seasonsState.day);
     this.resetInteractionState();
-    // Save default / initial sunray color.
-    if (!this.defaultSunrayColor) {
-      this.defaultSunrayColor = state.sunrayColor;
-    }
   }
 
   targetAngleReached() {
