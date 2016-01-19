@@ -11,47 +11,47 @@ webpackJsonp([8],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(158);
+	var _reactDom = __webpack_require__(159);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsSeasonsSunrayAngleJsx = __webpack_require__(260);
+	var _componentsSeasonsSunrayAngleJsx = __webpack_require__(261);
 
 	var _componentsSeasonsSunrayAngleJsx2 = _interopRequireDefault(_componentsSeasonsSunrayAngleJsx);
 
-	__webpack_require__(241);
+	__webpack_require__(242);
 
 	_reactDom2['default'].render(_react2['default'].createElement(_componentsSeasonsSunrayAngleJsx2['default'], null), document.getElementById('app'));
-
-/***/ },
-
-/***/ 249:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = {
-	  /**
-	   * Allows to communicate with an iframe.
-	   */
-	  ParentEndpoint:  __webpack_require__(250),
-	  /**
-	   * Allows to communicate with a parent page.
-	   * IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
-	   */
-	  getIFrameEndpoint: __webpack_require__(252),
-	  structuredClone: __webpack_require__(251),
-
-	  // TODO: May be misnamed
-	  IframePhoneRpcEndpoint: __webpack_require__(253)
-
-	};
-
 
 /***/ },
 
 /***/ 250:
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(251);
+	module.exports = {
+	  /**
+	   * Allows to communicate with an iframe.
+	   */
+	  ParentEndpoint:  __webpack_require__(251),
+	  /**
+	   * Allows to communicate with a parent page.
+	   * IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
+	   */
+	  getIFrameEndpoint: __webpack_require__(253),
+	  structuredClone: __webpack_require__(252),
+
+	  // TODO: May be misnamed
+	  IframePhoneRpcEndpoint: __webpack_require__(254)
+
+	};
+
+
+/***/ },
+
+/***/ 251:
+/***/ function(module, exports, __webpack_require__) {
+
+	var structuredClone = __webpack_require__(252);
 
 	/**
 	  Call as:
@@ -226,7 +226,7 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 251:
+/***/ 252:
 /***/ function(module, exports) {
 
 	var featureSupported = false;
@@ -269,10 +269,10 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 252:
+/***/ 253:
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(251);
+	var structuredClone = __webpack_require__(252);
 	var HELLO_INTERVAL_LENGTH = 200;
 	var HELLO_TIMEOUT_LENGTH = 60000;
 
@@ -423,13 +423,13 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 253:
+/***/ 254:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var ParentEndpoint = __webpack_require__(250);
-	var getIFrameEndpoint = __webpack_require__(252);
+	var ParentEndpoint = __webpack_require__(251);
+	var getIFrameEndpoint = __webpack_require__(253);
 
 	// Not a real UUID as there's an RFC for that (needed for proper distributed computing).
 	// But in this fairly parochial situation, we just need to be fairly sure to avoid repeats.
@@ -520,18 +520,18 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 260:
+/***/ 261:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _get = __webpack_require__(160)['default'];
+	var _get = __webpack_require__(161)['default'];
 
-	var _inherits = __webpack_require__(174)['default'];
+	var _inherits = __webpack_require__(177)['default'];
 
-	var _createClass = __webpack_require__(185)['default'];
+	var _createClass = __webpack_require__(186)['default'];
 
-	var _classCallCheck = __webpack_require__(188)['default'];
+	var _classCallCheck = __webpack_require__(189)['default'];
 
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 
@@ -543,23 +543,23 @@ webpackJsonp([8],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactMixin = __webpack_require__(189);
+	var _reactMixin = __webpack_require__(190);
 
 	var _reactMixin2 = _interopRequireDefault(_reactMixin);
 
-	var _iframePhone = __webpack_require__(249);
+	var _iframePhone = __webpack_require__(250);
 
 	var _iframePhone2 = _interopRequireDefault(_iframePhone);
 
-	var _mixinsLeapStateHandling = __webpack_require__(192);
+	var _mixinsLeapStateHandling = __webpack_require__(193);
 
 	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
 
-	var _gesturesSunrayAngle = __webpack_require__(261);
+	var _gesturesSunrayAngle = __webpack_require__(262);
 
 	var _gesturesSunrayAngle2 = _interopRequireDefault(_gesturesSunrayAngle);
 
-	var _leapStandardInfoJsx = __webpack_require__(227);
+	var _leapStandardInfoJsx = __webpack_require__(228);
 
 	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
 
@@ -591,6 +591,7 @@ webpackJsonp([8],{
 	        this.modelController.setAnimButtonsDisabled(true);
 	      } else {
 	        this.modelController.setAnimButtonsDisabled(false);
+	        this.modelController.resetSunrayColor();
 	      }
 	    }
 	  }, {
@@ -616,7 +617,7 @@ webpackJsonp([8],{
 	      return _react2['default'].createElement(
 	        'div',
 	        null,
-	        _react2['default'].createElement('iframe', { ref: 'seasonsModel', width: '1220px', height: '830px', scrolling: 'no', frameBorder: '0', src: 'http://concord-consortium.github.io/grasp-seasons' }),
+	        _react2['default'].createElement('iframe', { ref: 'seasonsModel', width: '1220px', height: '830px', scrolling: 'no', frameBorder: '0', src: 'http://concord-consortium.github.io/grasp-seasons/' }),
 	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
 	      );
 	    }
@@ -642,14 +643,13 @@ webpackJsonp([8],{
 	var ANGLE_THRESHOLD = 15;
 	var MIN_ANGLE_DIFF = 0.1;
 	var POLAR_NIGHT_ANIM_SPEED = 0.9;
+	var SUNRAY_DEFAULT_COLOR = '#888';
 	var SUNRAY_HIGHLIGHT_COLOR = 'orange';
-	var SUNRAY_ERROR_COLOR = 'red';
+	var SUNRAY_SOLSTICE_COLOR = 'orange';
 	var EARTH_TILT = 0.41;
 	var RAD_2_DEG = 180 / Math.PI;
 	var SUMMER_SOLSTICE = 171; // 171 day of year
 	var WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
-
-	var OBSERVED_SIM_STATE_KEYS = ['day', 'earthTitl', 'lat'];
 
 	var ModelController = (function () {
 	  function ModelController() {
@@ -657,7 +657,7 @@ webpackJsonp([8],{
 
 	    this.seasonsState = null;
 	    this.targetAngle = null;
-	    this.defaultSunrayColor = null;
+	    this.defaultSunrayColor = SUNRAY_DEFAULT_COLOR;
 	    this.phone = null;
 	    this.resetInteractionState();
 	  }
@@ -668,6 +668,11 @@ webpackJsonp([8],{
 	      this.withinTargetAngle = false;
 	      this.outOfRange = false;
 	      this.prevDay = null;
+	      this.resetSunrayColor();
+	    }
+	  }, {
+	    key: 'resetSunrayColor',
+	    value: function resetSunrayColor() {
 	      if (this.phone && this.defaultSunrayColor) {
 	        this.phone.post('setSimState', { sunrayColor: this.defaultSunrayColor });
 	      }
@@ -817,7 +822,7 @@ webpackJsonp([8],{
 	        // Set the first day which has angle equal to 180.
 	        this.seasonsState.day = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
 	      }
-	      this.phone.post('setSimState', { day: this.seasonsState.day, sunrayColor: SUNRAY_ERROR_COLOR });
+	      this.phone.post('setSimState', { day: this.seasonsState.day, sunrayColor: SUNRAY_SOLSTICE_COLOR });
 	    }
 
 	    // Called when user defines angle which is very close to winter solstice sunray angle.
@@ -834,7 +839,7 @@ webpackJsonp([8],{
 	        // Set the first day which has angle equal to 0.
 	        this.seasonsState.day = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
 	      }
-	      this.phone.post('setSimState', { day: this.seasonsState.day, sunrayColor: SUNRAY_ERROR_COLOR });
+	      this.phone.post('setSimState', { day: this.seasonsState.day, sunrayColor: SUNRAY_SOLSTICE_COLOR });
 	    }
 	  }, {
 	    key: 'summerOrFall',
@@ -896,14 +901,14 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 261:
+/***/ 262:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _createClass = __webpack_require__(185)['default'];
+	var _createClass = __webpack_require__(186)['default'];
 
-	var _classCallCheck = __webpack_require__(188)['default'];
+	var _classCallCheck = __webpack_require__(189)['default'];
 
 	Object.defineProperty(exports, '__esModule', {
 	  value: true

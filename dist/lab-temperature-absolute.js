@@ -11,25 +11,25 @@ webpackJsonp([4],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(158);
+	var _reactDom = __webpack_require__(159);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsLabTemperatureAbsoluteJsx = __webpack_require__(256);
+	var _componentsLabTemperatureAbsoluteJsx = __webpack_require__(257);
 
 	var _componentsLabTemperatureAbsoluteJsx2 = _interopRequireDefault(_componentsLabTemperatureAbsoluteJsx);
 
-	__webpack_require__(241);
+	__webpack_require__(242);
 
 	_reactDom2['default'].render(_react2['default'].createElement(_componentsLabTemperatureAbsoluteJsx2['default'], null), document.getElementById('app'));
 
 /***/ },
 
-/***/ 220:
+/***/ 221:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	 *  howler.js v1.1.26
+	 *  howler.js v1.1.28
 	 *  howlerjs.com
 	 *
 	 *  (c) 2013-2015, James Simpson of GoldFire Studios
@@ -217,13 +217,13 @@ webpackJsonp([4],{
 	            self.iOSAutoEnable = false;
 
 	            // remove the touch start listener
-	            window.removeEventListener('touchstart', unlock, false);
+	            window.removeEventListener('touchend', unlock, false);
 	          }
 	        }, 0);
 	      };
 
 	      // setup a touch start listener to attempt an unlock in
-	      window.addEventListener('touchstart', unlock, false);
+	      window.addEventListener('touchend', unlock, false);
 
 	      return self;
 	    }
@@ -1385,16 +1385,16 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 221:
+/***/ 222:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _createClass = __webpack_require__(185)['default'];
+	var _createClass = __webpack_require__(186)['default'];
 
-	var _classCallCheck = __webpack_require__(188)['default'];
+	var _classCallCheck = __webpack_require__(189)['default'];
 
-	var _Math$sign = __webpack_require__(222)['default'];
+	var _Math$sign = __webpack_require__(223)['default'];
 
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 
@@ -1402,7 +1402,7 @@ webpackJsonp([4],{
 	  value: true
 	});
 
-	var _extend = __webpack_require__(226);
+	var _extend = __webpack_require__(227);
 
 	var _extend2 = _interopRequireDefault(_extend);
 
@@ -1519,32 +1519,32 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 222:
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = { "default": __webpack_require__(223), __esModule: true };
-
-/***/ },
-
 /***/ 223:
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(224);
-	module.exports = __webpack_require__(172).Math.sign;
+	module.exports = { "default": __webpack_require__(224), __esModule: true };
 
 /***/ },
 
 /***/ 224:
 /***/ function(module, exports, __webpack_require__) {
 
-	// 20.2.2.28 Math.sign(x)
-	var $def = __webpack_require__(170);
-
-	$def($def.S, 'Math', {sign: __webpack_require__(225)});
+	__webpack_require__(225);
+	module.exports = __webpack_require__(173).Math.sign;
 
 /***/ },
 
 /***/ 225:
+/***/ function(module, exports, __webpack_require__) {
+
+	// 20.2.2.28 Math.sign(x)
+	var $export = __webpack_require__(171);
+
+	$export($export.S, 'Math', {sign: __webpack_require__(226)});
+
+/***/ },
+
+/***/ 226:
 /***/ function(module, exports) {
 
 	// 20.2.2.28 Math.sign(x)
@@ -1554,7 +1554,7 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 226:
+/***/ 227:
 /***/ function(module, exports) {
 
 	// Similar to jQuery.extend.
@@ -1574,33 +1574,33 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 249:
+/***/ 250:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
 	  /**
 	   * Allows to communicate with an iframe.
 	   */
-	  ParentEndpoint:  __webpack_require__(250),
+	  ParentEndpoint:  __webpack_require__(251),
 	  /**
 	   * Allows to communicate with a parent page.
 	   * IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
 	   */
-	  getIFrameEndpoint: __webpack_require__(252),
-	  structuredClone: __webpack_require__(251),
+	  getIFrameEndpoint: __webpack_require__(253),
+	  structuredClone: __webpack_require__(252),
 
 	  // TODO: May be misnamed
-	  IframePhoneRpcEndpoint: __webpack_require__(253)
+	  IframePhoneRpcEndpoint: __webpack_require__(254)
 
 	};
 
 
 /***/ },
 
-/***/ 250:
+/***/ 251:
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(251);
+	var structuredClone = __webpack_require__(252);
 
 	/**
 	  Call as:
@@ -1775,7 +1775,7 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 251:
+/***/ 252:
 /***/ function(module, exports) {
 
 	var featureSupported = false;
@@ -1818,10 +1818,10 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 252:
+/***/ 253:
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(251);
+	var structuredClone = __webpack_require__(252);
 	var HELLO_INTERVAL_LENGTH = 200;
 	var HELLO_TIMEOUT_LENGTH = 60000;
 
@@ -1972,13 +1972,13 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 253:
+/***/ 254:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var ParentEndpoint = __webpack_require__(250);
-	var getIFrameEndpoint = __webpack_require__(252);
+	var ParentEndpoint = __webpack_require__(251);
+	var getIFrameEndpoint = __webpack_require__(253);
 
 	// Not a real UUID as there's an RFC for that (needed for proper distributed computing).
 	// But in this fairly parochial situation, we just need to be fairly sure to avoid repeats.
@@ -2069,14 +2069,14 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 255:
+/***/ 256:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _createClass = __webpack_require__(185)['default'];
+	var _createClass = __webpack_require__(186)['default'];
 
-	var _classCallCheck = __webpack_require__(188)['default'];
+	var _classCallCheck = __webpack_require__(189)['default'];
 
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 
@@ -2084,17 +2084,17 @@ webpackJsonp([4],{
 	  value: true
 	});
 
-	var _toolsAvg = __webpack_require__(218);
+	var _toolsAvg = __webpack_require__(219);
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
 
-	var _howler = __webpack_require__(220);
+	var _howler = __webpack_require__(221);
 
-	var _toolsDirectionChange = __webpack_require__(221);
+	var _toolsDirectionChange = __webpack_require__(222);
 
 	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
 
-	var _toolsExtend = __webpack_require__(226);
+	var _toolsExtend = __webpack_require__(227);
 
 	var _toolsExtend2 = _interopRequireDefault(_toolsExtend);
 
@@ -2218,18 +2218,18 @@ webpackJsonp([4],{
 
 /***/ },
 
-/***/ 256:
+/***/ 257:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _get = __webpack_require__(160)['default'];
+	var _get = __webpack_require__(161)['default'];
 
-	var _inherits = __webpack_require__(174)['default'];
+	var _inherits = __webpack_require__(177)['default'];
 
-	var _createClass = __webpack_require__(185)['default'];
+	var _createClass = __webpack_require__(186)['default'];
 
-	var _classCallCheck = __webpack_require__(188)['default'];
+	var _classCallCheck = __webpack_require__(189)['default'];
 
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 
@@ -2241,27 +2241,27 @@ webpackJsonp([4],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactMixin = __webpack_require__(189);
+	var _reactMixin = __webpack_require__(190);
 
 	var _reactMixin2 = _interopRequireDefault(_reactMixin);
 
-	var _mixinsLeapStateHandling = __webpack_require__(192);
+	var _mixinsLeapStateHandling = __webpack_require__(193);
 
 	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
 
-	var _gesturesFistBump = __webpack_require__(255);
+	var _gesturesFistBump = __webpack_require__(256);
 
 	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
 
-	var _toolsAvg = __webpack_require__(218);
+	var _toolsAvg = __webpack_require__(219);
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
 
-	var _iframePhone = __webpack_require__(249);
+	var _iframePhone = __webpack_require__(250);
 
 	var _iframePhone2 = _interopRequireDefault(_iframePhone);
 
-	var _leapStandardInfoJsx = __webpack_require__(227);
+	var _leapStandardInfoJsx = __webpack_require__(228);
 
 	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
 

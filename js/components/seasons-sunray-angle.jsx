@@ -25,6 +25,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       this.modelController.setAnimButtonsDisabled(true);
     } else {
       this.modelController.setAnimButtonsDisabled(false);
+      this.modelController.resetSunrayColor();
     }
   }
 
@@ -46,7 +47,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   render() {
     return (
       <div>
-        <iframe ref='seasonsModel' width='1220px' height='830px' scrolling='no' frameBorder='0' src='http://concord-consortium.github.io/grasp-seasons'/>
+        <iframe ref='seasonsModel' width='1220px' height='830px' scrolling='no' frameBorder='0' src='http://concord-consortium.github.io/grasp-seasons/'/>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
       </div>
     );
@@ -63,20 +64,19 @@ reactMixin.onClass(SeasonsSunrayAngle, leapStateHandling);
 const ANGLE_THRESHOLD = 15;
 const MIN_ANGLE_DIFF = 0.1;
 const POLAR_NIGHT_ANIM_SPEED = 0.9;
+const SUNRAY_DEFAULT_COLOR = '#888';
 const SUNRAY_HIGHLIGHT_COLOR = 'orange';
-const SUNRAY_ERROR_COLOR = 'red';
+const SUNRAY_SOLSTICE_COLOR = 'orange';
 const EARTH_TILT = 0.41;
 const RAD_2_DEG = 180 / Math.PI;
 const SUMMER_SOLSTICE = 171; // 171 day of year
 const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
 
-const OBSERVED_SIM_STATE_KEYS = ['day', 'earthTitl', 'lat'];
-
 class ModelController {
   constructor() {
     this.seasonsState = null;
     this.targetAngle = null;
-    this.defaultSunrayColor = null;
+    this.defaultSunrayColor = SUNRAY_DEFAULT_COLOR;
     this.phone = null;
     this.resetInteractionState();
   }
@@ -85,6 +85,10 @@ class ModelController {
     this.withinTargetAngle = false;
     this.outOfRange = false;
     this.prevDay = null;
+    this.resetSunrayColor();
+  }
+
+  resetSunrayColor() {
     if (this.phone && this.defaultSunrayColor) {
       this.phone.post('setSimState', {sunrayColor: this.defaultSunrayColor});
     }
@@ -221,7 +225,7 @@ class ModelController {
       // Set the first day which has angle equal to 180.
       this.seasonsState.day = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
     }
-    this.phone.post('setSimState', {day: this.seasonsState.day, sunrayColor: SUNRAY_ERROR_COLOR});
+    this.phone.post('setSimState', {day: this.seasonsState.day, sunrayColor: SUNRAY_SOLSTICE_COLOR});
   }
 
   // Called when user defines angle which is very close to winter solstice sunray angle.
@@ -236,7 +240,7 @@ class ModelController {
       // Set the first day which has angle equal to 0.
       this.seasonsState.day = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
     }
-    this.phone.post('setSimState', {day: this.seasonsState.day, sunrayColor: SUNRAY_ERROR_COLOR});
+    this.phone.post('setSimState', {day: this.seasonsState.day, sunrayColor: SUNRAY_SOLSTICE_COLOR});
   }
 
   summerOrFall(day) {
