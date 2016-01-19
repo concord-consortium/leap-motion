@@ -2267,6 +2267,8 @@ webpackJsonp([7],{
 
 	var MAX_VOL = 0.82;
 	var MIN_VOL = 0.1;
+	var DEF_PISTON_COLOR = '#8CBBB8';
+	var ACTIVE_PISTON_COLOR = '#E8DC36';
 
 	var LabVolumePressure = (function (_React$Component) {
 	  _inherits(LabVolumePressure, _React$Component);
@@ -2283,15 +2285,25 @@ webpackJsonp([7],{
 	      this.fistBump = new _gesturesFistBump2['default'](this.props.handBumpConfig, this.gestureDetected.bind(this), this.plotter);
 	      this.setupLabCommunication();
 	      this.volume = MAX_VOL;
-	      this.volumeUpdateIntID = setInterval((function () {
-	        this.labPhone.post('set', { name: 'volume', value: this.volume });
+	      this.pistonColor = DEF_PISTON_COLOR;
+	      this.simUpdateID = setInterval((function () {
+	        this.labPhone.post('set', { name: { volume: this.volume, pistonColor: this.pistonColor } });
 	      }).bind(this), 75);
 	    }
 	  }, {
 	    key: 'componentWillUnmount',
 	    value: function componentWillUnmount() {
 	      this.labPhone.disconnect();
-	      clearInterval(this.volumeUpdateIntID);
+	      clearInterval(this.simUpdateID);
+	    }
+	  }, {
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      if (this.state.leapState === 'gestureDetected') {
+	        this.pistonColor = ACTIVE_PISTON_COLOR;
+	      } else {
+	        this.pistonColor = DEF_PISTON_COLOR;
+	      }
 	    }
 	  }, {
 	    key: 'setupLabCommunication',

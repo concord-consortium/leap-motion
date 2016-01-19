@@ -8,20 +8,31 @@ import LeapStandardInfo from './leap-standard-info.jsx';
 
 const MAX_VOL = 0.82;
 const MIN_VOL = 0.1;
+const DEF_PISTON_COLOR = '#8CBBB8';
+const ACTIVE_PISTON_COLOR = '#E8DC36';
 
 export default class LabVolumePressure extends React.Component {
   componentDidMount() {
     this.fistBump = new FistBump(this.props.handBumpConfig, this.gestureDetected.bind(this), this.plotter);
     this.setupLabCommunication();
     this.volume = MAX_VOL;
-    this.volumeUpdateIntID = setInterval(function () {
-      this.labPhone.post('set', { name: 'volume', value: this.volume });
+    this.pistonColor = DEF_PISTON_COLOR;
+    this.simUpdateID = setInterval(function () {
+      this.labPhone.post('set', {name: {volume: this.volume, pistonColor: this.pistonColor}});
     }.bind(this), 75);
   }
 
   componentWillUnmount() {
     this.labPhone.disconnect();
-    clearInterval(this.volumeUpdateIntID);
+    clearInterval(this.simUpdateID);
+  }
+
+  componentDidUpdate() {
+    if (this.state.leapState === 'gestureDetected') {
+      this.pistonColor = ACTIVE_PISTON_COLOR;
+    } else {
+      this.pistonColor = DEF_PISTON_COLOR;
+    }
   }
 
   get plotter() {
