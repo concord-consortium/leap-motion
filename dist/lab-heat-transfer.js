@@ -1621,6 +1621,8 @@ webpackJsonp([2],{
 
 	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
 
+	var DEFAULT_CLEAR_HAND_TIMEOUT = 500; // ms
+
 	var LabHeatTransfer = (function (_React$Component) {
 	  _inherits(LabHeatTransfer, _React$Component);
 
@@ -1636,6 +1638,8 @@ webpackJsonp([2],{
 	      this.fistShake = new _gesturesFistShake2['default'](this.props.handShakeConfig, this.gestureDetected.bind(this), this.plotter);
 	      this.setupLabCommunication();
 	      this.handType = null;
+	      this.clearHandTimeout = DEFAULT_CLEAR_HAND_TIMEOUT;
+	      this.clearHandTimeoutID = null;
 	    }
 	  }, {
 	    key: 'setupLabCommunication',
@@ -1646,13 +1650,30 @@ webpackJsonp([2],{
 	      }).bind(this));
 	    }
 	  }, {
+	    key: 'clearHandTimeoutChanged',
+	    value: function clearHandTimeoutChanged(event) {
+	      this.clearHandTimeout = event.target.value;
+	    }
+	  }, {
 	    key: 'componentDidUpdate',
 	    value: function componentDidUpdate(prevProps, prevState) {
+	      var _this = this;
+
 	      if (this.state.leapState === 'gestureDetected') {
 	        this.labPhone.post('set', { name: 'markedBlock', value: this.handType });
+	        if (this.clearHandTimeoutID !== null) {
+	          clearTimeout(this.clearHandTimeoutID);
+	          this.clearHandTimeoutID = null;
+	        }
 	      } else {
 	        this.labPhone.post('set', { name: 'markedBlock', value: 'none' });
-	        this.handType = null;
+	        // Sometimes Leap confuses input hand.
+	        // Do not allow change of hand unless Leap detects a "no hand" condition of for some duration.
+	        if (this.clearHandTimeoutID === null) {
+	          this.clearHandTimeoutID = setTimeout(function () {
+	            _this.handType = null;
+	          }, this.clearHandTimeout);
+	        }
 	      }
 	    }
 	  }, {
@@ -1708,7 +1729,15 @@ webpackJsonp([2],{
 	          null,
 	          _react2['default'].createElement('iframe', { ref: 'labModel', width: '610px', height: '350px', frameBorder: '0', src: 'http://lab.concord.org/embeddable.html#interactives/grasp/heat-transfer.json' })
 	        ),
-	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
+	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
+	        _react2['default'].createElement(
+	          'p',
+	          null,
+	          '"No hand" required duration [ms]: ',
+	          _react2['default'].createElement('input', { type: 'text', name: 'clearHandTimeout',
+	            defaultValue: DEFAULT_CLEAR_HAND_TIMEOUT,
+	            onChange: this.clearHandTimeoutChanged.bind(this) })
+	        )
 	      );
 	    }
 	  }, {

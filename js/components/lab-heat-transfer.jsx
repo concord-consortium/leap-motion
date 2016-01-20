@@ -6,11 +6,15 @@ import avg from '../tools/avg';
 import iframePhone from 'iframe-phone';
 import LeapStandardInfo from './leap-standard-info.jsx';
 
+const DEFAULT_CLEAR_HAND_TIMEOUT = 500; // ms
+
 export default class LabHeatTransfer extends React.Component {
   componentDidMount() {
     this.fistShake = new FistShake(this.props.handShakeConfig, this.gestureDetected.bind(this), this.plotter);
     this.setupLabCommunication();
     this.handType = null;
+    this.clearHandTimeout = DEFAULT_CLEAR_HAND_TIMEOUT;
+    this.clearHandTimeoutID = null;
   }
 
   get plotter() {
@@ -24,12 +28,26 @@ export default class LabHeatTransfer extends React.Component {
     }.bind(this));
   }
 
+  clearHandTimeoutChanged(event) {
+    this.clearHandTimeout = event.target.value;
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.state.leapState === 'gestureDetected') {
       this.labPhone.post('set', { name: 'markedBlock', value: this.handType });
+      if (this.clearHandTimeoutID !== null) {
+        clearTimeout(this.clearHandTimeoutID);
+        this.clearHandTimeoutID = null;
+      }
     } else {
       this.labPhone.post('set', { name: 'markedBlock', value: 'none' });
-      this.handType = null;
+      // Sometimes Leap confuses input hand.
+      // Do not allow change of hand unless Leap detects a "no hand" condition of for some duration.
+      if (this.clearHandTimeoutID === null) {
+        this.clearHandTimeoutID = setTimeout(() => {
+          this.handType = null;
+        }, this.clearHandTimeout);
+      }
     }
   }
 
@@ -79,6 +97,11 @@ export default class LabHeatTransfer extends React.Component {
           <iframe ref='labModel' width='610px' height='350px' frameBorder='0' src='http://lab.concord.org/embeddable.html#interactives/grasp/heat-transfer.json'/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
+        <p>
+          "No hand" required duration [ms]: <input type='text' name='clearHandTimeout'
+                                      defaultValue={DEFAULT_CLEAR_HAND_TIMEOUT}
+                                      onChange={this.clearHandTimeoutChanged.bind(this)}/>
+        </p>
       </div>
     );
   }
