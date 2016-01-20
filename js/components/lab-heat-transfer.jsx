@@ -94,7 +94,7 @@ export default class LabHeatTransfer extends React.Component {
     return (
       <div>
         <div>
-          <iframe ref='labModel' width='610px' height='350px' frameBorder='0' src='http://lab.concord.org/embeddable.html#interactives/grasp/heat-transfer.json'/>
+          <iframe ref='labModel' width='610px' height='350px' frameBorder='0' src='http://lab.concord.org/embeddable-dev.html#interactives/grasp/heat-transfer.json'/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
         <p>

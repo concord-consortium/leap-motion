@@ -1727,7 +1727,7 @@ webpackJsonp([2],{
 	        _react2['default'].createElement(
 	          'div',
 	          null,
-	          _react2['default'].createElement('iframe', { ref: 'labModel', width: '610px', height: '350px', frameBorder: '0', src: 'http://lab.concord.org/embeddable.html#interactives/grasp/heat-transfer.json' })
+	          _react2['default'].createElement('iframe', { ref: 'labModel', width: '610px', height: '350px', frameBorder: '0', src: 'http://lab.concord.org/embeddable-dev.html#interactives/grasp/heat-transfer.json' })
 	        ),
 	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
 	        _react2['default'].createElement(
