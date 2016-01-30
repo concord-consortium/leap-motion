@@ -24,7 +24,8 @@
     "css-loader": "^0.18.0",
     "node-libs-browser": "^0.5.3",
     "style-loader": "^0.12.4",
-    "webpack": "^1.12.2"
+    "webpack": "^1.12.2",
+    "copy-webpack-plugin": "^1.1.1"
   },
   "dependencies": {
     "leapjs": "^0.6.4",

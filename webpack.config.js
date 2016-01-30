@@ -1,5 +1,7 @@
 var path = require('path');
 var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
   entry: {
     'lab-temperature-test': './js/pages/lab-temperature-test.jsx',
@@ -29,6 +31,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new CommonsChunkPlugin("commons.js")
+    new CommonsChunkPlugin("commons.js"),
+    new CopyWebpackPlugin([
+      {from: 'public'}
+    ])
   ]
 };
