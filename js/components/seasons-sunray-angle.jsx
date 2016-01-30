@@ -47,7 +47,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   render() {
     return (
       <div>
-        <iframe ref='seasonsModel' width='1220px' height='830px' scrolling='no' frameBorder='0' src='http://concord-consortium.github.io/grasp-seasons/'/>
+        <iframe ref='seasonsModel' width='1220px' height='830px' scrolling='no' frameBorder='0' src='http://models-resources.concord.org/grasp-seasons/version/0.1.0/index.html'/>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
       </div>
     );
