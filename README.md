@@ -1,21 +1,22 @@
 # leap-motion
 
-Experiments related to the gesture detection.
+Latest **stable** version:
 
-####Lab
-- http://concord-consortium.github.io/leap-motion/examples/lab-temperature-absolute.html
-- http://concord-consortium.github.io/leap-motion/examples/lab-pressure-equilibrium.html
-- http://concord-consortium.github.io/leap-motion/examples/lab-volume-pressure.html
-- http://concord-consortium.github.io/leap-motion/examples/lab-heat-transfer.html
+http://models-resources.concord.org/leap-motion/index.html
 
-####Seasons
-- http://concord-consortium.github.io/leap-motion/examples/seasons-sunray-angle.html
+Latest **development** version:
 
-####Tests
-- http://concord-consortium.github.io/leap-motion/examples/lab-temperature-test.html
-- http://concord-consortium.github.io/leap-motion/examples/lab-temperature-delta.html
-- http://concord-consortium.github.io/leap-motion/examples/lab-add-rm-atom-test.html
-- http://concord-consortium.github.io/leap-motion/examples/lab-add-rm-atom-test-swipe.html
+http://models-resources.concord.org/leap-motion/branch/master/index.html
+
+Old versions can be accesed via `/version/<tag>` path, e.g.:
+
+http://models-resources.concord.org/leap-motion/version/0.1.0/index.html
+
+Github Pages deployment is equal to version 0.1.0:
+
+http://concord-consortium.github.io/leap-motion/
+
+It won't be updated in the future.
 
 ## Development
 
@@ -35,6 +36,14 @@ or:
 ```
 webpack --watch
 ```
+
+## Deployment
+
+This project is automatically deployed to S3 bucket by Travis-CI.
+
+- `production` branch is deployed to top-level directory (http://models-resources.concord.org/leap-motion/index.html).
+- other branches are deployed to `/branch/` subdirectories (e.g. http://models-resources.concord.org/leap-motion/branch/master/index.html)
+- tags are deployed to `/version/` subdirectories  (e.g. http://models-resources.concord.org/leap-motion/version/0.1.0/index.html)
 
 ## License 
 
