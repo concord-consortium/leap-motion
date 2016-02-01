@@ -34,8 +34,11 @@ export default class LabInteractive extends React.Component {
 LabInteractive.defaultProps = {
   width: '610px',
   height: '350px',
-  // lab-1.10.0 is stored in /public dir.
-  src: '/lab-1.10.0/embeddable.html'
+  // lab-1.10.0 is stored in `/public` directory.
+  // Note that application pages must be stored in the same dir, so this path works
+  // correctly. If an app is placed somewhere else, it has to provide custom `src` property
+  // (e.g. '../lab-1.10.0/embeddable.html' if its page is in a `/public` subdirectory).
+  src: 'lab-1.10.0/embeddable.html'
 };
 
 function combineInteractiveAndModel(interactive, model) {
