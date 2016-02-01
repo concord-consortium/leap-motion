@@ -15,6 +15,6 @@ ignore_on_server: ^leap-motion/(version/|branch/)
 ignore_on_server: ^(?!leap-motion/<%= Regexp.escape(ENV['DEPLOY_DIR']) %>/)
 <% end %>
 max_age:
-  "*": 0
-  "version/*": 31536000 # 1 year in seconds
-  "branch/*": 0
+  "leap-motion/*": 0
+  "leap-motion/version/*": 31536000 # 1 year in seconds
+  "leap-motion/branch/*": 0
