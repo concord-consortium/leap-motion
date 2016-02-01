@@ -15,13 +15,13 @@ webpackJsonp([1],{
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsLabAddRmAtomTestSwipeJsx = __webpack_require__(246);
+	var _labAddRmAtomTestSwipeJsx = __webpack_require__(248);
 
-	var _componentsLabAddRmAtomTestSwipeJsx2 = _interopRequireDefault(_componentsLabAddRmAtomTestSwipeJsx);
+	var _labAddRmAtomTestSwipeJsx2 = _interopRequireDefault(_labAddRmAtomTestSwipeJsx);
 
-	__webpack_require__(242);
+	__webpack_require__(244);
 
-	_reactDom2['default'].render(_react2['default'].createElement(_componentsLabAddRmAtomTestSwipeJsx2['default'], null), document.getElementById('app'));
+	_reactDom2['default'].render(_react2['default'].createElement(_labAddRmAtomTestSwipeJsx2['default'], null), document.getElementById('app'));
 
 /***/ },
 
@@ -52,21 +52,21 @@ webpackJsonp([1],{
 
 	var _reactMixin2 = _interopRequireDefault(_reactMixin);
 
-	var _mixinsLeapStateHandling = __webpack_require__(193);
+	var _commonJsMixinsLeapStateHandling = __webpack_require__(193);
 
-	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
+	var _commonJsMixinsLeapStateHandling2 = _interopRequireDefault(_commonJsMixinsLeapStateHandling);
 
-	var _toolsAvg = __webpack_require__(219);
+	var _commonJsToolsAvg = __webpack_require__(219);
 
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+	var _commonJsToolsAvg2 = _interopRequireDefault(_commonJsToolsAvg);
 
-	var _gesturesAddRmObj = __webpack_require__(220);
+	var _commonJsGesturesAddRmObj = __webpack_require__(220);
 
-	var _gesturesAddRmObj2 = _interopRequireDefault(_gesturesAddRmObj);
+	var _commonJsGesturesAddRmObj2 = _interopRequireDefault(_commonJsGesturesAddRmObj);
 
-	var _leapStandardInfoJsx = __webpack_require__(228);
+	var _commonJsComponentsLeapStandardInfoJsx = __webpack_require__(230);
 
-	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
+	var _commonJsComponentsLeapStandardInfoJsx2 = _interopRequireDefault(_commonJsComponentsLeapStandardInfoJsx);
 
 	var LabAddRmAtomTest = (function (_React$Component) {
 	  _inherits(LabAddRmAtomTest, _React$Component);
@@ -86,7 +86,7 @@ webpackJsonp([1],{
 	  _createClass(LabAddRmAtomTest, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.addRmObj = new _gesturesAddRmObj2['default'](this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.plotter);
+	      this.addRmObj = new _commonJsGesturesAddRmObj2['default'](this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.plotter);
 	    }
 	  }, {
 	    key: 'handleGestureConfigChange',
@@ -189,7 +189,7 @@ webpackJsonp([1],{
 	          'Number of atoms: ',
 	          this.state.objCount
 	        ),
-	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
+	        _react2['default'].createElement(_commonJsComponentsLeapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
 	        _react2['default'].createElement(
 	          'p',
 	          null,
@@ -220,7 +220,7 @@ webpackJsonp([1],{
 	  }
 	};
 
-	_reactMixin2['default'].onClass(LabAddRmAtomTest, _mixinsLeapStateHandling2['default']);
+	_reactMixin2['default'].onClass(LabAddRmAtomTest, _commonJsMixinsLeapStateHandling2['default']);
 	module.exports = exports['default'];
 
 /***/ },
@@ -250,6 +250,14 @@ webpackJsonp([1],{
 
 	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
 
+	var _soundsAddWav = __webpack_require__(228);
+
+	var _soundsAddWav2 = _interopRequireDefault(_soundsAddWav);
+
+	var _soundsRemoveWav = __webpack_require__(229);
+
+	var _soundsRemoveWav2 = _interopRequireDefault(_soundsRemoveWav);
+
 	var AddRmObj = (function () {
 	  function AddRmObj(config, callback, plotter) {
 	    _classCallCheck(this, AddRmObj);
@@ -263,10 +271,10 @@ webpackJsonp([1],{
 	    this.isClosed = false;
 
 	    this.addSound = new _howler.Howl({
-	      urls: ['add.wav']
+	      urls: [_soundsAddWav2['default']]
 	    });
 	    this.rmSound = new _howler.Howl({
-	      urls: ['remove.wav']
+	      urls: [_soundsRemoveWav2['default']]
 	    });
 	  }
 
@@ -1880,7 +1888,21 @@ webpackJsonp([1],{
 
 /***/ },
 
-/***/ 246:
+/***/ 228:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "be69b8faa3133da56111f811ee2c60dd.wav";
+
+/***/ },
+
+/***/ 229:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "7cc57c92cde1bf35a365e704feea2d85.wav";
+
+/***/ },
+
+/***/ 248:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1907,21 +1929,21 @@ webpackJsonp([1],{
 
 	var _reactMixin2 = _interopRequireDefault(_reactMixin);
 
-	var _mixinsLeapStateHandling = __webpack_require__(193);
+	var _commonJsMixinsLeapStateHandling = __webpack_require__(193);
 
-	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
+	var _commonJsMixinsLeapStateHandling2 = _interopRequireDefault(_commonJsMixinsLeapStateHandling);
 
-	var _labAddRmAtomTestJsx = __webpack_require__(160);
+	var _labAddRmAtomTestLabAddRmAtomTestJsx = __webpack_require__(160);
 
-	var _labAddRmAtomTestJsx2 = _interopRequireDefault(_labAddRmAtomTestJsx);
+	var _labAddRmAtomTestLabAddRmAtomTestJsx2 = _interopRequireDefault(_labAddRmAtomTestLabAddRmAtomTestJsx);
 
-	var _leapStandardInfoJsx = __webpack_require__(228);
+	var _commonJsComponentsLeapStandardInfoJsx = __webpack_require__(230);
 
-	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
+	var _commonJsComponentsLeapStandardInfoJsx2 = _interopRequireDefault(_commonJsComponentsLeapStandardInfoJsx);
 
-	var _gesturesAddRmObjSwipe = __webpack_require__(247);
+	var _addRmObjSwipe = __webpack_require__(249);
 
-	var _gesturesAddRmObjSwipe2 = _interopRequireDefault(_gesturesAddRmObjSwipe);
+	var _addRmObjSwipe2 = _interopRequireDefault(_addRmObjSwipe);
 
 	var LabAddRmAtomTestSwipe = (function (_LabAddRmAtomTest) {
 	  _inherits(LabAddRmAtomTestSwipe, _LabAddRmAtomTest);
@@ -1935,7 +1957,7 @@ webpackJsonp([1],{
 	  _createClass(LabAddRmAtomTestSwipe, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.addRmObj = new _gesturesAddRmObjSwipe2['default'](this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.plotter);
+	      this.addRmObj = new _addRmObjSwipe2['default'](this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.plotter);
 	      this.leapConnect(); // we need to call it manually, as we overwrite method modified by react mixin
 	    }
 	  }, {
@@ -2014,7 +2036,7 @@ webpackJsonp([1],{
 	          'Number of atoms: ',
 	          this.state.objCount
 	        ),
-	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
+	        _react2['default'].createElement(_commonJsComponentsLeapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
 	        _react2['default'].createElement(
 	          'p',
 	          null,
@@ -2036,11 +2058,11 @@ webpackJsonp([1],{
 	  }]);
 
 	  return LabAddRmAtomTestSwipe;
-	})(_labAddRmAtomTestJsx2['default']);
+	})(_labAddRmAtomTestLabAddRmAtomTestJsx2['default']);
 
 	exports['default'] = LabAddRmAtomTestSwipe;
 
-	_labAddRmAtomTestJsx2['default'].defaultProps = {
+	_labAddRmAtomTestLabAddRmAtomTestJsx2['default'].defaultProps = {
 	  addRmAtomConfig: {
 	    bufferLength: 30, // around 0.5s in practice, as Leap Motion is providing ~60 samples per second
 	    minAmplitude: 1,
@@ -2051,7 +2073,7 @@ webpackJsonp([1],{
 
 /***/ },
 
-/***/ 247:
+/***/ 249:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2060,11 +2082,21 @@ webpackJsonp([1],{
 
 	var _classCallCheck = __webpack_require__(189)['default'];
 
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
 
 	var _howler = __webpack_require__(221);
+
+	var _commonSoundsAddWav = __webpack_require__(228);
+
+	var _commonSoundsAddWav2 = _interopRequireDefault(_commonSoundsAddWav);
+
+	var _commonSoundsRemoveWav = __webpack_require__(229);
+
+	var _commonSoundsRemoveWav2 = _interopRequireDefault(_commonSoundsRemoveWav);
 
 	var DEFAULT_OPTIONS = {
 	  bufferLength: 30, // around 0.5s in practice, as Leap Motion is providing ~60 samples per second
@@ -2081,10 +2113,10 @@ webpackJsonp([1],{
 	    this.plotter = plotter;
 
 	    this.addSound = new _howler.Howl({
-	      urls: ['add.wav']
+	      urls: [_commonSoundsAddWav2['default']]
 	    });
 	    this.rmSound = new _howler.Howl({
-	      urls: ['remove.wav']
+	      urls: [_commonSoundsRemoveWav2['default']]
 	    });
 
 	    this._yaw = [];

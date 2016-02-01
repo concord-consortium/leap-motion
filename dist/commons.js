@@ -30271,7 +30271,9 @@
 /* 225 */,
 /* 226 */,
 /* 227 */,
-/* 228 */
+/* 228 */,
+/* 229 */,
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30294,15 +30296,15 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _leapHandsViewJsx = __webpack_require__(229);
+	var _leapHandsViewJsx = __webpack_require__(231);
 
 	var _leapHandsViewJsx2 = _interopRequireDefault(_leapHandsViewJsx);
 
-	var _leapFrameRateJsx = __webpack_require__(239);
+	var _leapFrameRateJsx = __webpack_require__(241);
 
 	var _leapFrameRateJsx2 = _interopRequireDefault(_leapFrameRateJsx);
 
-	var _plotterJsx = __webpack_require__(240);
+	var _plotterJsx = __webpack_require__(242);
 
 	var _plotterJsx2 = _interopRequireDefault(_plotterJsx);
 
@@ -30368,7 +30370,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 229 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -30395,7 +30397,7 @@
 
 	var _toolsLeapController2 = _interopRequireDefault(_toolsLeapController);
 
-	__webpack_require__(230);
+	__webpack_require__(232);
 
 	var LeapHandsView = (function (_React$Component) {
 	  _inherits(LeapHandsView, _React$Component);
@@ -30434,21 +30436,21 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 230 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	Leap = __webpack_require__(195)
-	__webpack_require__(231)
-	__webpack_require__(232)
 	__webpack_require__(233)
+	__webpack_require__(234)
 	__webpack_require__(235)
 	__webpack_require__(237)
-	__webpack_require__(238)
+	__webpack_require__(239)
+	__webpack_require__(240)
 	module.exports = true
 
 
 /***/ },
-/* 231 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/hand-entry/leap.hand-entry.coffee
@@ -30521,7 +30523,7 @@
 
 
 /***/ },
-/* 232 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/hand-hold/leap.hand-hold.coffee
@@ -30609,7 +30611,7 @@
 
 
 /***/ },
-/* 233 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/bone-hand/leap.bone-hand.coffee
@@ -30618,7 +30620,7 @@
 
 	  scope = null;
 
-	  THREE =  true ? __webpack_require__(234) : window.THREE;
+	  THREE =  true ? __webpack_require__(236) : window.THREE;
 
 	  initScene = function(targetEl, scale) {
 	    var camera, far, height, near, renderer, width;
@@ -31003,7 +31005,7 @@
 
 
 /***/ },
-/* 234 */
+/* 236 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var self = self || {};// File:src/Three.js
@@ -65752,7 +65754,7 @@
 
 
 /***/ },
-/* 235 */
+/* 237 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {/*
@@ -67590,10 +67592,10 @@
 
 	}).call(this);
 	}( window ));
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(236)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(238)(module)))
 
 /***/ },
-/* 236 */
+/* 238 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -67609,7 +67611,7 @@
 
 
 /***/ },
-/* 237 */
+/* 239 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//CoffeeScript generated from main/screen-position/leap.screen-position.coffee
@@ -67699,7 +67701,7 @@
 
 
 /***/ },
-/* 238 */
+/* 240 */
 /***/ function(module, exports) {
 
 	//CoffeeScript generated from main/transform/leap.transform.coffee
@@ -67847,7 +67849,7 @@
 
 
 /***/ },
-/* 239 */
+/* 241 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -67953,7 +67955,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 240 */
+/* 242 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -67976,7 +67978,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _toolsLeapDataPlotter = __webpack_require__(241);
+	var _toolsLeapDataPlotter = __webpack_require__(243);
 
 	var _toolsLeapDataPlotter2 = _interopRequireDefault(_toolsLeapDataPlotter);
 
@@ -68058,7 +68060,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 241 */
+/* 243 */
 /***/ function(module, exports) {
 
 	// It's slightly modified version of the LeapDataPlotter (leap-plugins-utils).
@@ -68295,23 +68297,23 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 242 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(243);
+	var content = __webpack_require__(245);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(245)(content, {});
+	var update = __webpack_require__(247)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../node_modules/css-loader/index.js!./basic-layout.css", function() {
-				var newContent = require("!!./../node_modules/css-loader/index.js!./basic-layout.css");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js!./basic-layout.css", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js!./basic-layout.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -68321,10 +68323,10 @@
 	}
 
 /***/ },
-/* 243 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(244)();
+	exports = module.exports = __webpack_require__(246)();
 	// imports
 
 
@@ -68335,7 +68337,7 @@
 
 
 /***/ },
-/* 244 */
+/* 246 */
 /***/ function(module, exports) {
 
 	/*
@@ -68391,7 +68393,7 @@
 
 
 /***/ },
-/* 245 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*

@@ -15,43 +15,43 @@ webpackJsonp([8],{
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsSeasonsSunrayAngleJsx = __webpack_require__(261);
+	var _seasonsSunrayAngleJsx = __webpack_require__(264);
 
-	var _componentsSeasonsSunrayAngleJsx2 = _interopRequireDefault(_componentsSeasonsSunrayAngleJsx);
+	var _seasonsSunrayAngleJsx2 = _interopRequireDefault(_seasonsSunrayAngleJsx);
 
-	__webpack_require__(242);
+	__webpack_require__(244);
 
-	_reactDom2['default'].render(_react2['default'].createElement(_componentsSeasonsSunrayAngleJsx2['default'], null), document.getElementById('app'));
+	_reactDom2['default'].render(_react2['default'].createElement(_seasonsSunrayAngleJsx2['default'], null), document.getElementById('app'));
 
 /***/ },
 
-/***/ 250:
+/***/ 253:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
 	  /**
 	   * Allows to communicate with an iframe.
 	   */
-	  ParentEndpoint:  __webpack_require__(251),
+	  ParentEndpoint:  __webpack_require__(254),
 	  /**
 	   * Allows to communicate with a parent page.
 	   * IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
 	   */
-	  getIFrameEndpoint: __webpack_require__(253),
-	  structuredClone: __webpack_require__(252),
+	  getIFrameEndpoint: __webpack_require__(256),
+	  structuredClone: __webpack_require__(255),
 
 	  // TODO: May be misnamed
-	  IframePhoneRpcEndpoint: __webpack_require__(254)
+	  IframePhoneRpcEndpoint: __webpack_require__(257)
 
 	};
 
 
 /***/ },
 
-/***/ 251:
+/***/ 254:
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(252);
+	var structuredClone = __webpack_require__(255);
 
 	/**
 	  Call as:
@@ -226,7 +226,7 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 252:
+/***/ 255:
 /***/ function(module, exports) {
 
 	var featureSupported = false;
@@ -269,10 +269,10 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 253:
+/***/ 256:
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(252);
+	var structuredClone = __webpack_require__(255);
 	var HELLO_INTERVAL_LENGTH = 200;
 	var HELLO_TIMEOUT_LENGTH = 60000;
 
@@ -423,13 +423,13 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 254:
+/***/ 257:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var ParentEndpoint = __webpack_require__(251);
-	var getIFrameEndpoint = __webpack_require__(253);
+	var ParentEndpoint = __webpack_require__(254);
+	var getIFrameEndpoint = __webpack_require__(256);
 
 	// Not a real UUID as there's an RFC for that (needed for proper distributed computing).
 	// But in this fairly parochial situation, we just need to be fairly sure to avoid repeats.
@@ -520,7 +520,7 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 261:
+/***/ 264:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -547,21 +547,21 @@ webpackJsonp([8],{
 
 	var _reactMixin2 = _interopRequireDefault(_reactMixin);
 
-	var _iframePhone = __webpack_require__(250);
+	var _iframePhone = __webpack_require__(253);
 
 	var _iframePhone2 = _interopRequireDefault(_iframePhone);
 
-	var _mixinsLeapStateHandling = __webpack_require__(193);
+	var _commonJsMixinsLeapStateHandling = __webpack_require__(193);
 
-	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
+	var _commonJsMixinsLeapStateHandling2 = _interopRequireDefault(_commonJsMixinsLeapStateHandling);
 
-	var _gesturesSunrayAngle = __webpack_require__(262);
+	var _commonJsComponentsLeapStandardInfoJsx = __webpack_require__(230);
 
-	var _gesturesSunrayAngle2 = _interopRequireDefault(_gesturesSunrayAngle);
+	var _commonJsComponentsLeapStandardInfoJsx2 = _interopRequireDefault(_commonJsComponentsLeapStandardInfoJsx);
 
-	var _leapStandardInfoJsx = __webpack_require__(228);
+	var _sunrayAngle = __webpack_require__(265);
 
-	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
+	var _sunrayAngle2 = _interopRequireDefault(_sunrayAngle);
 
 	var SeasonsSunrayAngle = (function (_React$Component) {
 	  _inherits(SeasonsSunrayAngle, _React$Component);
@@ -575,7 +575,7 @@ webpackJsonp([8],{
 	  _createClass(SeasonsSunrayAngle, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.sunrayAngle = new _gesturesSunrayAngle2['default'](this.gestureDetected.bind(this), this.plotter);
+	      this.sunrayAngle = new _sunrayAngle2['default'](this.gestureDetected.bind(this), this.plotter);
 	      this.modelController = new ModelController();
 	      this.modelController.setupModelCommunication(this.refs.seasonsModel);
 	    }
@@ -617,8 +617,8 @@ webpackJsonp([8],{
 	      return _react2['default'].createElement(
 	        'div',
 	        null,
-	        _react2['default'].createElement('iframe', { ref: 'seasonsModel', width: '1220px', height: '830px', scrolling: 'no', frameBorder: '0', src: 'http://concord-consortium.github.io/grasp-seasons/' }),
-	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
+	        _react2['default'].createElement('iframe', { ref: 'seasonsModel', width: '1220px', height: '830px', scrolling: 'no', frameBorder: '0', src: 'http://models-resources.concord.org/grasp-seasons/version/0.1.0/index.html' }),
+	        _react2['default'].createElement(_commonJsComponentsLeapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
 	      );
 	    }
 	  }, {
@@ -633,7 +633,7 @@ webpackJsonp([8],{
 
 	exports['default'] = SeasonsSunrayAngle;
 
-	_reactMixin2['default'].onClass(SeasonsSunrayAngle, _mixinsLeapStateHandling2['default']);
+	_reactMixin2['default'].onClass(SeasonsSunrayAngle, _commonJsMixinsLeapStateHandling2['default']);
 
 	// Logic related to Seasons model.
 	// IMPORTANT! Note that words "winter", "summer", "fall" and "spring" are used
@@ -901,7 +901,7 @@ webpackJsonp([8],{
 
 /***/ },
 
-/***/ 262:
+/***/ 265:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

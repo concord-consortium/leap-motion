@@ -15,13 +15,13 @@ webpackJsonp([0],{
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsLabAddRmAtomTestJsx = __webpack_require__(160);
+	var _labAddRmAtomTestJsx = __webpack_require__(160);
 
-	var _componentsLabAddRmAtomTestJsx2 = _interopRequireDefault(_componentsLabAddRmAtomTestJsx);
+	var _labAddRmAtomTestJsx2 = _interopRequireDefault(_labAddRmAtomTestJsx);
 
-	__webpack_require__(242);
+	__webpack_require__(244);
 
-	_reactDom2['default'].render(_react2['default'].createElement(_componentsLabAddRmAtomTestJsx2['default'], null), document.getElementById('app'));
+	_reactDom2['default'].render(_react2['default'].createElement(_labAddRmAtomTestJsx2['default'], null), document.getElementById('app'));
 
 /***/ },
 
@@ -52,21 +52,21 @@ webpackJsonp([0],{
 
 	var _reactMixin2 = _interopRequireDefault(_reactMixin);
 
-	var _mixinsLeapStateHandling = __webpack_require__(193);
+	var _commonJsMixinsLeapStateHandling = __webpack_require__(193);
 
-	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
+	var _commonJsMixinsLeapStateHandling2 = _interopRequireDefault(_commonJsMixinsLeapStateHandling);
 
-	var _toolsAvg = __webpack_require__(219);
+	var _commonJsToolsAvg = __webpack_require__(219);
 
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+	var _commonJsToolsAvg2 = _interopRequireDefault(_commonJsToolsAvg);
 
-	var _gesturesAddRmObj = __webpack_require__(220);
+	var _commonJsGesturesAddRmObj = __webpack_require__(220);
 
-	var _gesturesAddRmObj2 = _interopRequireDefault(_gesturesAddRmObj);
+	var _commonJsGesturesAddRmObj2 = _interopRequireDefault(_commonJsGesturesAddRmObj);
 
-	var _leapStandardInfoJsx = __webpack_require__(228);
+	var _commonJsComponentsLeapStandardInfoJsx = __webpack_require__(230);
 
-	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
+	var _commonJsComponentsLeapStandardInfoJsx2 = _interopRequireDefault(_commonJsComponentsLeapStandardInfoJsx);
 
 	var LabAddRmAtomTest = (function (_React$Component) {
 	  _inherits(LabAddRmAtomTest, _React$Component);
@@ -86,7 +86,7 @@ webpackJsonp([0],{
 	  _createClass(LabAddRmAtomTest, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.addRmObj = new _gesturesAddRmObj2['default'](this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.plotter);
+	      this.addRmObj = new _commonJsGesturesAddRmObj2['default'](this.props.addRmAtomConfig, this.gestureDetected.bind(this), this.plotter);
 	    }
 	  }, {
 	    key: 'handleGestureConfigChange',
@@ -189,7 +189,7 @@ webpackJsonp([0],{
 	          'Number of atoms: ',
 	          this.state.objCount
 	        ),
-	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
+	        _react2['default'].createElement(_commonJsComponentsLeapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
 	        _react2['default'].createElement(
 	          'p',
 	          null,
@@ -220,7 +220,7 @@ webpackJsonp([0],{
 	  }
 	};
 
-	_reactMixin2['default'].onClass(LabAddRmAtomTest, _mixinsLeapStateHandling2['default']);
+	_reactMixin2['default'].onClass(LabAddRmAtomTest, _commonJsMixinsLeapStateHandling2['default']);
 	module.exports = exports['default'];
 
 /***/ },
@@ -250,6 +250,14 @@ webpackJsonp([0],{
 
 	var _toolsDirectionChange2 = _interopRequireDefault(_toolsDirectionChange);
 
+	var _soundsAddWav = __webpack_require__(228);
+
+	var _soundsAddWav2 = _interopRequireDefault(_soundsAddWav);
+
+	var _soundsRemoveWav = __webpack_require__(229);
+
+	var _soundsRemoveWav2 = _interopRequireDefault(_soundsRemoveWav);
+
 	var AddRmObj = (function () {
 	  function AddRmObj(config, callback, plotter) {
 	    _classCallCheck(this, AddRmObj);
@@ -263,10 +271,10 @@ webpackJsonp([0],{
 	    this.isClosed = false;
 
 	    this.addSound = new _howler.Howl({
-	      urls: ['add.wav']
+	      urls: [_soundsAddWav2['default']]
 	    });
 	    this.rmSound = new _howler.Howl({
-	      urls: ['remove.wav']
+	      urls: [_soundsRemoveWav2['default']]
 	    });
 	  }
 
@@ -1877,6 +1885,20 @@ webpackJsonp([0],{
 	}
 
 	module.exports = exports["default"];
+
+/***/ },
+
+/***/ 228:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "be69b8faa3133da56111f811ee2c60dd.wav";
+
+/***/ },
+
+/***/ 229:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "7cc57c92cde1bf35a365e704feea2d85.wav";
 
 /***/ }
 

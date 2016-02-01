@@ -15,13 +15,13 @@ webpackJsonp([6],{
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsLabTemperatureTestJsx = __webpack_require__(259);
+	var _labTemperatureTestJsx = __webpack_require__(262);
 
-	var _componentsLabTemperatureTestJsx2 = _interopRequireDefault(_componentsLabTemperatureTestJsx);
+	var _labTemperatureTestJsx2 = _interopRequireDefault(_labTemperatureTestJsx);
 
-	__webpack_require__(242);
+	__webpack_require__(244);
 
-	_reactDom2['default'].render(_react2['default'].createElement(_componentsLabTemperatureTestJsx2['default'], null), document.getElementById('app'));
+	_reactDom2['default'].render(_react2['default'].createElement(_labTemperatureTestJsx2['default'], null), document.getElementById('app'));
 
 /***/ },
 
@@ -1574,7 +1574,14 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 256:
+/***/ 252:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "9817b8d8fda750268a7939e507516e7c.wav";
+
+/***/ },
+
+/***/ 259:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1589,11 +1596,11 @@ webpackJsonp([6],{
 	  value: true
 	});
 
+	var _howler = __webpack_require__(221);
+
 	var _toolsAvg = __webpack_require__(219);
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
-
-	var _howler = __webpack_require__(221);
 
 	var _toolsDirectionChange = __webpack_require__(222);
 
@@ -1602,6 +1609,10 @@ webpackJsonp([6],{
 	var _toolsExtend = __webpack_require__(227);
 
 	var _toolsExtend2 = _interopRequireDefault(_toolsExtend);
+
+	var _soundsTapWav = __webpack_require__(252);
+
+	var _soundsTapWav2 = _interopRequireDefault(_soundsTapWav);
 
 	var DEFAULT_OPTIONS = {
 	  closedGrabStrength: 0.4,
@@ -1635,7 +1646,7 @@ webpackJsonp([6],{
 	    key: '_setupDirectionChangeAlg',
 	    value: function _setupDirectionChangeAlg() {
 	      var sound = new _howler.Howl({
-	        urls: ['tap.wav']
+	        urls: [_soundsTapWav2['default']]
 	      });
 	      this.freqCalc = new _toolsDirectionChange2['default']({
 	        minAmplitude: this.config.minAmplitude,
@@ -1723,7 +1734,7 @@ webpackJsonp([6],{
 
 /***/ },
 
-/***/ 259:
+/***/ 262:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1750,21 +1761,21 @@ webpackJsonp([6],{
 
 	var _reactMixin2 = _interopRequireDefault(_reactMixin);
 
-	var _mixinsLeapStateHandling = __webpack_require__(193);
+	var _commonJsMixinsLeapStateHandling = __webpack_require__(193);
 
-	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
+	var _commonJsMixinsLeapStateHandling2 = _interopRequireDefault(_commonJsMixinsLeapStateHandling);
 
-	var _toolsAvg = __webpack_require__(219);
+	var _commonJsToolsAvg = __webpack_require__(219);
 
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+	var _commonJsToolsAvg2 = _interopRequireDefault(_commonJsToolsAvg);
 
-	var _gesturesFistBump = __webpack_require__(256);
+	var _commonJsGesturesFistBump = __webpack_require__(259);
 
-	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
+	var _commonJsGesturesFistBump2 = _interopRequireDefault(_commonJsGesturesFistBump);
 
-	var _leapStandardInfoJsx = __webpack_require__(228);
+	var _commonJsComponentsLeapStandardInfoJsx = __webpack_require__(230);
 
-	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
+	var _commonJsComponentsLeapStandardInfoJsx2 = _interopRequireDefault(_commonJsComponentsLeapStandardInfoJsx);
 
 	var LabTemperatureTest = (function (_React$Component) {
 	  _inherits(LabTemperatureTest, _React$Component);
@@ -1778,7 +1789,7 @@ webpackJsonp([6],{
 	  _createClass(LabTemperatureTest, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.fistBump = new _gesturesFistBump2['default'](this.props.handBumpConfig, this.gestureDetected.bind(this), this.plotter);
+	      this.fistBump = new _commonJsGesturesFistBump2['default'](this.props.handBumpConfig, this.gestureDetected.bind(this), this.plotter);
 	    }
 	  }, {
 	    key: 'handleGestureConfigChange',
@@ -1788,11 +1799,11 @@ webpackJsonp([6],{
 	  }, {
 	    key: 'gestureDetected',
 	    value: function gestureDetected() {
-	      _toolsAvg2['default'].addSample('newFreq', this.fistBump.freq, Math.round(this.props.freqAvg));
-	      _toolsAvg2['default'].addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
+	      _commonJsToolsAvg2['default'].addSample('newFreq', this.fistBump.freq, Math.round(this.props.freqAvg));
+	      _commonJsToolsAvg2['default'].addSample('maxVel', this.fistBump.maxVel, Math.round(this.props.maxVelAvg));
 	      this.plotter.showCanvas('gesture-detected');
-	      this.plotter.plot('max velocity avg', _toolsAvg2['default'].getAvg('maxVel'), { min: 0, max: 1500, precision: 2 });
-	      this.plotter.plot('frequency', _toolsAvg2['default'].getAvg('newFreq'), { min: 0, max: 9, precision: 2 });
+	      this.plotter.plot('max velocity avg', _commonJsToolsAvg2['default'].getAvg('maxVel'), { min: 0, max: 1500, precision: 2 });
+	      this.plotter.plot('frequency', _commonJsToolsAvg2['default'].getAvg('newFreq'), { min: 0, max: 9, precision: 2 });
 	      this.plotter.update();
 	    }
 	  }, {
@@ -1818,7 +1829,7 @@ webpackJsonp([6],{
 	      return _react2['default'].createElement(
 	        'div',
 	        null,
-	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
+	        _react2['default'].createElement(_commonJsComponentsLeapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() }),
 	        _react2['default'].createElement(
 	          'p',
 	          null,
@@ -1849,7 +1860,7 @@ webpackJsonp([6],{
 	  }
 	};
 
-	_reactMixin2['default'].onClass(LabTemperatureTest, _mixinsLeapStateHandling2['default']);
+	_reactMixin2['default'].onClass(LabTemperatureTest, _commonJsMixinsLeapStateHandling2['default']);
 	module.exports = exports['default'];
 
 /***/ }

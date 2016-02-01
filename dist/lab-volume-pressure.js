@@ -15,13 +15,13 @@ webpackJsonp([7],{
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _componentsLabVolumePressureJsx = __webpack_require__(260);
+	var _labVolumePressureJsx = __webpack_require__(263);
 
-	var _componentsLabVolumePressureJsx2 = _interopRequireDefault(_componentsLabVolumePressureJsx);
+	var _labVolumePressureJsx2 = _interopRequireDefault(_labVolumePressureJsx);
 
-	__webpack_require__(242);
+	__webpack_require__(244);
 
-	_reactDom2['default'].render(_react2['default'].createElement(_componentsLabVolumePressureJsx2['default'], null), document.getElementById('app'));
+	_reactDom2['default'].render(_react2['default'].createElement(_labVolumePressureJsx2['default'], null), document.getElementById('app'));
 
 /***/ },
 
@@ -1574,33 +1574,40 @@ webpackJsonp([7],{
 
 /***/ },
 
-/***/ 250:
+/***/ 252:
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__.p + "9817b8d8fda750268a7939e507516e7c.wav";
+
+/***/ },
+
+/***/ 253:
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = {
 	  /**
 	   * Allows to communicate with an iframe.
 	   */
-	  ParentEndpoint:  __webpack_require__(251),
+	  ParentEndpoint:  __webpack_require__(254),
 	  /**
 	   * Allows to communicate with a parent page.
 	   * IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
 	   */
-	  getIFrameEndpoint: __webpack_require__(253),
-	  structuredClone: __webpack_require__(252),
+	  getIFrameEndpoint: __webpack_require__(256),
+	  structuredClone: __webpack_require__(255),
 
 	  // TODO: May be misnamed
-	  IframePhoneRpcEndpoint: __webpack_require__(254)
+	  IframePhoneRpcEndpoint: __webpack_require__(257)
 
 	};
 
 
 /***/ },
 
-/***/ 251:
+/***/ 254:
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(252);
+	var structuredClone = __webpack_require__(255);
 
 	/**
 	  Call as:
@@ -1775,7 +1782,7 @@ webpackJsonp([7],{
 
 /***/ },
 
-/***/ 252:
+/***/ 255:
 /***/ function(module, exports) {
 
 	var featureSupported = false;
@@ -1818,10 +1825,10 @@ webpackJsonp([7],{
 
 /***/ },
 
-/***/ 253:
+/***/ 256:
 /***/ function(module, exports, __webpack_require__) {
 
-	var structuredClone = __webpack_require__(252);
+	var structuredClone = __webpack_require__(255);
 	var HELLO_INTERVAL_LENGTH = 200;
 	var HELLO_TIMEOUT_LENGTH = 60000;
 
@@ -1972,13 +1979,13 @@ webpackJsonp([7],{
 
 /***/ },
 
-/***/ 254:
+/***/ 257:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var ParentEndpoint = __webpack_require__(251);
-	var getIFrameEndpoint = __webpack_require__(253);
+	var ParentEndpoint = __webpack_require__(254);
+	var getIFrameEndpoint = __webpack_require__(256);
 
 	// Not a real UUID as there's an RFC for that (needed for proper distributed computing).
 	// But in this fairly parochial situation, we just need to be fairly sure to avoid repeats.
@@ -2069,7 +2076,7 @@ webpackJsonp([7],{
 
 /***/ },
 
-/***/ 256:
+/***/ 259:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2084,11 +2091,11 @@ webpackJsonp([7],{
 	  value: true
 	});
 
+	var _howler = __webpack_require__(221);
+
 	var _toolsAvg = __webpack_require__(219);
 
 	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
-
-	var _howler = __webpack_require__(221);
 
 	var _toolsDirectionChange = __webpack_require__(222);
 
@@ -2097,6 +2104,10 @@ webpackJsonp([7],{
 	var _toolsExtend = __webpack_require__(227);
 
 	var _toolsExtend2 = _interopRequireDefault(_toolsExtend);
+
+	var _soundsTapWav = __webpack_require__(252);
+
+	var _soundsTapWav2 = _interopRequireDefault(_soundsTapWav);
 
 	var DEFAULT_OPTIONS = {
 	  closedGrabStrength: 0.4,
@@ -2130,7 +2141,7 @@ webpackJsonp([7],{
 	    key: '_setupDirectionChangeAlg',
 	    value: function _setupDirectionChangeAlg() {
 	      var sound = new _howler.Howl({
-	        urls: ['tap.wav']
+	        urls: [_soundsTapWav2['default']]
 	      });
 	      this.freqCalc = new _toolsDirectionChange2['default']({
 	        minAmplitude: this.config.minAmplitude,
@@ -2218,7 +2229,7 @@ webpackJsonp([7],{
 
 /***/ },
 
-/***/ 260:
+/***/ 263:
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2245,25 +2256,25 @@ webpackJsonp([7],{
 
 	var _reactMixin2 = _interopRequireDefault(_reactMixin);
 
-	var _mixinsLeapStateHandling = __webpack_require__(193);
+	var _commonJsMixinsLeapStateHandling = __webpack_require__(193);
 
-	var _mixinsLeapStateHandling2 = _interopRequireDefault(_mixinsLeapStateHandling);
+	var _commonJsMixinsLeapStateHandling2 = _interopRequireDefault(_commonJsMixinsLeapStateHandling);
 
-	var _gesturesFistBump = __webpack_require__(256);
+	var _commonJsGesturesFistBump = __webpack_require__(259);
 
-	var _gesturesFistBump2 = _interopRequireDefault(_gesturesFistBump);
+	var _commonJsGesturesFistBump2 = _interopRequireDefault(_commonJsGesturesFistBump);
 
-	var _toolsAvg = __webpack_require__(219);
+	var _commonJsToolsAvg = __webpack_require__(219);
 
-	var _toolsAvg2 = _interopRequireDefault(_toolsAvg);
+	var _commonJsToolsAvg2 = _interopRequireDefault(_commonJsToolsAvg);
 
-	var _iframePhone = __webpack_require__(250);
+	var _iframePhone = __webpack_require__(253);
 
 	var _iframePhone2 = _interopRequireDefault(_iframePhone);
 
-	var _leapStandardInfoJsx = __webpack_require__(228);
+	var _commonJsComponentsLeapStandardInfoJsx = __webpack_require__(230);
 
-	var _leapStandardInfoJsx2 = _interopRequireDefault(_leapStandardInfoJsx);
+	var _commonJsComponentsLeapStandardInfoJsx2 = _interopRequireDefault(_commonJsComponentsLeapStandardInfoJsx);
 
 	var MAX_VOL = 0.82;
 	var MIN_VOL = 0.1;
@@ -2282,7 +2293,7 @@ webpackJsonp([7],{
 	  _createClass(LabVolumePressure, [{
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      this.fistBump = new _gesturesFistBump2['default'](this.props.handBumpConfig, this.gestureDetected.bind(this), this.plotter);
+	      this.fistBump = new _commonJsGesturesFistBump2['default'](this.props.handBumpConfig, this.gestureDetected.bind(this), this.plotter);
 	      this.setupLabCommunication();
 	      this.volume = MAX_VOL;
 	      this.pistonColor = DEF_PISTON_COLOR;
@@ -2316,8 +2327,8 @@ webpackJsonp([7],{
 	  }, {
 	    key: 'gestureDetected',
 	    value: function gestureDetected() {
-	      _toolsAvg2['default'].addSample('freq', this.fistBump.freq, Math.round(this.props.freqAvg));
-	      var freq = _toolsAvg2['default'].getAvg('freq');
+	      _commonJsToolsAvg2['default'].addSample('freq', this.fistBump.freq, Math.round(this.props.freqAvg));
+	      var freq = _commonJsToolsAvg2['default'].getAvg('freq');
 	      this.volume = Math.max(MIN_VOL, Math.min(MAX_VOL, MAX_VOL - this.props.volumeMult * freq));
 	      this.plotter.showCanvas('gesture-detected');
 	      this.plotter.plot('frequency', freq, { min: 0, max: 9, precision: 2 });
@@ -2351,7 +2362,7 @@ webpackJsonp([7],{
 	          null,
 	          _react2['default'].createElement('iframe', { ref: 'labModel', width: '610px', height: '350px', frameBorder: '0', src: 'http://lab.concord.org/embeddable.html#interactives/grasp/volume-pressure-relationship.json' })
 	        ),
-	        _react2['default'].createElement(_leapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
+	        _react2['default'].createElement(_commonJsComponentsLeapStandardInfoJsx2['default'], { ref: 'leapInfo', stateMsg: this.getStateMsg() })
 	      );
 	    }
 	  }, {
@@ -2378,7 +2389,7 @@ webpackJsonp([7],{
 	  }
 	};
 
-	_reactMixin2['default'].onClass(LabVolumePressure, _mixinsLeapStateHandling2['default']);
+	_reactMixin2['default'].onClass(LabVolumePressure, _commonJsMixinsLeapStateHandling2['default']);
 	module.exports = exports['default'];
 
 /***/ }
