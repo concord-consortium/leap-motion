@@ -5,6 +5,9 @@ import FistBump from '../common/js/gestures/fist-bump';
 import avg from '../common/js/tools/avg';
 import iframePhone from 'iframe-phone';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
+import LabInteractive from '../common/js/components/lab-interactive.jsx';
+import interactive from './lab-interactive.json';
+import model from './lab-model.json';
 
 const MAX_VOL = 0.82;
 const MIN_VOL = 0.1;
@@ -40,7 +43,7 @@ export default class LabVolumePressure extends React.Component {
   }
 
   setupLabCommunication() {
-    this.labPhone = new iframePhone.ParentEndpoint(this.refs.labModel);
+    this.labPhone = this.refs.labModel.phone;
     this.labPhone.addListener('modelLoaded', function () {
       this.labPhone.post('play');
     }.bind(this));
@@ -74,7 +77,7 @@ export default class LabVolumePressure extends React.Component {
     return (
       <div>
         <div>
-          <iframe ref='labModel' width='610px' height='350px' frameBorder='0' src='http://lab.concord.org/embeddable.html#interactives/grasp/volume-pressure-relationship.json'/>
+          <LabInteractive ref='labModel' interactive={interactive} model={model}/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
       </div>

@@ -5,6 +5,9 @@ import FistShake from './fist-shake';
 import avg from '../common/js/tools/avg';
 import iframePhone from 'iframe-phone';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
+import LabInteractive from '../common/js/components/lab-interactive.jsx';
+import interactive from './lab-interactive.json';
+import model from './lab-model.json';
 
 const DEFAULT_CLEAR_HAND_TIMEOUT = 500; // ms
 
@@ -22,7 +25,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   setupLabCommunication() {
-    this.labPhone = new iframePhone.ParentEndpoint(this.refs.labModel);
+    this.labPhone = this.refs.labModel.phone;
     this.labPhone.addListener('modelLoaded', function () {
       this.labPhone.post('play');
     }.bind(this));
@@ -94,7 +97,7 @@ export default class LabHeatTransfer extends React.Component {
     return (
       <div>
         <div>
-          <iframe ref='labModel' width='610px' height='350px' frameBorder='0' src='http://lab.concord.org/embeddable-dev.html#interactives/grasp/heat-transfer.json'/>
+          <LabInteractive ref='labModel' interactive={interactive} model={model}/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
         <p>

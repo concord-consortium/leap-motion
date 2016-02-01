@@ -5,6 +5,9 @@ import FistBump from '../common/js/gestures/fist-bump';
 import avg from '../common/js/tools/avg';
 import iframePhone from 'iframe-phone';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
+import LabInteractive from '../common/js/components/lab-interactive.jsx';
+import interactive from '../common/lab/temperature-pressure-relationship-interactive.json';
+import model from '../common/lab/temperature-pressure-relationship-model.json';
 
 export default class LabTemperatureAbsolute extends React.Component {
   componentDidMount() {
@@ -17,7 +20,7 @@ export default class LabTemperatureAbsolute extends React.Component {
   }
 
   setupLabCommunication() {
-    this.labPhone = new iframePhone.ParentEndpoint(this.refs.labModel);
+    this.labPhone = this.refs.labModel.phone;
     this.labPhone.addListener('modelLoaded', function () {
       this.labPhone.post('play');
     }.bind(this));
@@ -52,7 +55,7 @@ export default class LabTemperatureAbsolute extends React.Component {
     return (
       <div>
         <div>
-          <iframe ref='labModel' width='610px' height='350px' frameBorder='0' src='http://lab.concord.org/embeddable.html#interactives/grasp/temperature-pressure-relationship.json'/>
+          <LabInteractive ref='labModel' interactive={interactive} model={model}/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
       </div>

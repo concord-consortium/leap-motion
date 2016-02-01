@@ -24,6 +24,7 @@
     "copy-webpack-plugin": "^1.1.1",
     "css-loader": "^0.18.0",
     "file-loader": "^0.8.5",
+    "json-loader": "^0.5.4",
     "node-libs-browser": "^0.5.3",
     "style-loader": "^0.12.4",
     "webpack": "^1.12.2"

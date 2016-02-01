@@ -6,7 +6,9 @@ import AddRmObj from '../common/js/gestures/add-rm-obj';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
 import avg from '../common/js/tools/avg';
 import iframePhone from 'iframe-phone';
-
+import LabInteractive from '../common/js/components/lab-interactive.jsx';
+import interactive from './lab-interactive.json';
+import model from './lab-model.json';
 
 export default class LabPressureEquilibrium extends React.Component {
   componentDidMount() {
@@ -22,7 +24,7 @@ export default class LabPressureEquilibrium extends React.Component {
   setupLabCommunication() {
     this.purpleAtomsCount = 30;
     this.yellowAtomsCount = 30;
-    this.labPhone = new iframePhone.ParentEndpoint(this.refs.labModel);
+    this.labPhone = this.refs.labModel.phone;
     this.labPhone.addListener('modelLoaded', function () {
       this.labPhone.post('play');
     }.bind(this));
@@ -87,7 +89,7 @@ export default class LabPressureEquilibrium extends React.Component {
     return (
       <div>
         <div>
-          <iframe ref='labModel' width='610px' height='350px' frameBorder='0' src='http://lab.concord.org/embeddable.html#interactives/grasp/pressure-equilibrium.json'/>
+          <LabInteractive ref='labModel' interactive={interactive} model={model}/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
       </div>
