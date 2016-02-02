@@ -41,7 +41,7 @@
       (function() {
         Lab.config.rootUrl              = "lab";
         Lab.config.dataGamesProxyPrefix = "";
-        Lab.config.homeForSharing= "http://lab.concord.org";
+        Lab.config.sharing = false;
         Embeddable.controller = new Lab.InteractivesController(null, '#interactive-container');
         Embeddable.controller.on("modelLoaded.application", function() {
           document.title = "Lab Interactive: " + Embeddable.controller.interactive.title;
