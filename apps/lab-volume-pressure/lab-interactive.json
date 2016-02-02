@@ -77,13 +77,6 @@
   ],
   "components": [
     {
-      "type": "numericOutput",
-      "id": "current-volume",
-      "label": "Gas volume",
-      "property": "volume",
-      "displayValue": "return format('.2f')(value)"
-    },
-    {
       "type": "barGraph",
       "id": "bar-graph",
       "min": 0,
