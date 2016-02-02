@@ -50,9 +50,13 @@
       ]
     },
     {
-      "name": "pistonColor",
-      "initialValue": "#8CBBB8",
-      "onChange": "setObstacleProperties(0, {color: value});"
+      "name": "pistonGestureActive",
+      "initialValue": false,
+      "onChange": [
+        "setObstacleProperties(0, {color: value ? '#E8DC36' : '#8CBBB8'});",
+        "setComponentDisabled('increase-volume', value);",
+        "setComponentDisabled('decrease-volume', value);"
+      ]
     }
   ],
   "outputs": [
@@ -83,6 +87,18 @@
       "max": 2.5,
       "title": "Pressure (Bar)",
       "property": "pressureProbeFiltered"
+    },
+    {
+      "id": "increase-volume",
+      "type": "button",
+      "action": "if (get('volume') < 0.7) { set({ volume: get('volume') + 0.05 }) };",
+      "text": "Volume &#8593;"
+    },
+    {
+      "id": "decrease-volume",
+      "type": "button",
+      "action": "if (get('volume') > 0.14) { set({ volume: get('volume') - 0.05 }) };",
+      "text": "Volume &#8595;"
     }
   ],
   "layout": {
