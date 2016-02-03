@@ -14,7 +14,7 @@ const MAX_VOL = 0.82;
 const MIN_VOL = 0.1;
 
 const DEF_LAB_PROPS = {
-  pistonGestureActive: false,
+  pistonGestureStatus: false,
   volume: MAX_VOL
 };
 
@@ -33,11 +33,8 @@ export default class LabVolumePressure extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.state.leapState === 'gestureDetected' && prevState.leapState !== 'gestureDetected') {
-      this.setLabProps({pistonGestureActive: true});
-    }
-    if (this.state.leapState !== 'gestureDetected' && prevState.leapState === 'gestureDetected') {
-      this.setLabProps({pistonGestureActive: false});
+    if (this.state.leapState !== prevState.leapState) {
+      this.setLabProps({pistonGestureStatus: this.state.leapState});
     }
   }
 
@@ -69,6 +66,12 @@ export default class LabVolumePressure extends React.Component {
     switch(this.state.leapState) {
       case 'initial':
         return 'Please keep your hands steady above the Leap device.';
+      case 'rightHandDetected':
+      case 'closedHandDetected':
+        return 'Twist your right hand and keep it open.';
+      case 'leftHandDetected':
+      case 'verticalHandDetected':
+        return 'Close your left fist.';
       case 'twoHandsDetected':
         return 'Close left fist and twist the right hand.';
       case 'gestureDetected':

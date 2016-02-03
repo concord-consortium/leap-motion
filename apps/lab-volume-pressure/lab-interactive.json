@@ -34,6 +34,7 @@
         "    scaleFactor;",
         "if (getObstacleProperties(0).x === newX) return;",
         "setObstacleProperties(0, { x: newX });",
+        "setShapeProperties(0, { width: newX });",
         "for(var i = 0; i < getNumberOfAtoms(); i++) {",
         "  if (getAtomProperties(i).x > maxX) maxX = getAtomProperties(i).x;",
         "}",
@@ -50,12 +51,13 @@
       ]
     },
     {
-      "name": "pistonGestureActive",
+      "name": "pistonGestureStatus",
       "initialValue": false,
       "onChange": [
-        "setObstacleProperties(0, {color: value ? '#E8DC36' : '#8CBBB8'});",
-        "setComponentDisabled('increase-volume', value);",
-        "setComponentDisabled('decrease-volume', value);"
+        "setShapeProperties(0, {color: value === 'gestureDetected' || value === 'closedHandDetected' ? '#FFE5C5' : 'transparent'});",
+        "setObstacleProperties(0, {color: value === 'gestureDetected' || value === 'verticalHandDetected' ? '#8CBBB8' : '#888'});",
+        "setComponentDisabled('increase-volume', value === 'gestureDetected');",
+        "setComponentDisabled('decrease-volume', value === 'gestureDetected');"
       ]
     }
   ],

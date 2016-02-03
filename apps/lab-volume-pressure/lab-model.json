@@ -413,5 +413,41 @@
     "visible": [
       true
     ]
+  },
+  "shapes": {
+    "type": [
+      "rectangle",
+      "rectangle",
+      "rectangle",
+      "rectangle",
+      "rectangle"
+    ],
+    "width": [
+      3.5
+    ],
+    "height": [
+      2.5
+    ],
+    "x": [
+      0
+    ],
+    "y": [
+      0
+    ],
+    "color": [
+      "#FFE5C5"
+    ],
+    "lineColor": [
+      "transparent"
+    ],
+    "layer": [
+      0
+    ],
+    "layerPosition": [
+      1
+    ],
+    "visible": [
+      1
+    ]
   }
 }
