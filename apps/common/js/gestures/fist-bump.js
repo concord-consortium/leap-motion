@@ -9,7 +9,7 @@ const DEFAULT_OPTIONS = {
   openGrabStrength: 0.7,
   handTwistTolerance: 0.7,
   minAmplitude: 20,
-  allowedHand: { // moving and closed hand
+  allowedHand: {
     left: true,
     right: true
   },
@@ -38,7 +38,7 @@ export default class FistBump {
       minAmplitude: this.config.minAmplitude,
       onDirChange: function (data) {
         if (this.hand && ((this.hand.type === 'right' && data.type === DirectionChange.LEFT_TO_RIGHT) ||
-                          (this.hand.type === 'left' && data.type === DirectionChange.RIGHT_TO_LEFT))) {
+          (this.hand.type === 'left' && data.type === DirectionChange.RIGHT_TO_LEFT))) {
           if (this.handsWithinKnockDistance()) {
             // Sound effect!
             sound.play();
@@ -60,31 +60,9 @@ export default class FistBump {
     return Math.abs(this.hand.palmPosition[0] - this.openHand.palmPosition[0]) < this.config.maxKnockDist;
   }
 
-  handClosedAllowed(hand) {
-    return this.config.allowedHand[hand.type];
-  }
-
-  handVerticalAllowed(hand) {
-    return this.config.allowedHand[oppositeHand(hand.type)];
-  }
-
-  handClosed(hand) {
-    return this.handClosedAllowed(hand) &&
-           hand.grabStrength > this.config.closedGrabStrength;
-  }
-
-  handVertical(hand) {
-    return this.handVerticalAllowed(hand) &&
-           hand.grabStrength < this.config.openGrabStrength &&
-           Math.abs(Math.abs(hand.roll()) - Math.PI / 2) < this.config.handTwistTolerance;
-  }
-
   // State definitions:
 
   state_initial(frame, data) {
-    if (frame.hands.length === 1) {
-      return 'oneHandDetected';
-    }
     if (frame.hands.length === 2) {
       return 'twoHandsDetected';
     }
@@ -93,39 +71,30 @@ export default class FistBump {
     return null;
   }
 
-  state_oneHandDetected(frame, data) {
-    let hand = frame.hands[0];
-    if (this.handVertical(hand)) {
-      return 'verticalHandDetected';
+  state_twoHandsDetected(frame, data) {
+    let config = this.config;
+    function condition(closedHandIdx, openHandIdx) {
+      let closedHand = frame.hands[closedHandIdx];
+      let openHand = frame.hands[openHandIdx];
+      if (closedHand.grabStrength > config.closedGrabStrength && openHand.grabStrength < config.openGrabStrength &&
+        Math.abs(Math.abs(openHand.roll()) - Math.PI / 2) < config.handTwistTolerance) {
+        return true;
+      }
+      return false;
     }
-    if (this.handClosed(hand)) {
-      return 'closedHandDetected';
+    if (condition(0, 1) && this.config.allowedHand[frame.hands[0].type]) {
+      return {stateId: 'gestureDetected', data: {closedHand: frame.hands[0], openHand: frame.hands[1]}};
+    } else if (condition(1, 0) && this.config.allowedHand[frame.hands[1].type]) {
+      return {stateId: 'gestureDetected', data: {closedHand: frame.hands[1], openHand: frame.hands[0]}};
+    } else {
+      this.plotter.showCanvas('two-hands-detected');
+      this.plotter.plot('hand 0 roll', frame.hands[0].roll());
+      this.plotter.plot('hand 1 grab strength', frame.hands[1].grabStrength);
+      this.plotter.update();
+      return null;
     }
-    // 'leftHandDetected' or 'rightHandDetected'
-    return hand.type + 'HandDetected';
   }
 
-  state_twoHandsDetected(frame, data) {
-    let hands = frame.hands;
-    if (this.handClosed(hands[0]) && this.handVertical(hands[1])) {
-      return {stateId: 'gestureDetected', data: {closedHand: hands[0], openHand: hands[1]}};
-    }
-    if (this.handClosed(hands[1]) && this.handVertical(hands[0])) {
-      return {stateId: 'gestureDetected', data: {closedHand: hands[1], openHand: hands[0]}};
-    }
-    if (this.handVertical(hands[0]) || this.handVertical(hands[1])) {
-      return 'verticalHandDetected';
-    }
-    if (this.handClosed(hands[0]) || this.handClosed(hands[1])) {
-      return 'closedHandDetected';
-    }
-    this.plotter.showCanvas('two-hands-detected');
-    this.plotter.plot('hand 0 roll', hands[0].roll());
-    this.plotter.plot('hand 1 grab strength', hands[1].grabStrength);
-    this.plotter.update();
-    return null;
-  }
-  
   state_gestureDetected(frame, data) {
     this.hand = data.closedHand;
     this.openHand = data.openHand;
@@ -137,8 +106,4 @@ export default class FistBump {
     }
     return null;
   }
-}
-
-function oppositeHand(type) {
-  return type === 'left' ? 'right' : 'left';
 }

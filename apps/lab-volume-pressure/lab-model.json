@@ -402,7 +402,7 @@
       false
     ],
     "eastProbe": [
-      false
+      true
     ],
     "southProbe": [
       false
@@ -416,10 +416,6 @@
   },
   "shapes": {
     "type": [
-      "rectangle",
-      "rectangle",
-      "rectangle",
-      "rectangle",
       "rectangle"
     ],
     "width": [

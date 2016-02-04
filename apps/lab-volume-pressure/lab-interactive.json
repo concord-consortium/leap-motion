@@ -24,25 +24,54 @@
   ],
   "parameters": [
     {
+      "name": "prevOrientation",
+      "initialValue": "right"
+    },
+    {
+      "name": "orientation",
+      "initialValue": "right",
+      "onChange": [
+        "if (value === get('prevOrientation')) return;",
+        "var width = get('width');",
+        "batch(function() {",
+        "  var num = getNumberOfAtoms();",
+        "  for(var i = 0; i < num; i++) {",
+        "    setAtomProperties(i, { x: width - getAtomProperties(i).x });",
+        "  }",
+        "});",
+        "if (get('volume') !== undefined) set('volume', get('volume'));",
+        "set('prevOrientation', value);"
+      ]
+    },
+    {
       "name": "volume",
       "unitAbbreviation": "nm³",
       "label": "Volume",
       "initialValue": 0.82,
       "onChange": [
-        "var newX = value / 0.1 / get('height'),",
-        "    maxX = 0,",
-        "    scaleFactor;",
-        "if (getObstacleProperties(0).x === newX) return;",
-        "setObstacleProperties(0, { x: newX });",
-        "setShapeProperties(0, { width: newX });",
+        "var width = get('width');",
+        "var o = get('orientation');",
+        "var newX = value / 0.1 / get('height');",
+        "if (o === 'left') newX = width - newX;",
+        "var obsX = o === 'left' ? newX - getObstacleProperties(0).width : newX;",
+        "if (getObstacleProperties(0).x === obsX) return;",
+        "setObstacleProperties(0, {x: obsX});",
+        "setShapeProperties(0, o === 'left' ? {x: obsX, width: width} : {x: 0, width: obsX});",
+        "var minX = Infinity;",
+        "var maxX = 0;",
         "for(var i = 0; i < getNumberOfAtoms(); i++) {",
-        "  if (getAtomProperties(i).x > maxX) maxX = getAtomProperties(i).x;",
+        "  var atomX = getAtomProperties(i).x;",
+        "  if (atomX > maxX) maxX = atomX;",
+        "  else if (atomX < minX) minX = atomX;",
         "}",
-        "if (newX - 0.1 > maxX) return;",
-        "scaleFactor = (newX - 0.1) / maxX;",
+        "if (o === 'right' && newX - 0.1 > maxX) return;",
+        "if (o === 'left' && newX + 0.1 < minX) return;",
+        "var scaleFactor = o === 'left' ? (width - newX - 0.1) / (width - minX) : (newX - 0.1) / maxX;",
         "batch(function() {",
-        "  for(i = 0; i < getNumberOfAtoms(); i++) {",
-        "    setAtomProperties(i, { x: getAtomProperties(i).x * scaleFactor });",
+        "  var num = getNumberOfAtoms();",
+        "  for(i = 0; i < num; i++) {",
+        "    setAtomProperties(i, o === 'left' ? {x: width - (width - getAtomProperties(i).x) * scaleFactor } :",
+        "                                        {x: getAtomProperties(i).x * scaleFactor});",
         "  }",
         "});",
         "if (scaleFactor < 1) {",
@@ -51,13 +80,19 @@
       ]
     },
     {
-      "name": "pistonGestureStatus",
+      "name": "plungerHighlighted",
       "initialValue": false,
       "onChange": [
-        "setShapeProperties(0, {color: value === 'gestureDetected' || value === 'closedHandDetected' ? '#FFE5C5' : 'transparent'});",
-        "setObstacleProperties(0, {color: value === 'gestureDetected' || value === 'verticalHandDetected' ? '#8CBBB8' : '#888'});",
-        "setComponentDisabled('increase-volume', value === 'gestureDetected');",
-        "setComponentDisabled('decrease-volume', value === 'gestureDetected');"
+        "setObstacleProperties(0, {color: value ? '#8CBBB8' : '#888'});",
+        "setComponentDisabled('increase-volume', value);",
+        "setComponentDisabled('decrease-volume', value);"
+      ]
+    },
+    {
+      "name": "atomsHighlighted",
+      "initialValue": false,
+      "onChange": [
+        "setShapeProperties(0, {color: value ? '#FFE5C5' : 'transparent'});"
       ]
     }
   ],
@@ -67,7 +102,7 @@
       "unitType": "pressure",
       "label": "Pressure Gauge",
       "value": [
-        "return getObstacleProperties(0).westProbeValue;"
+        "return get('orientation') === 'right' ? getObstacleProperties(0).westProbeValue : getObstacleProperties(0).eastProbeValue;"
       ]
     }
   ],
@@ -93,7 +128,7 @@
     {
       "id": "increase-volume",
       "type": "button",
-      "action": "if (get('volume') < 0.7) { set({ volume: get('volume') + 0.05 }) };",
+      "action": "if (get('volume') < 0.77) { set({ volume: get('volume') + 0.05 }) };",
       "text": "Volume &#8593;"
     },
     {

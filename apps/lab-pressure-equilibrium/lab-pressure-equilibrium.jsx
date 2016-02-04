@@ -64,10 +64,7 @@ export default class LabPressureEquilibrium extends React.Component {
   }
 
   nextLeapState(stateId, frame, data) {
-    if (stateId === 'oneHandDetected') {
-      return this.addRmObj.nextLeapState(stateId, frame, data);
-    }
-    return this.fistBump.nextLeapState(stateId, frame, data);
+    return this.fistBump.nextLeapState(stateId, frame, data) || this.addRmObj.nextLeapState(stateId, frame, data);
   }
 
   getStateMsg() {
