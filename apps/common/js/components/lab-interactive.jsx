@@ -1,5 +1,6 @@
 import React from 'react';
 import iframePhone from 'iframe-phone';
+import extend from '../tools/extend';
 
 const LAB_PROPS_UPDATE_MIN_INTERVAL = 75; // ms
 
@@ -7,12 +8,14 @@ export default class LabInteractive extends React.Component {
   componentDidMount() {
     this._phone = new iframePhone.ParentEndpoint(this.refs.iframe);
     this._labUpdateTimeoutID = null;
+    this._labPropsToSet = {};
+
     this.loadInteractive(this.props.interactive, this.props.model);
     this._phone.addListener('modelLoaded', () => {
       this.props.onModelLoaded();
       this.setLabProperties(this.props.labProps);
-      this.setLabPlaying(this.props.playing);
       this.addLabListeners(this.props.labObservedProps);
+      this.setLabPlaying(this.props.playing);
     });
     this._phone.addListener('propertyValue', (prop) => {
       this.props.onObservedPropChange(prop.name, prop.value);
@@ -25,7 +28,10 @@ export default class LabInteractive extends React.Component {
       this.loadInteractive(nextProps.interactive, nextProps.model)
     }
     if (nextProps.labProps !== this.props.labProps) {
-      this.setLabProperties();
+      // Set only DIFF of new and old properties. It's quite important difference,
+      // as Lab calls 'onChange' callbacks each time we set given property,
+      // even if we set the same value.
+      this.setLabProperties(diff(nextProps.labProps, this.props.labProps));
     }
     if (nextProps.playing !== this.props.playing) {
       this.setLabPlaying(nextProps.playing);
@@ -51,13 +57,19 @@ export default class LabInteractive extends React.Component {
     }
   }
 
-  setLabProperties() {
+  setLabProperties(props) {
+    extend(this._labPropsToSet, props);
     if (this._labUpdateTimeoutID !== null) {
       return;
     }
     let updateFunc = () => {
-      this._phone.post('set', {name: this.props.labProps});
+      // Hack. Expected format is `post('set', {name: 'propName', value: 'propValue'})`
+      // However Lab internally checks if the `name` argument is string or hash, so we
+      // can pass hash too. We shouldn't, but iframePhone messages seem to be expensive,
+      // so it makes sense to limit their number.
+      this._phone.post('set', {name: this._labPropsToSet});
       this._labUpdateTimeoutID = null;
+      this._labPropsToSet = {};
     };
     this._labUpdateTimeoutID = setTimeout(updateFunc, LAB_PROPS_UPDATE_MIN_INTERVAL);
   }
@@ -107,4 +119,12 @@ function combineInteractiveAndModel(interactive, model) {
   delete interactive.models[0].url;
   interactive.models[0].model = model;
   return interactive;
+}
+
+function diff(newProps, oldProps={}) {
+  let result = {};
+  Object.keys(newProps).forEach(function (key) {
+    if (newProps[key] !== oldProps[key]) result[key] = newProps[key];
+  });
+  return result;
 }

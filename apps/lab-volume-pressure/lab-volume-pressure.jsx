@@ -1,8 +1,8 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
-import leapStateHandling from '../common/js/mixins/leap-state-handling';
+import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import setLabProps from '../common/js/mixins/set-lab-props';
-import FistBump from '../common/js/gestures/fist-bump';
+import FistBump from './fist-bump';
 import avg from '../common/js/tools/avg';
 import iframePhone from 'iframe-phone';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
@@ -12,10 +12,13 @@ import model from './lab-model.json';
 
 const MAX_VOL = 0.82;
 const MIN_VOL = 0.1;
+const VOLUME_MULT = 0.11;
 
 const DEF_LAB_PROPS = {
-  pistonGestureStatus: false,
-  volume: MAX_VOL
+  volume: MAX_VOL,
+  orientation: 'right',
+  plungerHighlighted: false,
+  atomsHighlighted: false
 };
 
 export default class LabVolumePressure extends React.Component {
@@ -25,17 +28,11 @@ export default class LabVolumePressure extends React.Component {
   }
 
   componentDidMount() {
-    this.fistBump = new FistBump(this.props.handBumpConfig, this.gestureDetected.bind(this), this.plotter);
+    this.fistBump = new FistBump(this.props.handBumpConfig, this.gestureCallbacks, this.plotter);
   }
 
   componentWillUnmount() {
     clearInterval(this.simUpdateID);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.leapState !== prevState.leapState) {
-      this.setLabProps({pistonGestureStatus: this.state.leapState});
-    }
   }
 
   labModelLoaded() {
@@ -47,35 +44,49 @@ export default class LabVolumePressure extends React.Component {
     return this.refs.leapInfo.plotter;
   }
 
-  gestureDetected() {
-    avg.addSample('freq', this.fistBump.freq, Math.round(this.props.freqAvg));
-    let freq = avg.getAvg('freq');
-    let volume = Math.max(MIN_VOL, Math.min(MAX_VOL, MAX_VOL - this.props.volumeMult * freq));
-    this.setLabProps({volume: volume});
+  get gestureCallbacks() {
+    return {
+      leapState: (leapState) => {
+        let labProps = {};
+        if (leapState.verticalHand) {
+          labProps.orientation = leapState.verticalHand.type;
+        }
+        labProps.plungerHighlighted = !!leapState.verticalHand;
+        labProps.atomsHighlighted   = !!leapState.closedHand &&
+                                        leapState.closedHand.type !== this.state.labProps.orientation;
+        this.setLabProps(labProps);
+      },
+      gestureDetected: (freqSample) => {
+        avg.addSample('freq', freqSample, Math.round(this.props.freqAvg));
+        let freq = avg.getAvg('freq');
+        let volume = Math.max(MIN_VOL, Math.min(MAX_VOL, MAX_VOL - VOLUME_MULT * freq));
 
-    this.plotter.showCanvas('gesture-detected');
-    this.plotter.plot('frequency', freq, {min: 0, max: 9, precision: 2});
-    this.plotter.update();
+        this.plotter.showCanvas('gesture-detected');
+        this.plotter.plot('frequency', freq, {min: 0, max: 9, precision: 2});
+        this.plotter.update();
+
+        this.setLabProps({volume: volume});
+      }
+    };
   }
 
-  nextLeapState(stateId, frame, data) {
-    return this.fistBump.nextLeapState(stateId, frame, data);
+  handleLeapFrame(frame) {
+    return this.fistBump.handleLeapFrame(frame);
   }
 
   getStateMsg() {
-    switch(this.state.leapState) {
-      case 'initial':
-        return 'Please keep your hands steady above the Leap device.';
-      case 'rightHandDetected':
-      case 'closedHandDetected':
-        return 'Twist your right hand and keep it open.';
-      case 'leftHandDetected':
-      case 'verticalHandDetected':
-        return 'Close your left fist.';
-      case 'twoHandsDetected':
-        return 'Close left fist and twist the right hand.';
-      case 'gestureDetected':
-        return 'Move your closed fist towards open palm and back rapidly.';
+    let state = this.state.labProps;
+    if (!state.plungerHighlighted && !state.atomsHighlighted) {
+      return 'Twist one hand and keep it vertical.';
+    }
+    if (state.plungerHighlighted && !state.atomsHighlighted) {
+      return 'Close the other fist.';
+    }
+    if (!state.plungerHighlighted && state.atomsHighlighted) {
+      return 'Twist the other hand and keep it vertical.';
+    }
+    if (state.plungerHighlighted && state.atomsHighlighted) {
+      return 'Move your closed fist towards open palm and back rapidly.';
     }
   }
 
@@ -94,17 +105,5 @@ export default class LabVolumePressure extends React.Component {
   }
 }
 
-LabVolumePressure.defaultProps = {
-  volumeMult: 0.11,
-  maxVelAvg: 120,
-  handBumpConfig: {
-    // Limit bumping only to the left hand, as wall is always on the right side.
-    allowedHand: {
-      left: true,
-      right: false
-    }
-  }
-};
-
-reactMixin.onClass(LabVolumePressure, leapStateHandling);
+reactMixin.onClass(LabVolumePressure, leapStateHandlingV2);
 reactMixin.onClass(LabVolumePressure, setLabProps);
