@@ -83,16 +83,16 @@
       "name": "plungerHighlighted",
       "initialValue": false,
       "onChange": [
-        "setObstacleProperties(0, {color: value ? '#8CBBB8' : '#888'});",
-        "setComponentDisabled('increase-volume', value);",
-        "setComponentDisabled('decrease-volume', value);"
+        "setObstacleProperties(0, {color: value ? '#E8DC36' : '#888'});",
+        "setComponentDisabled('plunger-right', value);",
+        "setComponentDisabled('plunger-left', value);"
       ]
     },
     {
       "name": "atomsHighlighted",
       "initialValue": false,
       "onChange": [
-        "setShapeProperties(0, {color: value ? '#FFE5C5' : 'transparent'});"
+        "setElementProperties(3, {color: value ? -13134236 : -3355444});"
       ]
     }
   ],
@@ -126,16 +126,28 @@
       "property": "pressureProbeFiltered"
     },
     {
-      "id": "increase-volume",
+      "id": "plunger-left",
       "type": "button",
-      "action": "if (get('volume') < 0.77) { set({ volume: get('volume') + 0.05 }) };",
-      "text": "Volume &#8593;"
+      "action": [
+        "if (get('orientation') === 'left') {",
+        "  if (get('volume') < 0.77) { set({ volume: get('volume') + 0.05 }) };",
+        "} else {",
+        "  if (get('volume') > 0.14) { set({ volume: get('volume') - 0.05 }) };",
+        "}"
+      ],
+      "text": "⟵"
     },
     {
-      "id": "decrease-volume",
+      "id": "plunger-right",
       "type": "button",
-      "action": "if (get('volume') > 0.14) { set({ volume: get('volume') - 0.05 }) };",
-      "text": "Volume &#8595;"
+      "action": [
+        "if (get('orientation') === 'left') {",
+        "  if (get('volume') > 0.14) { set({ volume: get('volume') - 0.05 }) };",
+        "} else {",
+        "  if (get('volume') < 0.77) { set({ volume: get('volume') + 0.05 }) };",
+        "}"
+    ],
+      "text": "⟶"
     }
   ],
   "layout": {
