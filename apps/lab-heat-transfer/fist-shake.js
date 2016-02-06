@@ -53,7 +53,6 @@ export default class FistBump {
       this.resetHandTimeoutID = setTimeout(() => {
         this.savedHandType = null;
       }, this.config.resetHandTimeout);
-      console.log('time out ' + this.config.resetHandTimeout);
     }
   }
 

@@ -73,12 +73,12 @@
     },
     {
       "name": "leftAtomsTargetTemp",
-      "initialValue": 250,
+      "initialValue": 150,
       "onChange": "setTemperatureOfAtoms(get('leftAtomsIndices'), value);"
     },
     {
       "name": "rightAtomsTargetTemp",
-      "initialValue": 250,
+      "initialValue": 150,
       "onChange": "setTemperatureOfAtoms(get('rightAtomsIndices'), value);"
     },
     {
@@ -219,19 +219,21 @@
       "type": "barGraph",
       "id": "bar-graph",
       "min": 0,
-      "max": 800,
+      "max": 600,
       "title": "Temperature of Molecules on Right",
       "property": "rightAtomsTempAvg",
-      "units": true
+      "units": true,
+      "gridLines": 8
     },
     {
       "type": "barGraph",
       "id": "bar-graph2",
       "min": 0,
-      "max": 800,
+      "max": 600,
       "title": "Temperature of Molecules on Left",
       "property": "leftAtomsTempAvg",
-      "units": true
+      "units": true,
+      "gridLines": 8
     },
     {
       "type": "checkbox",

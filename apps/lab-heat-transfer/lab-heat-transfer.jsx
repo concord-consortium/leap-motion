@@ -11,12 +11,22 @@ import interactive from './lab-interactive.json';
 import model from './lab-model.json';
 
 const TEMP_MULT = 115; // freq * temp mult = new target temperature
+const MAX_TEMP = 600;
+const MIN_TEMP = 30;
 const FREQ_AVG = 120;
 const DEF_LAB_PROPS = {
   markedBlock: 'none',
-  leftAtomsTargetTemp: 250,
-  rightAtomsTargetTemp: 250
+  leftAtomsTargetTemp: 150,
+  rightAtomsTargetTemp: 150
 };
+
+function freq2temp(freq) {
+  // + Math.random() ensures that we won't skip Lab property update due to caching
+  // when the temperature is equal to allowed min or max. This interactive is implemented
+  // in a way which requires multiple repetitions of `onChange` callback till atoms
+  // reach the desired temperature.
+  return Math.max(MIN_TEMP, Math.min(MAX_TEMP, freq * TEMP_MULT)) + Math.random();
+}
 
 export default class LabHeatTransfer extends React.Component {
   constructor(props) {
@@ -72,11 +82,11 @@ export default class LabHeatTransfer extends React.Component {
         if (data.closedHandType === 'left') {
           avg.addSample('freqLeft', data.frequency, Math.round(FREQ_AVG));
           avgFreq = avg.getAvg('freqLeft');
-          this.setLabProps({leftAtomsTargetTemp: avgFreq * TEMP_MULT});
+          this.setLabProps({leftAtomsTargetTemp: freq2temp(avgFreq)});
         } else {
           avg.addSample('freqRight', data.frequency, Math.round(FREQ_AVG));
           avgFreq = avg.getAvg('freqRight');
-          this.setLabProps({rightAtomsTargetTemp: avgFreq * TEMP_MULT});
+          this.setLabProps({rightAtomsTargetTemp: freq2temp(avgFreq)});
         }
         this.plotter.showCanvas('gesture-detected');
         this.plotter.plot('frequency', avgFreq, {min: 0, max: 9, precision: 2});
