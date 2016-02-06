@@ -4,7 +4,7 @@ import DirectionChange from '../common/js/tools/direction-change';
 import extend from '../common/js/tools/extend';
 import tapSound from '../common/sounds/tap.wav'
 
-const DEFAULT_OPTIONS = {
+const DEFAULT_CONFIG = {
   closedGrabStrength: 0.4,
   openGrabStrength: 0.7,
   handTwistTolerance: 0.7,
@@ -19,14 +19,13 @@ const AVAILABLE_CALLBACKS = {
 };
 
 export default class FistBump {
-  constructor(config, callbacks, plotter) {
-    this.config = extend({}, DEFAULT_OPTIONS, config);
+  constructor(config, callbacks) {
+    this.config = extend({}, DEFAULT_CONFIG, config);
     if (typeof callbacks === 'function') {
       this.callbacks = {gestureDetected: callbacks}
     } else {
       this.callbacks = extend({}, AVAILABLE_CALLBACKS, callbacks);
     }
-    this.plotter = plotter;
     // Outputs:
     this.freq = 0;
     this.maxVel = 0;
@@ -90,8 +89,6 @@ export default class FistBump {
       verticalHand: null,
       closedHand: null
     });
-    // Hide debug data.
-    this.plotter.showCanvas(null);
   }
 
   oneHandDetected(frame) {
