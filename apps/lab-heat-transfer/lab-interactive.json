@@ -107,8 +107,8 @@
         "  }",
         "  // Try to minize impact on block temperatures.",
         "  minimizeEnergy();",
-        "  setTemperatureOfAtoms(barIndices, 250); tick(); setTemperatureOfAtoms(barIndices, 250); tick();",
-        "  setTemperatureOfAtoms(barIndices, 250); tick(); setTemperatureOfAtoms(barIndices, 250);",
+        "  setTemperatureOfAtoms(barIndices, 150); tick(); setTemperatureOfAtoms(barIndices, 150); tick();",
+        "  setTemperatureOfAtoms(barIndices, 150); tick(); setTemperatureOfAtoms(barIndices, 150);",
         "}"
       ]
     }
