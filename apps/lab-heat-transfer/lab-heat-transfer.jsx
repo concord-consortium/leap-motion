@@ -1,12 +1,11 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
+import Lab from 'react-lab';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import FistShake from './fist-shake';
 import avg from '../common/js/tools/avg';
-import iframePhone from 'iframe-phone';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
-import LabInteractive from '../common/js/components/lab-interactive.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
 
@@ -110,10 +109,12 @@ export default class LabHeatTransfer extends React.Component {
     return (
       <div>
         <div>
-          <LabInteractive ref='labModel' interactive={interactive} model={model}
-                          labProps={this.state.labProps}
-                          onModelLoaded={this.labModelLoaded}
-                          playing={true}/>
+          <Lab ref='labModel' interactive={interactive} model={model}
+               width='610px' height='350px'
+               propsUpdateDelay={75}
+               props={this.state.labProps}
+               onModelLoad={this.labModelLoaded}
+               playing={true}/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
         <p>

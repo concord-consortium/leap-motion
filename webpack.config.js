@@ -29,7 +29,8 @@ module.exports = {
   plugins: [
     new CommonsChunkPlugin("commons.js"),
     new CopyWebpackPlugin([
-      {from: 'public'}
+      {from: 'public'},
+      {from: 'node_modules/react-lab/dist/lab', to: 'lab'}
     ])
   ]
 };

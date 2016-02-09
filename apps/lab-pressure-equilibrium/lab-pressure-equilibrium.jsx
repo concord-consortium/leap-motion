@@ -1,12 +1,11 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
+import Lab from 'react-lab';
 import leapStateHandling from '../common/js/mixins/leap-state-handling';
 import FistBump from '../common/js/gestures/fist-bump';
 import AddRmObj from '../common/js/gestures/add-rm-obj';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
 import avg from '../common/js/tools/avg';
-import iframePhone from 'iframe-phone';
-import LabInteractive from '../common/js/components/lab-interactive.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
 
@@ -89,7 +88,8 @@ export default class LabPressureEquilibrium extends React.Component {
     return (
       <div>
         <div>
-          <LabInteractive ref='labModel' interactive={interactive} model={model}/>
+          <Lab ref='labModel' interactive={interactive} model={model}
+               width='610px' height='350px'/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
       </div>

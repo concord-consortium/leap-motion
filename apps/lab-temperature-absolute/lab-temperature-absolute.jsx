@@ -1,11 +1,10 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
+import Lab from 'react-lab';
 import leapStateHandling from '../common/js/mixins/leap-state-handling';
 import FistBump from '../common/js/gestures/fist-bump';
 import avg from '../common/js/tools/avg';
-import iframePhone from 'iframe-phone';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
-import LabInteractive from '../common/js/components/lab-interactive.jsx';
 import interactive from '../common/lab/temperature-pressure-relationship-interactive.json';
 import model from '../common/lab/temperature-pressure-relationship-model.json';
 
@@ -55,7 +54,7 @@ export default class LabTemperatureAbsolute extends React.Component {
     return (
       <div>
         <div>
-          <LabInteractive ref='labModel' interactive={interactive} model={model}/>
+          <Lab ref='labModel' interactive={interactive} model={model} width='610px' height='350px'/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
       </div>
