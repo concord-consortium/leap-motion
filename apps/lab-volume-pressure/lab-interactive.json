@@ -83,10 +83,12 @@
         "batch(function() {",
         "  var num = getNumberOfAtoms();",
         "  for(var i = 0; i < num; i++) {",
-        "    setAtomProperties(i, { x: width - getAtomProperties(i).x });",
+        "    var atom = getAtomProperties(i);",
+        "    setAtomProperties(i, {x: width - atom.x, vx: -atom.vx});",
         "  }",
+        "  var obs = getObstacleProperties(0);",
+        "  setObstacleProperties(0, {x: width - obs.x - obs.width});",
         "});",
-        "if (get('volume') !== undefined) set('volume', get('volume'));",
         "set('prevOrientation', value);"
       ]
     },
