@@ -100,7 +100,7 @@ export default class LabHeatTransfer extends React.Component {
         return 'Please keep you hand (left or right) steady above the Leap device.';
       case 'oneHandDetected':
         return 'Close your fist.';
-      case 'gestureDetected':
+      case 'closedHand':
         return 'Shake your hand.';
     }
   }
