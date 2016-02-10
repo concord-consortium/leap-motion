@@ -19,21 +19,20 @@ export default class ModelController {
   constructor() {
     this.seasonsState = null;
     this.targetAngle = null;
-    this.defaultSunrayColor = SUNRAY_DEFAULT_COLOR;
     this.phone = null;
     this.resetInteractionState();
   }
 
   resetInteractionState() {
-    this.withinTargetAngle = false;
     this.outOfRange = false;
     this.prevDay = null;
-    this.resetSunrayColor();
+    this.prevTargetAngle = null;
+    this.setViewInactive();
   }
 
-  resetSunrayColor() {
-    if (this.phone && this.defaultSunrayColor) {
-      this.phone.post('setSimState', {sunrayColor: this.defaultSunrayColor});
+  setViewInactive() {
+    if (this.phone) {
+      this.phone.post('setSimState', {sunrayColor: SUNRAY_DEFAULT_COLOR, sunrayDistMarker: false});
     }
   }
 
@@ -68,26 +67,25 @@ export default class ModelController {
 
     if (this.targetAngle > 90) {
       angle = 180 - angle;
-    } else if (this.targetAngle === 90 && this._prevTargetAngle < 90) {
+    } else if (this.targetAngle === 90 && this.prevTargetAngle < 90) {
       // Change direction.
       angle = 180 - angle;
     }
-    if (this.targetAngle !== 90) this._prevTargetAngle = this.targetAngle;
-    this.setHandAngle(angle);
+    if (this.targetAngle !== 90) this.prevTargetAngle = this.targetAngle;
+    this.setAngle(angle, true);
   }
 
   setHandAngle(angle) {
+    this.setAngle(angle, false);
+  }
+
+  setAngle(angle, usingDistGesture) {
+    // User needs to "find" current angle (targetAngle) first.
+    // Only then he can modify it.
     if (Math.abs(angle - this.targetAngle) < ANGLE_THRESHOLD) {
-      if (!this.withinTargetAngle) {
-        this.withinTargetAngle = true;
-        this.targetAngleReached();
-      }
-      this.updateTargetAngle(angle);
+      this.updateTargetAngle(angle, usingDistGesture);
     } else {
-      if (this.withinTargetAngle) {
-        this.withinTargetAngle = false;
-        this.targetAngleLost();
-      }
+      this.targetAngleLost();
     }
   }
 
@@ -97,15 +95,11 @@ export default class ModelController {
     this.resetInteractionState();
   }
 
-  targetAngleReached() {
-    this.phone.post('setSimState', {sunrayColor: SUNRAY_HIGHLIGHT_COLOR});
-  }
-
   targetAngleLost() {
-    this.phone.post('setSimState', {sunrayColor: this.defaultSunrayColor});
+    this.setViewInactive();
   }
 
-  updateTargetAngle(newAngle) {
+  updateTargetAngle(newAngle, usingDistGesture) {
     // Handle "winter" polar night special case.
     if (newAngle === 0 && this.targetAngle === 0) {
       return this.winterPolarNightHandler();
@@ -158,7 +152,7 @@ export default class ModelController {
     } else {
       newDay = newDay.inWinterOrSpring;
     }
-    this.phone.post('setSimState', {day: newDay, sunrayColor: SUNRAY_HIGHLIGHT_COLOR});
+    this.phone.post('setSimState', {day: newDay, sunrayColor: SUNRAY_HIGHLIGHT_COLOR, sunrayDistMarker: usingDistGesture});
     this.seasonsState.day = newDay;
     this.targetAngle = newAngle;
   }

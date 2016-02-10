@@ -29,11 +29,12 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.state.leapState !== 'initial') {
+    if (this.state.leapState === 'oneHandGestureDetected' ||
+        this.state.leapState === 'twoHandsGestureDetected') {
       this.modelController.setAnimButtonsDisabled(true);
     } else {
       this.modelController.setAnimButtonsDisabled(false);
-      this.modelController.resetSunrayColor();
+      this.modelController.setViewInactive();
     }
   }
 
@@ -68,7 +69,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     return (
       <div>
         <iframe ref='seasonsModel' width='1220px' height='830px' scrolling='no' frameBorder='0'
-                src='http://models-resources.concord.org/grasp-seasons/version/0.1.0/index.html'></iframe>
+                src='http://models-resources.concord.org/grasp-seasons/version/0.2.0/index.html'></iframe>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
         <p>
           Min distance between hands [mm]: <input type='text' name='minDist'

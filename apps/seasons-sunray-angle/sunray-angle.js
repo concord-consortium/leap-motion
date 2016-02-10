@@ -1,6 +1,6 @@
 import extend from '../common/js/tools/extend';
 
-const MAX_VELOCITY = 100;
+const MAX_VELOCITY = 200;
 const HAND_TWIST_TOLERANCE = 0.7;
 
 const DEFAULT_CONFIG = {
