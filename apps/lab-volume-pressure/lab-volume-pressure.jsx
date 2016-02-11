@@ -32,7 +32,6 @@ export default class LabVolumePressure extends React.Component {
 
   componentDidMount() {
     this.fistBump = new FistBump({}, this.gestureCallbacks);
-    window.d = this;
   }
 
   labModelLoaded() {
@@ -53,15 +52,15 @@ export default class LabVolumePressure extends React.Component {
   get gestureCallbacks() {
     return {
       leapState: (leapState) => {
-        let labProps = {};
-        if (leapState.verticalHand) {
-          labProps.orientation = leapState.verticalHand.type;
-        }
-        labProps.plungerHighlighted = !!leapState.verticalHand;
-        labProps.atomsHighlighted = !!leapState.closedHand &&
-          leapState.closedHand.type !== this.state.labProps.orientation;
-        this.setLabProps(labProps);
+        let orientation = this.state.labProps.orientation;
+        this.setLabProps({
+          plungerHighlighted: leapState.verticalHand && leapState.verticalHand.type === orientation,
+          atomsHighlighted: leapState.closedHand && leapState.closedHand.type !== orientation
+        });
         this.plotter.showCanvas(null);
+      },
+      orientationDetected: (orientation) => {
+        this.setLabProps({orientation: orientation});
       },
       gestureDetected: (freqSample) => {
         avg.addSample('freq', freqSample, Math.round(this.props.freqAvg));

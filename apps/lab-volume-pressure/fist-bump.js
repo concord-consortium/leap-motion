@@ -4,18 +4,22 @@ import DirectionChange from '../common/js/tools/direction-change';
 import extend from '../common/js/tools/extend';
 import tapSound from '../common/sounds/tap.wav'
 
+
 const DEFAULT_CONFIG = {
   closedGrabStrength: 0.4,
   openGrabStrength: 0.7,
   handTwistTolerance: 0.7,
   minAmplitude: 20,
-  maxKnockDist: 150
+  maxKnockDist: 150,
+  orientationFlipDelay: 1000
 };
 
 const AVAILABLE_CALLBACKS = {
   leapState: function (state) {},
   // Closed fist bumping against flat hand within knocking distance.
-  gestureDetected: function (gestureState) {}
+  gestureDetected: function (gestureState) {},
+  // Orientation can be "left" or "right", it's defined by the vertical hand.
+  orientationDetected: function (orientation) {}
 };
 
 export default class FistBump {
@@ -26,11 +30,9 @@ export default class FistBump {
     } else {
       this.callbacks = extend({}, AVAILABLE_CALLBACKS, callbacks);
     }
-    // Outputs:
-    this.freq = 0;
-    this.maxVel = 0;
-    this.hand = null;
-    this.openHand = null;
+    this.orientationEstablishedTimestamp = Infinity;
+    this.closedHand = {};
+    this.verticalHand = {};
     this.withinKnockDist = false;
     this._setupDirectionChangeAlg();
   }
@@ -42,9 +44,9 @@ export default class FistBump {
     this.freqCalc = new DirectionChange({
       minAmplitude: this.config.minAmplitude,
       onDirChange: (data) => {
-        if (this.hand && ((this.hand.type === 'right' && data.type === DirectionChange.LEFT_TO_RIGHT) ||
-          (this.hand.type === 'left' && data.type === DirectionChange.RIGHT_TO_LEFT))) {
-          if (this.handsWithinKnockDistance()) {
+        if (this.closedHand && ((this.closedHand.type === 'right' && data.type === DirectionChange.LEFT_TO_RIGHT) ||
+          (this.closedHand.type === 'left' && data.type === DirectionChange.RIGHT_TO_LEFT))) {
+          if (this.handsWithinKnockDistance(this.closedHand, this.verticalHand)) {
             // Sound effect!
             sound.play();
             this.withinKnockDist = true;
@@ -56,8 +58,8 @@ export default class FistBump {
     });
   }
 
-  handsWithinKnockDistance() {
-    return Math.abs(this.hand.palmPosition[0] - this.openHand.palmPosition[0]) < this.config.maxKnockDist;
+  handsWithinKnockDistance(closedHand, verticalHand) {
+    return Math.abs(closedHand.palmPosition[0] - verticalHand.palmPosition[0]) < this.config.maxKnockDist;
   }
 
   handClosed(hand) {
@@ -89,6 +91,7 @@ export default class FistBump {
       verticalHand: null,
       closedHand: null
     });
+    this.gestureNotDetected();
   }
 
   oneHandDetected(frame) {
@@ -104,6 +107,7 @@ export default class FistBump {
       state.closedHand = hand;
     }
     this.callbacks.leapState(state);
+    this.gestureNotDetected();
   }
 
   twoHandsDetected(frame) {
@@ -127,20 +131,31 @@ export default class FistBump {
     if (state.verticalHand && state.closedHand) {
       return this.gestureDetected(state.closedHand, state.verticalHand);
     }
+    this.gestureNotDetected();
   }
 
-  gestureDetected(closedHand, openHand) {
-    this.hand = closedHand;
-    this.openHand = openHand;
-    this.freqCalc.addSample(this.hand.palmVelocity[0]);
-    this.freq = this.freqCalc.frequency;
-    this.maxVel = this.freqCalc.halfPeriodMaxVel;
+  gestureDetected(closedHand, verticalHand) {
+    if (verticalHand.type === this.verticalHand.type &&
+        closedHand.type === this.closedHand.type &&
+        Date.now() - this.orientationEstablishedTimestamp > this.config.orientationFlipDelay) {
+      this.callbacks.orientationDetected(verticalHand.type);
+      this.orientationEstablishedTimestamp = Infinity;
+    }
+    if (verticalHand.type !== this.verticalHand.type) {
+      this.orientationEstablishedTimestamp = Date.now();
+    }
+    this.closedHand = closedHand;
+    this.verticalHand = verticalHand;
+
+    this.freqCalc.addSample(this.closedHand.palmVelocity[0]);
     if (this.withinKnockDist) {
-      this.callbacks.gestureDetected(this.freq);
+      this.callbacks.gestureDetected(this.freqCalc.frequency);
     }
   }
-}
 
-function oppositeHand(type) {
-  return type === 'left' ? 'right' : 'left';
+  gestureNotDetected() {
+    this.orientationEstablishedTimestamp = Infinity;
+    this.closedHand = {};
+    this.verticalHand = {};
+  }
 }
