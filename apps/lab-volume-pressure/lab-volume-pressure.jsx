@@ -17,22 +17,33 @@ const DEF_LAB_PROPS = {
   volume: MAX_VOL,
   orientation: 'right',
   plungerHighlighted: false,
-  atomsHighlighted: false
+  atomsHighlighted: false,
+  markersCount: 10,
+  markerFadeSpeed: 0.035,
+  markerSensitivity: 1
 };
 
 export default class LabVolumePressure extends React.Component {
   constructor(props) {
     super(props);
     this.labModelLoaded = this.labModelLoaded.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
   componentDidMount() {
     this.fistBump = new FistBump({}, this.gestureCallbacks);
+    window.d = this;
   }
 
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
+  }
+
+  handleInputChange(event) {
+    let props = {};
+    props[event.target.name] = event.target.value;
+    this.setLabProps(props);
   }
 
   get plotter() {
@@ -98,6 +109,46 @@ export default class LabVolumePressure extends React.Component {
                playing={true}/>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
+        <table>
+          <tbody>
+          <tr>
+            <td>Number of bump spots:</td>
+            <td>
+              <input type='text' name='markersCount' size='7'
+                     value={this.state.labProps.markersCount}
+                     onChange={this.handleInputChange}/>
+              <input type='range' name='markersCount'
+                     min='0' max='25'
+                     value={this.state.labProps.markersCount}
+                     onChange={this.handleInputChange}/>
+            </td>
+          </tr>
+          <tr>
+            <td>Bump spot fade speed:</td>
+            <td>
+              <input type='text' name='markerFadeSpeed' size='7'
+                     value={this.state.labProps.markerFadeSpeed}
+                     onChange={this.handleInputChange}/>
+              <input type='range' name='markerFadeSpeed'
+                     min='0.005' max='0.075' step='0.005'
+                     value={this.state.labProps.markerFadeSpeed}
+                     onChange={this.handleInputChange}/>
+            </td>
+          </tr>
+          <tr>
+            <td>Bump spot sensitivity:</td>
+            <td>
+              <input type='text' name='markerSensitivity' size='7'
+                     value={this.state.labProps.markerSensitivity}
+                     onChange={this.handleInputChange}/>
+              <input type='range' name='markerSensitivity'
+                     min='0.1' max='5' step='0.1'
+                     value={this.state.labProps.markerSensitivity}
+                     onChange={this.handleInputChange}/>
+            </td>
+          </tr>
+          </tbody>
+        </table>
       </div>
     );
   }
