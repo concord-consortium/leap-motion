@@ -1,4 +1,4 @@
-import iframePhone from 'iframe-phone';
+import extend from '../common/js/tools/extend';
 
 // Logic related to Seasons model.
 // IMPORTANT! Note that words "winter", "summer", "fall" and "spring" are used
@@ -7,9 +7,13 @@ import iframePhone from 'iframe-phone';
 const ANGLE_THRESHOLD = 15;
 const MIN_ANGLE_DIFF = 0.1;
 const POLAR_NIGHT_ANIM_SPEED = 0.9;
-const SUNRAY_DEFAULT_COLOR = '#888';
-const SUNRAY_HIGHLIGHT_COLOR = 'orange';
-const SUNRAY_SOLSTICE_COLOR = 'orange';
+
+const SUNRAY_INACTIVE_COLOR = '#888';
+const SUNRAY_NORMAL_COLOR = 'orange';
+
+const GROUND_NORMAL_COLOR = '#4C7F19';
+const GROUND_INACTIVE_COLOR = '#888';
+
 const EARTH_TILT = 0.41;
 const RAD_2_DEG = 180 / Math.PI;
 const SUMMER_SOLSTICE = 171; // 171 day of year
@@ -17,10 +21,24 @@ const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
 
 export default class ModelController {
   constructor() {
-    this.seasonsState = null;
     this.targetAngle = null;
-    this.phone = null;
+    this.seasons = null;
     this.resetInteractionState();
+  }
+
+  setSeasonsState(state) {
+    if (!this.seasons) return;
+    // Last argument ensures that Seasons won't emit `simState.change` event.
+    // We are interested only in changes caused by the Seasons UI, not our own.
+    this.seasons.setSimState(state, undefined, true);
+  }
+
+  get seasonsState() {
+    return this.seasons ? this.seasons.state.sim : {};
+  }
+
+  get raysVertical() {
+    return this.seasonsState.sunrayOrientation === 'vertical';
   }
 
   resetInteractionState() {
@@ -31,23 +49,22 @@ export default class ModelController {
   }
 
   setViewInactive() {
-    if (this.phone) {
-      this.phone.post('setSimState', {sunrayColor: SUNRAY_DEFAULT_COLOR, sunrayDistMarker: false});
+    if (this.raysVertical) {
+      this.setSeasonsState({sunrayColor: SUNRAY_INACTIVE_COLOR, groundColor: GROUND_NORMAL_COLOR, sunrayDistMarker: false});
+    } else {
+      this.setSeasonsState({sunrayColor: SUNRAY_NORMAL_COLOR, groundColor: GROUND_INACTIVE_COLOR, sunrayDistMarker: false});
     }
   }
 
-  setupModelCommunication(iframe) {
-    if (this.phone) {
-      this.phone.disconnect();
-    }
-    this.phone = new iframePhone.ParentEndpoint(iframe);
-    this.phone.addListener('simState', this.setSeasonsState.bind(this));
-    this.phone.post('observeSimState');
+  setupModelCommunication(seasonsComponent) {
+    this.seasons = seasonsComponent;
+    this.seasons.on('simState.change', this.handleSimStateUpdate.bind(this));
+    this.handleSimStateUpdate();
   }
 
   setAnimButtonsDisabled(v) {
-    this.phone.post('setPlayBtnDisabled', v);
-    this.phone.post('setRotatingBtnDisabled', v);
+    this.seasons.setPlayBtnDisabled(v);
+    this.seasons.setRotatingBtnDisabled(v);
   }
 
   setHandDistance(dist) {
@@ -76,6 +93,10 @@ export default class ModelController {
   }
 
   setHandAngle(angle) {
+    if (!this.raysVertical) {
+      // In horizontal view user controls ground, not rays.
+      angle = 180 - angle;
+    }
     this.setAngle(angle, false);
   }
 
@@ -89,8 +110,7 @@ export default class ModelController {
     }
   }
 
-  setSeasonsState(state) {
-    this.seasonsState = state;
+  handleSimStateUpdate() {
     this.targetAngle = this.sunrayAngle(this.seasonsState.day);
     this.resetInteractionState();
   }
@@ -152,41 +172,40 @@ export default class ModelController {
     } else {
       newDay = newDay.inWinterOrSpring;
     }
-    this.phone.post('setSimState', {day: newDay, sunrayColor: SUNRAY_HIGHLIGHT_COLOR, sunrayDistMarker: usingDistGesture});
-    this.seasonsState.day = newDay;
+    this.setSeasonsState({day: newDay, sunrayColor: SUNRAY_NORMAL_COLOR, groundColor: GROUND_NORMAL_COLOR, sunrayDistMarker: usingDistGesture});
     this.targetAngle = newAngle;
   }
 
   // Just increase / decrease day number. User will see animation.
   summerPolarNightHandler() {
     let diff = this.summerOrFall(this.prevDay) ? -POLAR_NIGHT_ANIM_SPEED : POLAR_NIGHT_ANIM_SPEED;
-    this.seasonsState.day = (this.seasonsState.day + diff + 365) % 365;
-    this.targetAngle = Math.min(180, this.sunrayAngle(this.seasonsState.day));
-    this.phone.post('setSimState', {day: this.seasonsState.day});
+    let newDay = (this.seasonsState.day + diff + 365) % 365;
+    this.targetAngle = Math.min(180, this.sunrayAngle(newDay));
+    this.setSeasonsState({day: newDay});
   }
 
   // Just increase / decrease day number. User will see animation.
   winterPolarNightHandler() {
     let diff = this.summerOrFall(this.prevDay) ? POLAR_NIGHT_ANIM_SPEED : -POLAR_NIGHT_ANIM_SPEED;
-    this.seasonsState.day = (this.seasonsState.day + diff + 365) % 365;
-    this.targetAngle = Math.max(0, this.sunrayAngle(this.seasonsState.day));
-    this.phone.post('setSimState', {day: this.seasonsState.day});
+    let newDay = (this.seasonsState.day + diff + 365) % 365;
+    this.targetAngle = Math.max(0, this.sunrayAngle(newDay));
+    this.setSeasonsState({day: newDay});
   }
 
   // Called when user defines angle which is very close to summer solstice sunray angle.
   summerSolsticeReachedHandler(maxAngle) {
     this.prevDay = this.seasonsState.day;
     this.outOfRange = true;
-    this.seasonsState.day = SUMMER_SOLSTICE;
+    let newDay = SUMMER_SOLSTICE;
     this.targetAngle = maxAngle;
     if (!this.summerPolarNight()) {
-      this.seasonsState.day = SUMMER_SOLSTICE;
+      newDay = SUMMER_SOLSTICE;
     } else {
-      let newDay = this.angleToDay(180);
+      newDay = this.angleToDay(180);
       // Set the first day which has angle equal to 180.
-      this.seasonsState.day = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
+      newDay = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
     }
-    this.phone.post('setSimState', {day: this.seasonsState.day, sunrayColor: SUNRAY_SOLSTICE_COLOR});
+    this.setSeasonsState({day: newDay, sunrayColor: SUNRAY_NORMAL_COLOR});
   }
 
   // Called when user defines angle which is very close to winter solstice sunray angle.
@@ -194,14 +213,15 @@ export default class ModelController {
     this.prevDay = this.seasonsState.day;
     this.outOfRange = true;
     this.targetAngle = minAngle;
+    let newDay;
     if (!this.winterPolarNight()) {
-      this.seasonsState.day = WINTER_SOLSTICE;
+      newDay = WINTER_SOLSTICE;
     } else {
-      let newDay = this.angleToDay(0);
+      newDay = this.angleToDay(0);
       // Set the first day which has angle equal to 0.
-      this.seasonsState.day = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
+      newDay = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
     }
-    this.phone.post('setSimState', {day: this.seasonsState.day, sunrayColor: SUNRAY_SOLSTICE_COLOR});
+    this.setSeasonsState({day: newDay, sunrayColor: SUNRAY_NORMAL_COLOR});
   }
 
   summerOrFall(day) {

@@ -4,6 +4,7 @@ import leapStateHandling from '../common/js/mixins/leap-state-handling';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
 import SunrayAngle from './sunray-angle';
 import ModelController from './model-controller';
+import {Seasons} from 'grasp-seasons';
 
 export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
@@ -68,8 +69,9 @@ export default class SeasonsSunrayAngle extends React.Component {
   render() {
     return (
       <div>
-        <iframe ref='seasonsModel' width='1220px' height='830px' scrolling='no' frameBorder='0'
-                src='http://models-resources.concord.org/grasp-seasons/version/0.2.0/index.html'></iframe>
+        <div style={{background: '#f6f6f6', width: '1210px'}}>
+          <Seasons ref='seasonsModel'></Seasons>
+        </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
         <p>
           Min distance between hands [mm]: <input type='text' name='minDist'
