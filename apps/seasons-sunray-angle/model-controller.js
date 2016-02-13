@@ -5,6 +5,7 @@ import extend from '../common/js/tools/extend';
 // in the context of the northern hemisphere! It let's us unambiguously define time of the year.
 // Some method names may initially look strange, e.g. "summerPolarNight" or "winterPolarNight".
 const ANGLE_THRESHOLD = 15;
+const INITIAL_ANGLE_THRESHOLD = 2;
 const MIN_ANGLE_DIFF = 0.1;
 const POLAR_NIGHT_ANIM_SPEED = 0.9;
 
@@ -45,10 +46,12 @@ export default class ModelController {
     this.outOfRange = false;
     this.prevDay = null;
     this.prevTargetAngle = null;
+    this.withinTargetAngle = false;
     this.setViewInactive();
   }
 
   setViewInactive() {
+    this.withinTargetAngle = false;
     if (this.raysVertical) {
       this.setSeasonsState({sunrayColor: SUNRAY_INACTIVE_COLOR, groundColor: GROUND_NORMAL_COLOR, sunrayDistMarker: false});
     } else {
@@ -103,7 +106,9 @@ export default class ModelController {
   setAngle(angle, usingDistGesture) {
     // User needs to "find" current angle (targetAngle) first.
     // Only then he can modify it.
-    if (Math.abs(angle - this.targetAngle) < ANGLE_THRESHOLD) {
+    let threshold = this.withinTargetAngle ? ANGLE_THRESHOLD : INITIAL_ANGLE_THRESHOLD;
+    if (Math.abs(angle - this.targetAngle) < threshold) {
+      this.withinTargetAngle = true;
       this.updateTargetAngle(angle, usingDistGesture);
     } else {
       this.targetAngleLost();
