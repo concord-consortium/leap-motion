@@ -45,30 +45,8 @@
       "name": "markedBlock",
       "initialValue": "none",
       "onChange": [
-        "if (getNumberOfShapes() > 0) removeShape(0);",
-        "if (value === 'left') {",
-        "  addShape({",
-        "    type: 'rectangle',",
-        "    x: 0.03,",
-        "    y: 0.03,",
-        "    width: 1.1,",
-        "    height: 1.94,",
-        "    color: '#FFE5C5',",
-        "    lineColor: 'transparent',",
-        "    layer: 0",
-        "  });",
-        "} else if (value === 'right') {",
-        "  addShape({",
-        "    type: 'rectangle',",
-        "    x: 2.37,",
-        "    y: 0.03,",
-        "    width: 1.1,",
-        "    height: 1.94,",
-        "    color: '#FFE5C5',",
-        "    lineColor: 'transparent',",
-        "    layer: 0",
-        "  });",
-        "}"
+        "setElementProperties(0, {color: value === 'left' ? -13134236 : -8355712});",
+        "setElementProperties(2, {color: value === 'right' ? -13134236 : -8355712});"
       ]
     },
     {
