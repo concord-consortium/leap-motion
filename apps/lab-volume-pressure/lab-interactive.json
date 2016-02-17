@@ -64,7 +64,7 @@
     },
     {
       "name": "markerFadeSpeed",
-      "initialValue": 0.035
+      "initialValue": 0.075
     },
     {
       "name": "markerSensitivity",
@@ -72,7 +72,7 @@
     },
     {
       "name": "markersCount",
-      "initialValue": 10,
+      "initialValue": 25,
       "onChange": [
         "// parseInt() is not available in scripts... Use * 1 to convert value to number.",
         "var count = value * 1 || 0;",
@@ -97,11 +97,11 @@
     },
     {
       "name": "prevOrientation",
-      "initialValue": "right"
+      "initialValue": "left"
     },
     {
       "name": "orientation",
-      "initialValue": "right",
+      "initialValue": "left",
       "onChange": [
         "if (value === get('prevOrientation')) return;",
         "var width = get('width');",

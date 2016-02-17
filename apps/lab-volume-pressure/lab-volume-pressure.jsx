@@ -15,11 +15,11 @@ const VOLUME_MULT = 0.11;
 
 const DEF_LAB_PROPS = {
   volume: MAX_VOL,
-  orientation: 'right',
+  orientation: 'left',
   plungerHighlighted: false,
   atomsHighlighted: false,
-  markersCount: 10,
-  markerFadeSpeed: 0.035,
+  markersCount: 25,
+  markerFadeSpeed: 0.075,
   markerSensitivity: 1
 };
 
