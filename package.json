@@ -1,6 +1,6 @@
 {
   "name": "leap-motion",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "",
   "repository": {
     "type": "git",
@@ -39,6 +39,6 @@
     "leapjs-plugins": "^0.1.11",
     "iframe-phone": "^1.1.3",
     "howler": "^1.1.26",
-    "grasp-seasons": "^0.3.0"
+    "grasp-seasons": "^0.3.1"
   }
 }
