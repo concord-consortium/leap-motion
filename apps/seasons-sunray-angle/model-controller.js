@@ -38,8 +38,14 @@ export default class ModelController {
     return this.seasons ? this.seasons.state.sim : {};
   }
 
-  get raysVertical() {
-    return this.seasonsState.sunrayOrientation === 'vertical';
+  get groundViewControl() {
+    let viewState = this.seasons ? this.seasons.state.view : {};
+    let result = false;
+    ['small-bottom', 'small-top', 'main'].forEach(function (pos) {
+      if (viewState[pos] === 'raysGround') result = true;
+      if (viewState[pos] === 'raysSpace') result = false;
+    });
+    return result;
   }
 
   resetInteractionState() {
@@ -52,7 +58,7 @@ export default class ModelController {
 
   setViewInactive() {
     this.withinTargetAngle = false;
-    if (this.raysVertical) {
+    if (this.groundViewControl) {
       this.setSeasonsState({sunrayColor: SUNRAY_INACTIVE_COLOR, groundColor: GROUND_NORMAL_COLOR, sunrayDistMarker: false});
     } else {
       this.setSeasonsState({sunrayColor: SUNRAY_NORMAL_COLOR, groundColor: GROUND_INACTIVE_COLOR, sunrayDistMarker: false});
@@ -62,6 +68,7 @@ export default class ModelController {
   setupModelCommunication(seasonsComponent) {
     this.seasons = seasonsComponent;
     this.seasons.on('simState.change', this.handleSimStateUpdate.bind(this));
+    this.seasons.on('viewState.change', this.handleSimStateUpdate.bind(this));
     this.handleSimStateUpdate();
   }
 
@@ -96,7 +103,7 @@ export default class ModelController {
   }
 
   setHandAngle(angle) {
-    if (!this.raysVertical) {
+    if (!this.groundViewControl) {
       // In horizontal view user controls ground, not rays.
       angle = 180 - angle;
     }
