@@ -1,0 +1,15 @@
+.status-box {
+  background-color: #EAEAEA;
+  border-radius: 5px;
+  margin-top: 5px;
+  padding: 5px;
+  width: 300px;
+}
+.status-box label {
+  font-size: 0.8em;
+  vertical-align: middle;
+  margin-bottom: 5px;
+}
+.status-box > div {
+  margin-top: 5px;
+}
