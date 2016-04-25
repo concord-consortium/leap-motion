@@ -21,7 +21,8 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel-loader?optional=runtime' },
-      { test: /\.css$/, exclude: /node_modules/, loader: 'style-loader!css-loader' },
+      { test: /\.css$/, exclude: /node_modules/, loader: 'style!css!autoprefixer' },
+      { test: /\.less$/, exclude: /node_modules/, loader: 'style!css!less!autoprefixer' },
       { test: /\.json$/, exclude: /node_modules/, loader: 'json-loader' },
       { test: /\.(png|jpg|wav)$/, exclude: /node_modules/, loader: 'file-loader' }
     ]
