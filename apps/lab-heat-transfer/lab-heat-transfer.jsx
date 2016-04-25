@@ -1,13 +1,16 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
+import pureRender from 'react-addons-pure-render-mixin';
 import Lab from 'react-lab';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import FistShake from './fist-shake';
 import avg from '../common/js/tools/avg';
-import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
+import LeapStatus from '../common/js/components/leap-status.jsx';
+import LeapHandsView from '../common/js/components/leap-hands-view.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
+import './lab-heat-transfer.less'
 
 const TEMP_MULT = 115; // freq * temp mult = new target temperature
 const MAX_TEMP = 600;
@@ -18,6 +21,10 @@ const DEF_LAB_PROPS = {
   leftAtomsTargetTemp: 150,
   rightAtomsTargetTemp: 150
 };
+
+const MIN_FREQ_TO_HIDE_INSTRUCTIONS = 1;
+const IFRAME_WIDTH = 610;
+const IFRAME_HEIGHT = 350;
 
 function freq2temp(freq) {
   // + Math.random() ensures that we won't skip Lab property update due to caching
@@ -35,7 +42,9 @@ export default class LabHeatTransfer extends React.Component {
     this.soundEnabledChanged = this.soundEnabledChanged.bind(this);
     this.resetHandTimeoutChanged = this.resetHandTimeoutChanged.bind(this);
     this.state = {
-      leapState: 'initial'
+      leapState: 'initial',
+      overlayVisible: true,
+      gestureEverDetected: false
     }
   }
 
@@ -44,7 +53,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   get plotter() {
-    return this.refs.leapInfo.plotter;
+    return this.refs.status.plotter;
   }
 
   setLeapState(v) {
@@ -54,6 +63,7 @@ export default class LabHeatTransfer extends React.Component {
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
+    this.setState({overlayVisible: true, gestureEverDetected: false})
   }
 
   resetHandTimeoutChanged(event) {
@@ -74,6 +84,15 @@ export default class LabHeatTransfer extends React.Component {
           this.setLabProps({markedBlock: 'none'});
           this.setLeapState(data.numberOfHands === 1 ? 'oneHandDetected' : 'initial');
           this.plotter.showCanvas(null);
+
+          if (data.numberOfHands > 0) {
+            // Show overlay if user keeps his hands over the Leap.
+            this.setState({overlayVisible: true});
+          } else if (this.state.gestureEverDetected) {
+            // But hide it if user removes hands and gesture has been detected before.
+            // This might be useful when user simply wants to watch the simulation.
+            this.setState({overlayVisible: false});
+          }
         }
       },
       gestureDetected: (data) => {
@@ -90,6 +109,10 @@ export default class LabHeatTransfer extends React.Component {
         this.plotter.showCanvas('gesture-detected');
         this.plotter.plot('frequency', avgFreq, {min: 0, max: 9, precision: 2});
         this.plotter.update();
+
+        if (avgFreq > MIN_FREQ_TO_HIDE_INSTRUCTIONS) {
+          this.setState({overlayVisible: false, gestureEverDetected: true});
+        }
       }
     };
   }
@@ -97,26 +120,33 @@ export default class LabHeatTransfer extends React.Component {
   getStateMsg() {
     switch(this.state.leapState) {
       case 'initial':
-        return 'Please keep you hand (left or right) steady above the Leap device.';
+        return 'Please keep you hand (left or right) steady above the Leap device';
       case 'oneHandDetected':
-        return 'Close your fist.';
+        return 'Close your fist';
       case 'closedHand':
-        return 'Shake your hand.';
+        return 'Shake your hand';
     }
   }
 
   render() {
+    const { overlayVisible } = this.state;
     return (
       <div>
-        <div>
+        <div className='container'>
           <Lab ref='labModel' interactive={interactive} model={model}
-               width='610px' height='350px'
+               width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
                propsUpdateDelay={75}
                props={this.state.labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
+          <div className={`overlay ${overlayVisible ? '' : 'hidden'}`}>
+            <LeapHandsView width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}/>
+            <div className='instructions'>
+              {this.getStateMsg()}
+            </div>
+          </div>
         </div>
-        <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
+        <LeapStatus ref='status'>
         <p>
           Sound: <input type='checkbox' name='soundEnabled'
                         defaultChecked={this.fistShake.config.soundEnabled}
@@ -127,10 +157,12 @@ export default class LabHeatTransfer extends React.Component {
                                                    defaultValue={this.fistShake.config.resetHandTimeout}
                                                    onChange={this.resetHandTimeoutChanged}/>
         </p>
+        </LeapStatus>
       </div>
     );
   }
 }
 
+reactMixin.onClass(LabHeatTransfer, pureRender);
 reactMixin.onClass(LabHeatTransfer, leapStateHandlingV2);
 reactMixin.onClass(LabHeatTransfer, setLabProps);
