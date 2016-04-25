@@ -114,11 +114,11 @@ export default class LabVolumePressure extends React.Component {
             <td>Number of bump spots:</td>
             <td>
               <input type='text' name='markersCount' size='7'
-                     value={this.state.labProps.markersCount}
+                     value={this.state.labProps.markersCount || 0}
                      onChange={this.handleInputChange}/>
               <input type='range' name='markersCount'
                      min='0' max='25'
-                     value={this.state.labProps.markersCount}
+                     value={this.state.labProps.markersCount || 0}
                      onChange={this.handleInputChange}/>
             </td>
           </tr>
@@ -126,11 +126,11 @@ export default class LabVolumePressure extends React.Component {
             <td>Bump spot fade speed:</td>
             <td>
               <input type='text' name='markerFadeSpeed' size='7'
-                     value={this.state.labProps.markerFadeSpeed}
+                     value={this.state.labProps.markerFadeSpeed || 0}
                      onChange={this.handleInputChange}/>
               <input type='range' name='markerFadeSpeed'
                      min='0.005' max='0.075' step='0.005'
-                     value={this.state.labProps.markerFadeSpeed}
+                     value={this.state.labProps.markerFadeSpeed || 0}
                      onChange={this.handleInputChange}/>
             </td>
           </tr>
@@ -138,11 +138,11 @@ export default class LabVolumePressure extends React.Component {
             <td>Bump spot sensitivity:</td>
             <td>
               <input type='text' name='markerSensitivity' size='7'
-                     value={this.state.labProps.markerSensitivity}
+                     value={this.state.labProps.markerSensitivity || 0}
                      onChange={this.handleInputChange}/>
               <input type='range' name='markerSensitivity'
                      min='0.1' max='5' step='0.1'
-                     value={this.state.labProps.markerSensitivity}
+                     value={this.state.labProps.markerSensitivity || 0}
                      onChange={this.handleInputChange}/>
             </td>
           </tr>
