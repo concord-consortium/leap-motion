@@ -1,38 +1,3 @@
 body {
   font-family: Helvetica, Arial, sans-serif;
 }
-.hands-view {
-  background-color: #EAEAEA;
-  border-radius: 5px;
-  display: inline-block;
-  vertical-align: top;
-  margin-left: 5px;
-}
-.state-msg {
-  width: 300px;
-  height: 125px;
-  background-color: #EAEAEA;
-  padding: 5px;
-  border-radius: 5px;
-  margin: 0;
-}
-.state-msg p {
-  margin: 0 0 0 5px;
-}
-.status-box {
-  background-color: #EAEAEA;
-  border-radius: 5px;
-  margin-top: 5px;
-  padding: 5px;
-}
-.status-box label {
-  font-size: 0.8em;
-  vertical-align: middle;
-  margin-bottom: 5px;
-}
-.status-box > div {
-  margin-top: 5px;
-}
-.state-and-plotter {
-  display: inline-block;
-}
