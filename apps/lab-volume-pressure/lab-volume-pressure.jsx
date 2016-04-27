@@ -1,13 +1,16 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
+import pureRender from 'react-addons-pure-render-mixin';
 import Lab from 'react-lab';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import FistBump from './fist-bump';
 import avg from '../common/js/tools/avg';
-import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
+import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
+import LeapStatus from '../common/js/components/leap-status.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
+import './lab-voule-pressure.less';
 
 const MAX_VOL = 0.82;
 const MIN_VOL = 0.1;
@@ -23,11 +26,20 @@ const DEF_LAB_PROPS = {
   markerSensitivity: 1
 };
 
+const MIN_FREQ_TO_HIDE_INSTRUCTIONS = 1;
+const IFRAME_WIDTH = 610;
+const IFRAME_HEIGHT = 350;
+
 export default class LabVolumePressure extends React.Component {
   constructor(props) {
     super(props);
     this.labModelLoaded = this.labModelLoaded.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.state = {
+      leapState: 'initial',
+      overlayVisible: true,
+      gestureEverDetected: false
+    }
   }
 
   componentDidMount() {
@@ -37,6 +49,7 @@ export default class LabVolumePressure extends React.Component {
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
+    this.setState({overlayVisible: true, gestureEverDetected: false})
   }
 
   handleInputChange(event) {
@@ -45,8 +58,13 @@ export default class LabVolumePressure extends React.Component {
     this.setLabProps(props);
   }
 
+  get finalGesture() {
+    const { labProps } = this.state;
+    return labProps.plungerHighlighted && labProps.atomsHighlighted;
+  }
+
   get plotter() {
-    return this.refs.leapInfo.plotter;
+    return this.refs.status.plotter;
   }
 
   get gestureCallbacks() {
@@ -58,6 +76,17 @@ export default class LabVolumePressure extends React.Component {
           atomsHighlighted: leapState.closedHand && leapState.closedHand.type !== orientation
         });
         this.plotter.showCanvas(null);
+
+        if (!this.finalGesture) {
+          if (leapState.numberOfHands > 0) {
+            // Show overlay if user keeps his hands over the Leap.
+            this.setState({overlayVisible: true});
+          } else if (this.state.gestureEverDetected) {
+            // But hide it if user removes hands and gesture has been detected before.
+            // This might be useful when user simply wants to watch the simulation.
+            this.setState({overlayVisible: false});
+          }
+        }
       },
       orientationDetected: (orientation) => {
         this.setLabProps({orientation: orientation});
@@ -72,6 +101,10 @@ export default class LabVolumePressure extends React.Component {
         this.plotter.update();
 
         this.setLabProps({volume: volume});
+
+        if (freq > MIN_FREQ_TO_HIDE_INSTRUCTIONS) {
+          this.setState({overlayVisible: false, gestureEverDetected: true});
+        }
       }
     };
   }
@@ -83,75 +116,81 @@ export default class LabVolumePressure extends React.Component {
   getStateMsg() {
     let state = this.state.labProps;
     if (!state.plungerHighlighted && !state.atomsHighlighted) {
-      return 'Twist one hand and keep it vertical.';
+      return 'Twist one hand and keep it vertical';
     }
     if (state.plungerHighlighted && !state.atomsHighlighted) {
-      return 'Close the other fist.';
+      return 'Close the other fist';
     }
     if (!state.plungerHighlighted && state.atomsHighlighted) {
-      return 'Twist the other hand and keep it vertical.';
+      return 'Twist the other hand and keep it vertical';
     }
     if (state.plungerHighlighted && state.atomsHighlighted) {
-      return 'Move your closed fist towards open palm and back rapidly.';
+      return 'Move your closed fist towards open palm and back rapidly';
     }
   }
 
   render() {
+    const { overlayVisible, labProps } = this.state;
     return (
       <div>
-        <div>
+        <div className='container'>
           <Lab ref='labModel' interactive={interactive} model={model}
-               width='610px' height='350px'
+               width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
                propsUpdateDelay={75}
-               props={this.state.labProps}
+               props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
+          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
+            {this.getStateMsg()}
+          </InstructionsOverlay>
         </div>
-        <LeapStandardInfo ref='leapInfo' stateMsg={this.getStateMsg()}/>
-        <table>
-          <tbody>
-          <tr>
-            <td>Number of bump spots:</td>
-            <td>
-              <input type='text' name='markersCount' size='7'
-                     value={this.state.labProps.markersCount || 0}
-                     onChange={this.handleInputChange}/>
-              <input type='range' name='markersCount'
-                     min='0' max='25'
-                     value={this.state.labProps.markersCount || 0}
-                     onChange={this.handleInputChange}/>
-            </td>
-          </tr>
-          <tr>
-            <td>Bump spot fade speed:</td>
-            <td>
-              <input type='text' name='markerFadeSpeed' size='7'
-                     value={this.state.labProps.markerFadeSpeed || 0}
-                     onChange={this.handleInputChange}/>
-              <input type='range' name='markerFadeSpeed'
-                     min='0.005' max='0.075' step='0.005'
-                     value={this.state.labProps.markerFadeSpeed || 0}
-                     onChange={this.handleInputChange}/>
-            </td>
-          </tr>
-          <tr>
-            <td>Bump spot sensitivity:</td>
-            <td>
-              <input type='text' name='markerSensitivity' size='7'
-                     value={this.state.labProps.markerSensitivity || 0}
-                     onChange={this.handleInputChange}/>
-              <input type='range' name='markerSensitivity'
-                     min='0.1' max='5' step='0.1'
-                     value={this.state.labProps.markerSensitivity || 0}
-                     onChange={this.handleInputChange}/>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+        <LeapStatus ref='status'>
+          <table>
+            <tbody>
+            <tr>
+              <td>Number of bump spots:</td>
+              <td>
+                <input type='text' name='markersCount' size='7'
+                       value={this.state.labProps.markersCount || 0}
+                       onChange={this.handleInputChange}/>
+                <input type='range' name='markersCount'
+                       min='0' max='25'
+                       value={this.state.labProps.markersCount || 0}
+                       onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            <tr>
+              <td>Bump spot fade speed:</td>
+              <td>
+                <input type='text' name='markerFadeSpeed' size='7'
+                       value={this.state.labProps.markerFadeSpeed || 0}
+                       onChange={this.handleInputChange}/>
+                <input type='range' name='markerFadeSpeed'
+                       min='0.005' max='0.075' step='0.005'
+                       value={this.state.labProps.markerFadeSpeed || 0}
+                       onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            <tr>
+              <td>Bump spot sensitivity:</td>
+              <td>
+                <input type='text' name='markerSensitivity' size='7'
+                       value={this.state.labProps.markerSensitivity || 0}
+                       onChange={this.handleInputChange}/>
+                <input type='range' name='markerSensitivity'
+                       min='0.1' max='5' step='0.1'
+                       value={this.state.labProps.markerSensitivity || 0}
+                       onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </LeapStatus>
       </div>
     );
   }
 }
 
+reactMixin.onClass(LabVolumePressure, pureRender);
 reactMixin.onClass(LabVolumePressure, leapStateHandlingV2);
 reactMixin.onClass(LabVolumePressure, setLabProps);

@@ -7,7 +7,7 @@ import setLabProps from '../common/js/mixins/set-lab-props';
 import FistShake from './fist-shake';
 import avg from '../common/js/tools/avg';
 import LeapStatus from '../common/js/components/leap-status.jsx';
-import LeapHandsView from '../common/js/components/leap-hands-view.jsx';
+import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
 import './lab-heat-transfer.less'
@@ -129,34 +129,31 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { overlayVisible } = this.state;
+    const { overlayVisible, labProps } = this.state;
     return (
       <div>
         <div className='container'>
           <Lab ref='labModel' interactive={interactive} model={model}
                width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
                propsUpdateDelay={75}
-               props={this.state.labProps}
+               props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <div className={`overlay ${overlayVisible ? '' : 'hidden'}`}>
-            <LeapHandsView width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}/>
-            <div className='instructions'>
-              {this.getStateMsg()}
-            </div>
-          </div>
+          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
+            {this.getStateMsg()}
+          </InstructionsOverlay>
         </div>
         <LeapStatus ref='status'>
-        <p>
-          Sound: <input type='checkbox' name='soundEnabled'
-                        defaultChecked={this.fistShake.config.soundEnabled}
-                        onChange={this.soundEnabledChanged}/>
-        </p>
-        <p>
-          "No hand" required duration [ms]: <input type='text' name='clearHandTimeout'
-                                                   defaultValue={this.fistShake.config.resetHandTimeout}
-                                                   onChange={this.resetHandTimeoutChanged}/>
-        </p>
+          <p>
+            Sound: <input type='checkbox' name='soundEnabled'
+                          defaultChecked={this.fistShake.config.soundEnabled}
+                          onChange={this.soundEnabledChanged}/>
+          </p>
+          <p>
+            "No hand" required duration [ms]: <input type='text' name='clearHandTimeout'
+                                                     defaultValue={this.fistShake.config.resetHandTimeout}
+                                                     onChange={this.resetHandTimeoutChanged}/>
+          </p>
         </LeapStatus>
       </div>
     );
