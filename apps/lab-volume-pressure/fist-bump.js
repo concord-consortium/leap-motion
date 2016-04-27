@@ -1,9 +1,7 @@
 import {Howl} from 'howler';
-import avg from '../common/js/tools/avg';
 import DirectionChange from '../common/js/tools/direction-change';
 import extend from '../common/js/tools/extend';
 import tapSound from '../common/sounds/tap.wav'
-
 
 const DEFAULT_CONFIG = {
   closedGrabStrength: 0.4,
