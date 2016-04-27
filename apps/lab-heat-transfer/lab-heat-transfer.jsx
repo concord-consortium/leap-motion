@@ -8,6 +8,7 @@ import FistShake from './fist-shake';
 import avg from '../common/js/tools/avg';
 import LeapStatus from '../common/js/components/leap-status.jsx';
 import LeapHandsView from '../common/js/components/leap-hands-view.jsx';
+import FullscreenContainer from '../common/js/components/fullscreen-container.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
 import './lab-heat-transfer.less'
@@ -23,8 +24,6 @@ const DEF_LAB_PROPS = {
 };
 
 const MIN_FREQ_TO_HIDE_INSTRUCTIONS = 1;
-const IFRAME_WIDTH = 610;
-const IFRAME_HEIGHT = 350;
 
 function freq2temp(freq) {
   // + Math.random() ensures that we won't skip Lab property update due to caching
@@ -132,20 +131,20 @@ export default class LabHeatTransfer extends React.Component {
     const { overlayVisible } = this.state;
     return (
       <div>
-        <div className='container'>
+        <FullscreenContainer className='container'>
           <Lab ref='labModel' interactive={interactive} model={model}
-               width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
+               width='100%' height='100%' allowFullScreen={false}
                propsUpdateDelay={75}
                props={this.state.labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
           <div className={`overlay ${overlayVisible ? '' : 'hidden'}`}>
-            <LeapHandsView width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}/>
+            <LeapHandsView/>
             <div className='instructions'>
               {this.getStateMsg()}
             </div>
           </div>
-        </div>
+        </FullscreenContainer>
         <LeapStatus ref='status'>
         <p>
           Sound: <input type='checkbox' name='soundEnabled'

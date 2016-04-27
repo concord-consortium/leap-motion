@@ -24,7 +24,7 @@ module.exports = {
       { test: /\.css$/, exclude: /node_modules/, loader: 'style!css!autoprefixer' },
       { test: /\.less$/, exclude: /node_modules/, loader: 'style!css!less!autoprefixer' },
       { test: /\.json$/, exclude: /node_modules/, loader: 'json-loader' },
-      { test: /\.(png|jpg|wav)$/, exclude: /node_modules/, loader: 'file-loader' }
+      { test: /\.(png|jpg|svg|wav)$/, exclude: /node_modules/, loader: 'file-loader' }
     ]
   },
   plugins: [
