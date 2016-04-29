@@ -1,7 +1,8 @@
 import Leap from 'leapjs';
 
 let controller = new Leap.Controller({
-  background: true
+  background: true,
+  frameEventName: 'animationFrame'
 });
 controller.connect();
 
