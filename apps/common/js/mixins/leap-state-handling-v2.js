@@ -1,8 +1,5 @@
 import leapController from '../tools/leap-controller';
 
-const MAX_NUMBER_OF_FRAMES_TO_PROCESS_PER_ANIM_STEP = 1;
-let prevFrameId = null;
-
 // Simplified version.
 // Target is expected to implement #handleLeapFrame(frame) method.
 export default {
@@ -15,16 +12,8 @@ export default {
   },
 
   leapConnect: function () {
-    this._onFrameCallback = () => {
-      let lastFrame = leapController.frame(0);
-      if (prevFrameId === lastFrame.id) return;
-      let framesToProcess = Math.min(MAX_NUMBER_OF_FRAMES_TO_PROCESS_PER_ANIM_STEP, lastFrame.id - prevFrameId);
-      while (framesToProcess > 0) {
-        framesToProcess--;
-        let frame = leapController.frame(framesToProcess);
-        this.handleLeapFrame(this.preprocessLeapFrame(frame));
-      }
-      prevFrameId = lastFrame.id;
+    this._onFrameCallback = (frame) => {
+      this.handleLeapFrame(this.preprocessLeapFrame(frame));
     };
     leapController.on('frame', this._onFrameCallback);
   },
