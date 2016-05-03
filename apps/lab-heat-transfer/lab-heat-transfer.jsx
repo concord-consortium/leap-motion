@@ -124,7 +124,7 @@ export default class LabHeatTransfer extends React.Component {
       case 'oneHandDetected':
         return 'Close your fist';
       case 'closedHand':
-        return 'Shake your hand';
+        return 'Shake your fist';
     }
   }
 
