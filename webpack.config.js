@@ -9,6 +9,7 @@ module.exports = {
     'lab-temperature-absolute': './apps/lab-temperature-absolute/main.jsx',
     'lab-volume-pressure': './apps/lab-volume-pressure/main.jsx',
     'lab-heat-transfer': './apps/lab-heat-transfer/main.jsx',
+    'lab-heat-transfer-micro': './apps/lab-heat-transfer-micro/main.jsx',
     'lab-add-rm-atom-test': './apps/lab-add-rm-atom-test/main.jsx',
     'lab-add-rm-atom-test-swipe': './apps/lab-add-rm-atom-test-swipe/main.jsx',
     'lab-pressure-equilibrium': './apps/lab-pressure-equilibrium/main.jsx',

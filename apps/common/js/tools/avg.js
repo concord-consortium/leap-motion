@@ -28,6 +28,11 @@ export default {
     return sum / len;
   },
 
+  getLen: function (id) {
+    if (!this.data[id]) return null;
+    return this.data[id].length;
+  },
+
   // Clears 'id' set.
   clear: function (id) {
     if (this.data[id]) {
