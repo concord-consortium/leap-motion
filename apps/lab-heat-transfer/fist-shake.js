@@ -1,5 +1,4 @@
 import {Howl} from 'howler';
-import avg from '../common/js/tools/avg';
 import DirectionChange from '../common/js/tools/direction-change';
 import tapSound from '../common/sounds/tap.wav'
 import extend from '../common/js/tools/extend';

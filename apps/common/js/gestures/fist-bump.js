@@ -1,5 +1,4 @@
 import {Howl} from 'howler';
-import avg from '../tools/avg';
 import DirectionChange from '../tools/direction-change';
 import extend from '../tools/extend';
 import tapSound from '../../sounds/tap.wav'
