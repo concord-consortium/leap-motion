@@ -10,6 +10,7 @@ import InstructionsOverlay from '../common/js/components/instructions-overlay.js
 import LeapStatus from '../common/js/components/leap-status.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
+import introSrc from './intro.gif';
 import './lab-voule-pressure.less';
 
 const MAX_VOL = 0.82;
@@ -36,7 +37,7 @@ export default class LabVolumePressure extends React.Component {
     this.labModelLoaded = this.labModelLoaded.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.state = {
-      leapState: 'initial',
+      numberOfHands: 0,
       overlayVisible: true,
       gestureEverDetected: false
     }
@@ -75,6 +76,7 @@ export default class LabVolumePressure extends React.Component {
           plungerHighlighted: leapState.verticalHand && leapState.verticalHand.type === orientation,
           atomsHighlighted: leapState.closedHand && leapState.closedHand.type !== orientation
         });
+        this.setState({numberOfHands: leapState.numberOfHands});
         this.plotter.showCanvas(null);
 
         if (!this.finalGesture) {
@@ -116,21 +118,23 @@ export default class LabVolumePressure extends React.Component {
   getStateMsg() {
     let state = this.state.labProps;
     if (!state.plungerHighlighted && !state.atomsHighlighted) {
-      return 'Twist one hand and keep it vertical';
+      return 'Rotate one hand.';
     }
     if (state.plungerHighlighted && !state.atomsHighlighted) {
-      return 'Close the other fist';
+      return 'Make a fist with the other hand.';
     }
     if (!state.plungerHighlighted && state.atomsHighlighted) {
-      return 'Twist the other hand and keep it vertical';
+      return 'Rotate one hand.';
     }
     if (state.plungerHighlighted && state.atomsHighlighted) {
-      return 'Move your closed fist towards open palm and back rapidly';
+      return 'Tap fist to palm. Try fast and slow.';
     }
   }
 
   render() {
-    const { overlayVisible, labProps } = this.state;
+    const { overlayVisible, labProps, numberOfHands } = this.state;
+    const introVisible = overlayVisible && numberOfHands === 0;
+    const textVisible = overlayVisible && numberOfHands > 0;
     return (
       <div>
         <div className='container'>
@@ -141,7 +145,8 @@ export default class LabVolumePressure extends React.Component {
                onModelLoad={this.labModelLoaded}
                playing={true}/>
           <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
-            {this.getStateMsg()}
+            <img className={introVisible ? 'intro' : 'intro hidden'} src={introSrc}/>
+            <p className='text'>{textVisible && this.getStateMsg()}</p>
           </InstructionsOverlay>
         </div>
         <LeapStatus ref='status'>
