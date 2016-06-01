@@ -1,6 +1,6 @@
 {
   "type": "md2d",
-  "imagePath": "/",
+  "imagePath": "../",
   "width": 0.75,
   "height": 0.75,
   "unitsScheme": "md2d",
