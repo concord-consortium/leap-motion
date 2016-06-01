@@ -271,9 +271,9 @@
   },
   "elements": {
     "mass": [
-      60,
-      60,
-      60,
+      150,
+      40,
+      6000,
       120,
       120
     ],
@@ -301,13 +301,13 @@
   },
   "pairwiseLJProperties": [
     {
-      "sigma": 0.00001,
+      "sigma": 0.0000000001,
       "epsilon": 0,
       "element1": 0,
       "element2": 2
     },
     {
-      "sigma": 0.00001,
+      "sigma": 0.0000000001,
       "epsilon": 0,
       "element1": 1,
       "element2": 2

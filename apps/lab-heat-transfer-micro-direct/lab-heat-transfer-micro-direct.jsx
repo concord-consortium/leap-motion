@@ -25,7 +25,9 @@ export default class LabHeatTransfer extends React.Component {
       overlayVisible: true,
       gestureEverDetected: false,
       handleSensitivity: 1,
-      springStrength: 1500
+      springStrength: 1500,
+      atomMass: 150,
+      draggableAtomMass: 40
     }
   }
 
@@ -138,6 +140,30 @@ export default class LabHeatTransfer extends React.Component {
                 <input type='range' name='springStrength'
                        min='0' max='5000' step='1'
                        value={this.state.springStrength}
+                       onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            <tr>
+              <td>Mass of the draggable atom:</td>
+              <td>
+                <input type='text' name='draggableAtomMass' size='7'
+                       value={this.state.draggableAtomMass}
+                       onChange={this.handleInputChange}/>
+                <input type='range' name='draggableAtomMass'
+                       min='1' max='500' step='1'
+                       value={this.state.draggableAtomMass}
+                       onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            <tr>
+              <td>Mass of the regular atoms:</td>
+              <td>
+                <input type='text' name='atomMass' size='7'
+                       value={this.state.atomMass}
+                       onChange={this.handleInputChange}/>
+                <input type='range' name='atomMass'
+                       min='1' max='500' step='1'
+                       value={this.state.atomMass}
                        onChange={this.handleInputChange}/>
               </td>
             </tr>
