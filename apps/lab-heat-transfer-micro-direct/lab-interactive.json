@@ -123,6 +123,8 @@
         "if (value === 'neutral') color = -13134236;",
         "if (value === 'increasing') color = -4379648;",
         "if (value === 'decreasing') color = -14580301;",
+        "if (value) setImageProperties(0, {imageUri: 'star-active.svg'});",
+        "else       setImageProperties(0, {imageUri: 'star-inactive.svg'});",
         "setElementProperties(1, {color: color});"
       ]
     },
