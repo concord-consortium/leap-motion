@@ -37,7 +37,7 @@ export default class LabVolumePressure extends React.Component {
     this.labModelLoaded = this.labModelLoaded.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.state = {
-      numberOfHands: 0,
+      leapState: {},
       overlayVisible: true,
       gestureEverDetected: false
     }
@@ -76,7 +76,7 @@ export default class LabVolumePressure extends React.Component {
           plungerHighlighted: leapState.verticalHand && leapState.verticalHand.type === orientation,
           atomsHighlighted: leapState.closedHand && leapState.closedHand.type !== orientation
         });
-        this.setState({numberOfHands: leapState.numberOfHands});
+        this.setState({leapState});
         this.plotter.showCanvas(null);
 
         if (!this.finalGesture) {
@@ -116,25 +116,23 @@ export default class LabVolumePressure extends React.Component {
   }
 
   getStateMsg() {
-    let state = this.state.labProps;
-    if (!state.plungerHighlighted && !state.atomsHighlighted) {
+    let state = this.state.leapState;
+    if (state.numberOfHands < 2) {
+      return 'Place two hands over the Leap controller.';
+    }
+    if (!state.verticalHand) {
       return 'Rotate one hand.';
     }
-    if (state.plungerHighlighted && !state.atomsHighlighted) {
+    if (!state.closedHand) {
       return 'Make a fist with the other hand.';
     }
-    if (!state.plungerHighlighted && state.atomsHighlighted) {
-      return 'Rotate one hand.';
-    }
-    if (state.plungerHighlighted && state.atomsHighlighted) {
-      return 'Tap fist to palm. Try fast and slow.';
-    }
+    return 'Tap fist to palm. Try fast and slow.';
   }
 
   render() {
-    const { overlayVisible, labProps, numberOfHands } = this.state;
-    const introVisible = overlayVisible && numberOfHands === 0;
-    const textVisible = overlayVisible && numberOfHands > 0;
+    const { overlayVisible, labProps, leapState } = this.state;
+    const introVisible = overlayVisible && leapState.numberOfHands === 0;
+    const textVisible = overlayVisible && leapState.numberOfHands > 0;
     return (
       <div>
         <div className='container'>
