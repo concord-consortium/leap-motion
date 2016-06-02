@@ -54,7 +54,7 @@
     "showAtomTrace": false,
     "images": [
       {
-        "imageUri": "star.svg",
+        "imageUri": "star-inactive.svg",
         "imageX": 0.8284883497464655,
         "imageY": 0.8962662157184595,
         "imageHostType": "Atom",
