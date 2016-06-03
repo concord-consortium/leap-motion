@@ -14,7 +14,8 @@ module.exports = {
     'lab-add-rm-atom-test': './apps/lab-add-rm-atom-test/main.jsx',
     'lab-add-rm-atom-test-swipe': './apps/lab-add-rm-atom-test-swipe/main.jsx',
     'lab-pressure-equilibrium': './apps/lab-pressure-equilibrium/main.jsx',
-    'seasons-sunray-angle': './apps/seasons-sunray-angle/main.jsx'
+    'seasons-sunray-angle': './apps/seasons-sunray-angle/main.jsx',
+    'hands-view': './apps/hands-view/main.jsx'
   },
   output: {
     path: path.join(__dirname, 'dist'),
