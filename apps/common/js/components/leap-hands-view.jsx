@@ -11,6 +11,7 @@ const SKIN_COLOR_DARK = 0xA75E37;
 
 export default class LeapHandsView extends React.Component {
   componentDidMount() {
+    const { handsOpacity } = this.props;
     const renderer = new THREE.WebGLRenderer({alpha: true});
     renderer.setClearColor(0x000000, 0);
     renderer.setSize(this.width, this.height);
@@ -22,7 +23,7 @@ export default class LeapHandsView extends React.Component {
       scene: threeData.scene,
       camera: threeData.camera,
       materialOptions: {
-        opacity: 0.9
+        opacity: handsOpacity
       }
     });
   }
@@ -63,5 +64,6 @@ export default class LeapHandsView extends React.Component {
 
 LeapHandsView.defaultProps = {
   width: '100%',
-  height: '100%'
+  height: '100%',
+  handsOpacity: 0.9
 };

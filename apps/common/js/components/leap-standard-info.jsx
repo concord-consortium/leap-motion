@@ -15,7 +15,7 @@ export default class LeapStandardInfo extends React.Component {
           <div className='state-msg'>{this.props.stateMsg}</div>
           <LeapStatus ref='status'/>
         </div>
-        <LeapHandsView width='299px' height='347px'/>
+        <LeapHandsView width='299px' height='347px' handsOpacity={1}/>
       </div>
     )
   }
