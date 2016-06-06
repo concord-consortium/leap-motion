@@ -9,13 +9,23 @@ import {Seasons} from 'grasp-seasons';
 export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
     super(props);
-    this.sunrayAngle = new SunrayAngle({
-      oneHandGestureDetected: this.oneHandGestureDetected.bind(this),
-      twoHandsGestureDetected: this.twoHandsGestureDetected.bind(this)
+    this.state = {
+      activeRaysView: 'ground'
+    };
+
+    this.modelController = new ModelController({
+      activeRayViewChanged: this.activeRaysViewChanged.bind(this)
     });
-    this.modelController = new ModelController();
+    // Gesture recognition depends on the current mode (ground vs space). Provide function that returns this info
+    // and pass it to gesture detection module.
+    this.sunrayAngle = new SunrayAngle({
+      handAngleDetected: this.handAngleDetected.bind(this),
+      twoHandsDistanceDetected: this.twoHandsDistanceDetected.bind(this)
+    }, () => this.state.activeRaysView);
+
     this.handleConfigChange = this.handleConfigChange.bind(this);
   }
+
   componentDidMount() {
     this.sunrayAngle.plotter = this.plotter;
     this.modelController.setupModelCommunication(this.refs.seasonsModel);
@@ -30,8 +40,9 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.state.leapState === 'oneHandGestureDetected' ||
-        this.state.leapState === 'twoHandsGestureDetected') {
+    if (this.state.leapState === 'oneHandAngleDetected' ||
+        this.state.leapState === 'twoHandsAngleDetected' ||
+        this.state.leapState === 'twoHandsDistanceDetected') {
       this.modelController.setAnimButtonsDisabled(true);
     } else {
       this.modelController.setAnimButtonsDisabled(false);
@@ -44,25 +55,35 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   getStateMsg() {
+    const groundViewActive = this.state.activeRaysView === 'ground';
     switch(this.state.leapState) {
       case 'initial':
-        return 'Use one hand to set sunray angle or two hands to set distance between rays.';
+        if (groundViewActive) return 'Use one hand to set sunray angle or two hands to set distance between rays.';
+        else return 'Use two hands to set ground angle or distance between rays.';
       case 'oneHandDetected':
-        return 'Please keep you hand steady above the Leap device.';
+        if (groundViewActive) return 'Please keep you hand steady above the Leap device.';
+        else return 'Use two hands to set ground angle or distance between rays.';
       case 'twoHandsDetected':
-        return 'Please keep you hands vertical.';
-      case 'oneHandGestureDetected':
+        if (groundViewActive) return 'Please keep you hands vertical.';
+        else return 'Please keep you hands vertical to set distance between rays or use left hand to set ground angle' +
+                    'while right hand should represent rays (point left).';
+      case 'oneHandAngleDetected':
+      case 'twoHandsAngleDetected':
         return 'Rotate your hand to set the sun angle.';
-      case 'twoHandsGestureDetected':
+      case 'twoHandsDistanceDetected':
         return 'Your hands represent distance between rays.';
     }
   }
 
-  oneHandGestureDetected(angle) {
+  activeRaysViewChanged(viewName) {
+    this.setState({activeRaysView: viewName})
+  }
+
+  handAngleDetected(angle) {
     this.modelController.setHandAngle(angle);
   }
 
-  twoHandsGestureDetected(dist) {
+  twoHandsDistanceDetected(dist) {
     this.modelController.setHandDistance(dist);
   }
 

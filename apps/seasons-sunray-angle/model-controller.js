@@ -12,18 +12,26 @@ const POLAR_NIGHT_ANIM_SPEED = 0.9;
 const SUNRAY_INACTIVE_COLOR = '#888';
 const SUNRAY_NORMAL_COLOR = 'orange';
 
-const GROUND_NORMAL_COLOR = '#4C7F19';
+const GROUND_NORMAL_COLOR = 'auto';
 const GROUND_INACTIVE_COLOR = '#888';
 
 const EARTH_TILT = 0.41;
 const RAD_2_DEG = 180 / Math.PI;
 const SUMMER_SOLSTICE = 171; // 171 day of year
-const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
+const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5
+
+const SPACE = 'space';
+const GROUND = 'ground';
+
+const AVAILABLE_CALLBACKS = {
+  activeRayViewChanged: function (viewType) {}
+};
 
 export default class ModelController {
-  constructor() {
+  constructor(callbacks) {
     this.targetAngle = null;
     this.seasons = null;
+    this.callbacks = extend({}, AVAILABLE_CALLBACKS, callbacks);
     this.resetInteractionState();
   }
 
@@ -38,12 +46,16 @@ export default class ModelController {
     return this.seasons ? this.seasons.state.sim : {};
   }
 
-  get groundViewControl() {
-    let viewState = this.seasons ? this.seasons.state.view : {};
-    let result = false;
+  get activeRaysView() {
+    if (!this.seasons) {
+      // If seasons isn't loaded yet, return true since the ground view control is the default view.
+      return GROUND;
+    }
+    let viewState = this.seasons.state.view;
+    let result = GROUND;
     ['small-bottom', 'small-top', 'main'].forEach(function (pos) {
-      if (viewState[pos] === 'raysGround') result = true;
-      if (viewState[pos] === 'raysSpace') result = false;
+      if (viewState[pos] === 'raysGround') result = GROUND;
+      if (viewState[pos] === 'raysSpace') result = SPACE;
     });
     return result;
   }
@@ -58,7 +70,7 @@ export default class ModelController {
 
   setViewInactive() {
     this.withinTargetAngle = false;
-    if (this.groundViewControl) {
+    if (this.activeRaysView === GROUND) {
       this.setSeasonsState({sunrayColor: SUNRAY_INACTIVE_COLOR, groundColor: GROUND_NORMAL_COLOR, sunrayDistMarker: false});
     } else {
       this.setSeasonsState({sunrayColor: SUNRAY_NORMAL_COLOR, groundColor: GROUND_INACTIVE_COLOR, sunrayDistMarker: false});
@@ -68,7 +80,10 @@ export default class ModelController {
   setupModelCommunication(seasonsComponent) {
     this.seasons = seasonsComponent;
     this.seasons.on('simState.change', this.handleSimStateUpdate.bind(this));
-    this.seasons.on('viewState.change', this.handleSimStateUpdate.bind(this));
+    this.seasons.on('viewState.change', () => {
+      this.handleSimStateUpdate();
+      this.callbacks.activeRayViewChanged(this.activeRaysView)
+    });
     this.handleSimStateUpdate();
   }
 
@@ -103,7 +118,7 @@ export default class ModelController {
   }
 
   setHandAngle(angle) {
-    if (!this.groundViewControl) {
+    if (this.activeRaysView === SPACE) {
       // In horizontal view user controls ground, not rays.
       angle = 180 - angle;
     }
