@@ -6,8 +6,7 @@ import 'leapjs-plugins/main/version-check/leap.version-check';
 // leapjs-rigged-hand package is a total mess. Require JS file directly.
 import 'imports?THREE=three!leapjs-rigged-hand/build/leap.rigged-hand-0.1.7';
 
-const SKIN_COLOR_LIGHT = 0xFFCEB4;
-const SKIN_COLOR_DARK = 0xA75E37;
+const SKIN_COLOR = 0x93603F;
 
 export default class LeapHandsView extends React.Component {
   componentDidMount() {
@@ -26,6 +25,12 @@ export default class LeapHandsView extends React.Component {
         opacity: handsOpacity
       }
     });
+    leapController.on('riggedHand.meshAdded', function(handMesh){
+      handMesh.material.color.setHex(SKIN_COLOR);
+      handMesh.material.emissive.setHex(0x000000);
+      handMesh.material.ambient.setHex(SKIN_COLOR);
+    });
+
   }
 
   shouldComponentUpdate() {
@@ -42,11 +47,11 @@ export default class LeapHandsView extends React.Component {
 
   initScene() {
     const scene = new THREE.Scene();
-    const pointLight = new THREE.PointLight(SKIN_COLOR_LIGHT, 0.8);
+    const pointLight = new THREE.PointLight(0xFFFFFF, 0.8);
     pointLight.position.set(-20, 400, 0);
     pointLight.lookAt(new THREE.Vector3(0, 0, 0));
     scene.add(pointLight);
-    scene.add(new THREE.AmbientLight(SKIN_COLOR_DARK));
+    scene.add(new THREE.AmbientLight(0x777777));
     const camera = new THREE.PerspectiveCamera(45, this.width / this.height, 1, 10000);
     camera.position.fromArray([0, 500, 400]);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -65,5 +70,5 @@ export default class LeapHandsView extends React.Component {
 LeapHandsView.defaultProps = {
   width: '100%',
   height: '100%',
-  handsOpacity: 0.9
+  handsOpacity: 0.7
 };
