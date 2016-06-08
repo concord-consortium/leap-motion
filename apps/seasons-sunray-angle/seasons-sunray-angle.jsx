@@ -14,13 +14,8 @@ const GROUND_INACTIVE_COLOR = '#888';
 
 const INSTRUCTIONS = {
   INITIAL_GROUND: 'Use one hand to set sunray angle or two hands to set distance between rays.',
-  INITIAL_SPACE: 'Use two hands to set ground angle or distance between rays.',
-  RAYS_HIGHLIGHTED_SPACE: 'Now add the second hand to set angle of the ground.',
-  ONE_HAND_GROUND: 'Please keep you hand steady above the Leap device.',
-  ONE_HAND_SPACE: 'Use two hands to set ground angle or distance between rays.',
-  TWO_HANDS_GROUND: 'Please keep you hands vertical.',
-  TWO_HANDS_SPACE: 'Please keep you hands vertical to set distance between rays or use left hand to set ground angle' +
-                   'while right hand should represent rays (point left).',
+  INITIAL_SPACE: 'Use one hand to set ground angle or distance between rays.',
+  TWO_HANDS: 'Please keep you hands vertical.',
   ROTATE_GROUND: 'Rotate your hand to set the sunray angle.',
   ROTATE_SPACE: 'Rotate your hand to set the ground angle.',
   DISTANCE: 'Your hands represent distance between rays.'
@@ -78,30 +73,26 @@ export default class SeasonsSunrayAngle extends React.Component {
 
   handleSpaceViewGestures(data) {
     if (data.numberOfHands === 0) {
-      this.setSeasonsState(false, false, false, true);
-      this.setInstructions(INSTRUCTIONS.INITIAL_SPACE);
-    } else if (data.numberOfHands === 1 && data.rightHandPointingLeft) {
-      // Highlight rays.
+      // Ground inactive.
       this.setSeasonsState(false, true, false, true);
-      this.setInstructions(INSTRUCTIONS.RAYS_HIGHLIGHTED_SPACE);
-    } else if (data.numberOfHands === 1) {
-      // Everything inactive.
-      this.setSeasonsState(false, false, false, true);
       this.setInstructions(INSTRUCTIONS.INITIAL_SPACE);
-    } else if (data.numberOfHands === 2 && data.rightHandPointingLeft) {
+    } else if (data.numberOfHands === 1 && data.handStill) {
       // Try to set angle, feedback depends on whether angle was updated or not (user needs to stay within given
       // range around the current angle).
-      const angleChanged = this.modelController.setHandAngle(data.leftHandAngle);
+      const angleChanged = this.modelController.setHandAngle(data.handAngle);
       this.setSeasonsState(angleChanged, true, false, false);
-      this.setInstructions(INSTRUCTIONS.ROTATE_SPACE);
+      this.setInstructions(INSTRUCTIONS.ROTATE_GROUND);
+    } else if (data.numberOfHands === 1) {
+      // Hand moving too fast.
+      this.setSeasonsState(false, true, false, true);
     } else if (data.numberOfHands === 2 && data.handsVertical) {
       const distanceChanged = this.modelController.setHandDistance(data.handsDistance);
-      this.setSeasonsState(distanceChanged, distanceChanged, true, false);
+      this.setSeasonsState(distanceChanged, true, true, false);
       this.setInstructions(INSTRUCTIONS.DISTANCE);
     } else if (data.numberOfHands === 2) {
-      // Everything inactive.
-      this.setSeasonsState(false, false, false, true);
-      this.setInstructions(INSTRUCTIONS.TWO_HANDS_SPACE);
+      // Ground inactive.
+      this.setSeasonsState(false, true, false, true);
+      this.setInstructions(INSTRUCTIONS.TWO_HANDS);
     }
   }
 
@@ -117,9 +108,8 @@ export default class SeasonsSunrayAngle extends React.Component {
       this.setSeasonsState(true, angleChanged, false, false);
       this.setInstructions(INSTRUCTIONS.ROTATE_GROUND);
     } else if (data.numberOfHands === 1) {
-      // Sunrays inactive.
+      // Hand moving too fast.
       this.setSeasonsState(true, false, false, true);
-      this.setInstructions(INSTRUCTIONS.ONE_HAND_GROUND);
     } else if (data.numberOfHands === 2 && data.handsVertical) {
       const distanceChanged = this.modelController.setHandDistance(data.handsDistance);
       this.setSeasonsState(true, distanceChanged, true, false);
@@ -127,7 +117,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     } else if (data.numberOfHands === 2) {
       // Sunrays inactive.
       this.setSeasonsState(true, false, false, true);
-      this.setInstructions(INSTRUCTIONS.TWO_HANDS_GROUND);
+      this.setInstructions(INSTRUCTIONS.TWO_HANDS);
     }
   }
 

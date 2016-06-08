@@ -9,7 +9,9 @@ const HAND_POINTING_LEFT_TOLERANCE = 1.1; // radians
 const PALM_POINTING_LEFT_NORMAL = [0, 0, 1];
 const DEFAULT_CONFIG = {
   minDist: 80,
-  maxDist: 250
+  maxDist: 250,
+  // Enables calculation of new properties, keep disabled if not necessary.
+  twoHandsAngleDetection: false
 };
 
 function len(x, y, z) {
@@ -76,14 +78,18 @@ export default class GesturesHelper {
     if (data.numberOfHands === 1) {
       data.handStill = velocity(hands[0]) < MAX_VELOCITY;
       data.handAngle = getHandAngle(hands[0]);
-      data.rightHandPointingLeft = hands[0].type === 'right' && isPointingLeft(hands[0]);
+      if (this.config.twoHandsAngleDetection) {
+        data.rightHandPointingLeft = hands[0].type === 'right' && isPointingLeft(hands[0]);
+      }
     } else if (data.numberOfHands === 2) {
       const leftHand = hands[0].type === 'left' ? hands[0] : hands[1];
       const rightHand = hands[0].type === 'right' ? hands[0] : hands[1];
-      data.leftHandAngle = getHandAngle(leftHand);
-      data.rightHandPointingLeft = isPointingLeft(rightHand);
       data.handsVertical = isVertical(leftHand) && isVertical(rightHand);
       data.handsDistance = this.distanceBetweenHands(leftHand, rightHand);
+      if (this.config.twoHandsAngleDetection) {
+        data.leftHandAngle = getHandAngle(leftHand);
+        data.rightHandPointingLeft = isPointingLeft(rightHand);
+      }
     }
     return data;
   }
