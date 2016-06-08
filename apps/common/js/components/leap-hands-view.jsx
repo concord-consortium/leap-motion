@@ -70,5 +70,5 @@ export default class LeapHandsView extends React.Component {
 LeapHandsView.defaultProps = {
   width: '100%',
   height: '100%',
-  handsOpacity: 0.7
+  handsOpacity: 1
 };
