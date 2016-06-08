@@ -14,6 +14,10 @@
         "atomRadiusScale": 1.13
       },
       "onLoad": [
+        "onClick('atom', function(x, y, atom) {",
+        "  markAtoms([atom.idx]);",
+        "});",
+        "",
         "var leftAtoms = [];",
         "var rightAtoms = [];",
         "for (var i = 0; i < getNumberOfAtoms(); i++) {",

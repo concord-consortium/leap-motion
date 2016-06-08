@@ -9,7 +9,7 @@ export default class InstructionsOverlay extends React.Component {
 
     return (
       <div className={`overlay ${className} ${visible ? '' : 'hidden'}`}>
-        <LeapHandsView width={width} height={height}/>
+        <LeapHandsView width={width} height={height} handsOpacity={0.85}/>
         <div className='instructions'>
           {children}
         </div>
