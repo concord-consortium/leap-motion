@@ -8,18 +8,10 @@ const ANGLE_THRESHOLD = 15;
 const INITIAL_ANGLE_THRESHOLD = 2;
 const MIN_ANGLE_DIFF = 0.1;
 const POLAR_NIGHT_ANIM_SPEED = 0.9;
-
-const SUNRAY_INACTIVE_COLOR = '#888';
-const SUNRAY_NORMAL_COLOR = 'orange';
-
-const GROUND_NORMAL_COLOR = 'auto';
-const GROUND_INACTIVE_COLOR = '#888';
-
 const EARTH_TILT = 0.41;
 const RAD_2_DEG = 180 / Math.PI;
 const SUMMER_SOLSTICE = 171; // 171 day of year
-const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5
-
+const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
 const SPACE = 'space';
 const GROUND = 'ground';
 
@@ -65,16 +57,6 @@ export default class ModelController {
     this.prevDay = null;
     this.prevTargetAngle = null;
     this.withinTargetAngle = false;
-    this.setViewInactive();
-  }
-
-  setViewInactive() {
-    this.withinTargetAngle = false;
-    if (this.activeRaysView === GROUND) {
-      this.setSeasonsState({sunrayColor: SUNRAY_INACTIVE_COLOR, groundColor: GROUND_NORMAL_COLOR, sunrayDistMarker: false});
-    } else {
-      this.setSeasonsState({sunrayColor: SUNRAY_NORMAL_COLOR, groundColor: GROUND_INACTIVE_COLOR, sunrayDistMarker: false});
-    }
   }
 
   setupModelCommunication(seasonsComponent) {
@@ -92,7 +74,32 @@ export default class ModelController {
     this.seasons.setRotatingBtnDisabled(v);
   }
 
-  setHandDistance(dist) {
+  withinSunrayAngle(handAngle) {
+    // User needs to "find" current angle (targetAngle) first.
+    // Only then he can modify it.
+    const threshold = this.withinTargetAngle ? ANGLE_THRESHOLD : INITIAL_ANGLE_THRESHOLD;
+    return Math.abs(handAngle - this.targetAngle) < threshold;
+  }
+
+  setAngle(angle) {
+    if (this.withinSunrayAngle(angle)) {
+      this.withinTargetAngle = true;
+      this.updateTargetAngle(angle);
+      return true;
+    }
+    this.withinTargetAngle = false;
+    return false;
+  }
+
+  setHandAngle(angle) {
+    if (this.activeRaysView === SPACE) {
+      // In horizontal view user controls ground, not rays.
+      angle = 180 - angle;
+    }
+    return this.setAngle(angle);
+  }
+
+  handDistanceToAngle(dist) {
     let maxAngle = this.maxAngle;
     let minAngle = this.minAngle;
     // Distance between rays is defined between 0 (min) and 1 (max).
@@ -113,28 +120,13 @@ export default class ModelController {
       // Change direction.
       angle = 180 - angle;
     }
+    return angle;
+  }
+
+  setHandDistance(dist) {
+    const angle = this.handDistanceToAngle(dist);
     if (this.targetAngle !== 90) this.prevTargetAngle = this.targetAngle;
-    this.setAngle(angle, true);
-  }
-
-  setHandAngle(angle) {
-    if (this.activeRaysView === SPACE) {
-      // In horizontal view user controls ground, not rays.
-      angle = 180 - angle;
-    }
-    this.setAngle(angle, false);
-  }
-
-  setAngle(angle, usingDistGesture) {
-    // User needs to "find" current angle (targetAngle) first.
-    // Only then he can modify it.
-    let threshold = this.withinTargetAngle ? ANGLE_THRESHOLD : INITIAL_ANGLE_THRESHOLD;
-    if (Math.abs(angle - this.targetAngle) < threshold) {
-      this.withinTargetAngle = true;
-      this.updateTargetAngle(angle, usingDistGesture);
-    } else {
-      this.targetAngleLost();
-    }
+    return this.setAngle(angle);
   }
 
   handleSimStateUpdate() {
@@ -142,11 +134,7 @@ export default class ModelController {
     this.resetInteractionState();
   }
 
-  targetAngleLost() {
-    this.setViewInactive();
-  }
-
-  updateTargetAngle(newAngle, usingDistGesture) {
+  updateTargetAngle(newAngle) {
     // Handle "winter" polar night special case.
     if (newAngle === 0 && this.targetAngle === 0) {
       return this.winterPolarNightHandler();
@@ -199,7 +187,7 @@ export default class ModelController {
     } else {
       newDay = newDay.inWinterOrSpring;
     }
-    this.setSeasonsState({day: newDay, sunrayColor: SUNRAY_NORMAL_COLOR, groundColor: GROUND_NORMAL_COLOR, sunrayDistMarker: usingDistGesture});
+    this.setSeasonsState({day: newDay});
     this.targetAngle = newAngle;
   }
 
@@ -232,7 +220,7 @@ export default class ModelController {
       // Set the first day which has angle equal to 180.
       newDay = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
     }
-    this.setSeasonsState({day: newDay, sunrayColor: SUNRAY_NORMAL_COLOR});
+    this.setSeasonsState({day: newDay});
   }
 
   // Called when user defines angle which is very close to winter solstice sunray angle.
@@ -248,7 +236,7 @@ export default class ModelController {
       // Set the first day which has angle equal to 0.
       newDay = this.summerOrFall(this.prevDay) ? newDay.inSummerOrFall : newDay.inWinterOrSpring;
     }
-    this.setSeasonsState({day: newDay, sunrayColor: SUNRAY_NORMAL_COLOR});
+    this.setSeasonsState({day: newDay});
   }
 
   summerOrFall(day) {
