@@ -35,9 +35,11 @@ export default class LabVolumePressure extends React.Component {
   constructor(props) {
     super(props);
     this.labModelLoaded = this.labModelLoaded.bind(this);
+    this.handleLabPropChange = this.handleLabPropChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.state = {
       leapState: {},
+      overlayEnabled: true,
       overlayVisible: true,
       gestureEverDetected: false
     }
@@ -53,10 +55,16 @@ export default class LabVolumePressure extends React.Component {
     this.setState({overlayVisible: true, gestureEverDetected: false})
   }
 
-  handleInputChange(event) {
+  handleLabPropChange(event) {
     let props = {};
     props[event.target.name] = event.target.value;
     this.setLabProps(props);
+  }
+
+  handleInputChange(event) {
+    let props = {};
+    props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+    this.setState(props);
   }
 
   get finalGesture() {
@@ -130,7 +138,7 @@ export default class LabVolumePressure extends React.Component {
   }
 
   render() {
-    const { overlayVisible, labProps, leapState } = this.state;
+    const { overlayEnabled, overlayVisible, labProps, leapState } = this.state;
     const introVisible = overlayVisible && leapState.numberOfHands === 0;
     const textVisible = overlayVisible && leapState.numberOfHands > 0;
     return (
@@ -142,7 +150,7 @@ export default class LabVolumePressure extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
+          <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
             <img className={introVisible ? 'intro' : 'intro hidden'} src={introSrc}/>
             <p className='text'>{textVisible && this.getStateMsg()}</p>
           </InstructionsOverlay>
@@ -151,39 +159,47 @@ export default class LabVolumePressure extends React.Component {
           <table>
             <tbody>
             <tr>
+              <td>Overlay:</td>
+              <td>
+                <input type='checkbox' name='overlayEnabled'
+                       checked={overlayEnabled}
+                       onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            <tr>
               <td>Number of bump spots:</td>
               <td>
                 <input type='text' name='markersCount' size='7'
-                       value={this.state.labProps.markersCount || 0}
-                       onChange={this.handleInputChange}/>
+                       value={labProps.markersCount || 0}
+                       onChange={this.handleLabPropChange}/>
                 <input type='range' name='markersCount'
                        min='0' max='25'
-                       value={this.state.labProps.markersCount || 0}
-                       onChange={this.handleInputChange}/>
+                       value={labProps.markersCount || 0}
+                       onChange={this.handleLabPropChange}/>
               </td>
             </tr>
             <tr>
               <td>Bump spot fade speed:</td>
               <td>
                 <input type='text' name='markerFadeSpeed' size='7'
-                       value={this.state.labProps.markerFadeSpeed || 0}
-                       onChange={this.handleInputChange}/>
+                       value={labProps.markerFadeSpeed || 0}
+                       onChange={this.handleLabPropChange}/>
                 <input type='range' name='markerFadeSpeed'
                        min='0.005' max='0.075' step='0.005'
-                       value={this.state.labProps.markerFadeSpeed || 0}
-                       onChange={this.handleInputChange}/>
+                       value={labProps.markerFadeSpeed || 0}
+                       onChange={this.handleLabPropChange}/>
               </td>
             </tr>
             <tr>
               <td>Bump spot sensitivity:</td>
               <td>
                 <input type='text' name='markerSensitivity' size='7'
-                       value={this.state.labProps.markerSensitivity || 0}
-                       onChange={this.handleInputChange}/>
+                       value={labProps.markerSensitivity || 0}
+                       onChange={this.handleLabPropChange}/>
                 <input type='range' name='markerSensitivity'
                        min='0.1' max='5' step='0.1'
-                       value={this.state.labProps.markerSensitivity || 0}
-                       onChange={this.handleInputChange}/>
+                       value={labProps.markerSensitivity || 0}
+                       onChange={this.handleLabPropChange}/>
               </td>
             </tr>
             </tbody>

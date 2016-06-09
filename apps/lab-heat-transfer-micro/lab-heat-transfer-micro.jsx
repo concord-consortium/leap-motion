@@ -25,6 +25,7 @@ export default class LabHeatTransfer extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.state = {
       leapState: 'initial',
+      overlayEnabled: true,
       overlayVisible: true,
       gestureEverDetected: false,
       freqCooling: 2,
@@ -55,7 +56,7 @@ export default class LabHeatTransfer extends React.Component {
 
   handleInputChange(event) {
     let props = {};
-    props[event.target.name] = event.target.value;
+    props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
     this.setState(props);
   }
 
@@ -133,7 +134,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { overlayVisible, labProps } = this.state;
+    const { overlayEnabled, overlayVisible, labProps } = this.state;
     return (
       <div>
         <div className='container'>
@@ -143,7 +144,7 @@ export default class LabHeatTransfer extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
+          <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
             {this.getStateMsg()}
           </InstructionsOverlay>
         </div>
@@ -151,10 +152,21 @@ export default class LabHeatTransfer extends React.Component {
           <table>
             <tbody>
             <tr>
+              <td>Overlay:</td>
               <td>
-                Sound: <input type='checkbox' name='soundEnabled'
-                              defaultChecked={this.fistShake.config.soundEnabled}
-                              onChange={this.soundEnabledChanged}/>
+                <input type='checkbox' name='overlayEnabled'
+                       checked={overlayEnabled}
+                       onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Sound:
+              </td>
+              <td>
+                <input type='checkbox' name='soundEnabled'
+                       defaultChecked={this.fistShake.config.soundEnabled}
+                       onChange={this.soundEnabledChanged}/>
               </td>
             </tr>
             <tr>
