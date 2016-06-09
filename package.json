@@ -16,6 +16,10 @@
   "bugs": {
     "url": "https://github.com/concord-consortium/leap-motion/issues"
   },
+  "scripts": {
+    "build": "webpack",
+    "server": "webpack-dev-server"
+  },
   "homepage": "https://github.com/concord-consortium/leap-motion",
   "devDependencies": {
     "autoprefixer-loader": "^3.2.0",
@@ -30,7 +34,8 @@
     "less-loader": "^2.2.3",
     "node-libs-browser": "^0.5.3",
     "style-loader": "^0.12.4",
-    "webpack": "^1.12.2"
+    "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
     "grasp-seasons": "^0.4.1",
