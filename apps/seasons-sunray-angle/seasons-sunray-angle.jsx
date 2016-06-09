@@ -9,7 +9,7 @@ import {Seasons} from 'grasp-seasons';
 const SUNRAY_INACTIVE_COLOR = '#888';
 const SUNRAY_NORMAL_COLOR = 'orange';
 
-const GROUND_NORMAL_COLOR = 'auto';
+const GROUND_NORMAL_COLOR = '#4C7F19';
 const GROUND_INACTIVE_COLOR = '#888';
 
 const INSTRUCTIONS = {
