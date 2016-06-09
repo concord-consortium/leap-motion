@@ -45,6 +45,30 @@ This project is automatically deployed to S3 bucket by Travis-CI.
 - other branches are deployed to `/branch/` subdirectories (e.g. http://models-resources.concord.org/leap-motion/branch/master/index.html)
 - tags are deployed to `/version/` subdirectories  (e.g. http://models-resources.concord.org/leap-motion/version/0.1.0/index.html)
 
+## Running project locally 
+
+### Prerequisites
+
+1. Open Terminal app
+2. Make sure that *node* and *npm* tools are installed and up to date. Type: `node --version` and `npm --version`
+3. If they are not installed or outdated (*node* version is older than 5.x), download *node* installer from [this page](https://nodejs.org/en/download/current/). *npm* will be automatically installed together with *node*.
+
+### Running local server (production code)
+
+1. Download and unzip the source code: https://github.com/concord-consortium/leap-motion/archive/production.zip
+2. Open Terminal app
+3. Go to the directory with downloaded code, type `cd ~/Downloads/leap-motion-production`
+4. Type: `npm install` (it might take a while)
+5. Type: `npm run server`
+6. Open: [http://localhost:8080/index.html](http://localhost:8080/index.html)
+
+### Running local server (latest development or topic branch code)
+
+Follow previous instructions, but replace `production.zip` segment in the URL with `master.zip` for the latest development version or with name of the branch that you're interested in. For example:
+
+- https://github.com/concord-consortium/leap-motion/archive/master.zip
+- https://github.com/concord-consortium/leap-motion/archive/two-hands-angle.zip
+
 ## License 
 
 [MIT](https://github.com/concord-consortium/grasp-seasons/blob/master/LICENSE)
