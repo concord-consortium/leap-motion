@@ -12,13 +12,53 @@
     visibility: hidden;
   }
 
+  &.grasp-seasons {
+    position: fixed;
+    text-align: center;
+    background-color: transparent;
+
+    &.main{
+      top: 200px;
+      left: 10px;
+      width: 795px;
+      height: 400px;
+    }
+    &.small-top{
+      top: 10px;
+      left: 815px;
+      width: 395px;
+      height: 300px;
+    }
+    &.small-bottom{
+      top: 340px;
+      left: 815px;
+      width: 395px;
+      height: 300px;
+    }
+    &.active{
+      background-color: transparent;
+    }
+      .hands-view{
+        background-color:transparent;
+      }
+      .instructions {
+        padding: 3px 10px 3px 3px;
+        text-shadow:
+          -1px -1px 0 #000,
+          1px -1px 0 #000,
+          -1px 1px 0 #000,
+          1px 1px 0 #000;
+      }
+  }
+
   .instructions {
     position: absolute;
-    top: 70%;
+    bottom: 0;
+    margin-bottom:4px;
     width: 100%;
     text-align: center;
     text-shadow: 1px 1px 10px #000;
     color: white;
-    font-size: 1.2em;
+    font-size: 1.3em;
   }
 }

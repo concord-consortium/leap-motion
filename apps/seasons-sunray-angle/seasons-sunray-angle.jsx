@@ -2,6 +2,7 @@ import React from 'react';
 import reactMixin from 'react-mixin';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
+import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import GesturesHelper from './gestures-helper';
 import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
@@ -26,10 +27,13 @@ export default class SeasonsSunrayAngle extends React.Component {
     super(props);
     this.state = {
       activeRaysView: 'ground',
-      instructions: INSTRUCTIONS.INITIAL_GROUND
+      activeViewPanel: 'main',
+      instructions: INSTRUCTIONS.INITIAL_GROUND,
+      overlaySize: {width: 400, height:200}
     };
     this.modelController = new ModelController({
-      activeRayViewChanged: this.activeRaysViewChanged.bind(this)
+      activeRayViewChanged: this.activeRaysViewChanged.bind(this),
+      activeViewPanelChanged: this.activeViewPanelChanged.bind(this)
     });
     this.gesturesHelper = new GesturesHelper();
     this.handleConfigChange = this.handleConfigChange.bind(this);
@@ -45,6 +49,10 @@ export default class SeasonsSunrayAngle extends React.Component {
 
   activeRaysViewChanged(viewName) {
     this.setState({activeRaysView: viewName})
+  }
+
+  activeViewPanelChanged(activePanel) {
+    this.setState({ activeViewPanel: activePanel });
   }
 
   setInstructions(text) {
@@ -69,6 +77,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     } else { // ground view
       this.handleGroundViewGestures(data);
     }
+    this.applyOverlayStyle();
   }
 
   handleSpaceViewGestures(data) {
@@ -121,6 +130,22 @@ export default class SeasonsSunrayAngle extends React.Component {
     }
   }
 
+  applyOverlayStyle(data) {
+    if (this.state.overlayStyle == null || this.state.overlayStyle.indexOf(this.state.activeViewPanel) == -1) {
+      let currentStyles = ["grasp-seasons"];
+      let windowPosition = this.state.activeViewPanel || 'main';
+      currentStyles.push(windowPosition);
+      this.setState({ overlayStyle: currentStyles.join(' ') });
+      // now get window size
+      let activeWindow = document.getElementsByClassName("view " + windowPosition);
+      if (activeWindow != null) {
+        let size = { width: activeWindow[0].getBoundingClientRect().width, height: activeWindow[0].getBoundingClientRect().height };
+        this.setState({ overlaySize: size });
+        console.log(this.state.overlaySize);
+      }
+    }
+  }
+
   render() {
     const { instructions } = this.state;
     return (
@@ -128,7 +153,9 @@ export default class SeasonsSunrayAngle extends React.Component {
         <div style={{background: '#f6f6f6', width: '1210px'}}>
           <Seasons ref='seasonsModel'></Seasons>
         </div>
-        <LeapStandardInfo ref='leapInfo' stateMsg={instructions}/>
+        <InstructionsOverlay visible={true} width={this.state.overlaySize.width} height={this.state.overlaySize.height} handsOpacity={0.7} className={this.state.overlayStyle}>
+          { instructions }
+        </InstructionsOverlay>
         <p>
           Min distance between hands [mm]: <input type='text' name='minDist'
                                                   defaultValue={this.gesturesHelper.config.minDist}
