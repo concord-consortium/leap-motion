@@ -29,7 +29,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       activeRaysView: 'ground',
       activeViewPanel: 'main',
       instructions: INSTRUCTIONS.INITIAL_GROUND,
-      overlaySize: {width: 400, height:200}
+      overlaySize: {width: 300, height:200}
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -141,7 +141,6 @@ export default class SeasonsSunrayAngle extends React.Component {
       if (activeWindow != null) {
         let size = { width: activeWindow[0].getBoundingClientRect().width, height: activeWindow[0].getBoundingClientRect().height };
         this.setState({ overlaySize: size });
-        console.log(this.state.overlaySize);
       }
     }
   }

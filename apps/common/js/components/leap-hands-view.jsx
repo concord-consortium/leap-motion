@@ -9,11 +9,15 @@ import 'imports?THREE=three!leapjs-rigged-hand/build/leap.rigged-hand-0.1.7';
 const SKIN_COLOR = 0x93603F;
 
 export default class LeapHandsView extends React.Component {
+  componentWillMount(){
+    this.setState({ width: this.props.width, height: this.props.height });
+  }
   componentDidMount() {
     const { handsOpacity } = this.props;
     const renderer = new THREE.WebGLRenderer({alpha: true});
     renderer.setClearColor(0x000000, 0);
-    renderer.setSize(this.width, this.height);
+    renderer.setSize(this.props.width, this.props.height);
+    this.setState({renderer:renderer});
     this.refs.container.appendChild(renderer.domElement);
     const threeData = this.initScene();
     leapController.use('riggedHand', {
@@ -30,7 +34,15 @@ export default class LeapHandsView extends React.Component {
       handMesh.material.emissive.setHex(0x000000);
       handMesh.material.ambient.setHex(SKIN_COLOR);
     });
-
+  }
+  componentWillReceiveProps(newProps) {
+    if (newProps.width != this.props.width){
+      if (this.state && this.state.renderer!=null){
+        let newRenderer = this.state.renderer;
+        newRenderer.setSize(newProps.width, newProps.height);
+        this.setState({renderer: newRenderer, width: newProps.width, height: newProps.height });
+      }
+    }
   }
 
   shouldComponentUpdate() {
@@ -60,7 +72,7 @@ export default class LeapHandsView extends React.Component {
   }
 
   render() {
-    const { width, height } = this.props;
+    const { width, height } = this.state;
     return (
       <div className='hands-view' ref='container' style={{width, height}}></div>
     )
