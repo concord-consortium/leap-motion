@@ -55,12 +55,12 @@
     },
     {
       "name": "leftAtomsTargetTemp",
-      "initialValue": 150,
+      "initialValue": 500,
       "onChange": "setTemperatureOfAtoms(get('leftAtomsIndices'), value);"
     },
     {
       "name": "rightAtomsTargetTemp",
-      "initialValue": 150,
+      "initialValue": 50,
       "onChange": "setTemperatureOfAtoms(get('rightAtomsIndices'), value);"
     },
     {

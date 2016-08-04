@@ -18,8 +18,8 @@ const MIN_TEMP = 30;
 const FREQ_AVG = 120;
 const DEF_LAB_PROPS = {
   markedBlock: 'none',
-  leftAtomsTargetTemp: 150,
-  rightAtomsTargetTemp: 150
+  leftAtomsTargetTemp: 500,
+  rightAtomsTargetTemp: 50
 };
 
 const MIN_FREQ_TO_HIDE_INSTRUCTIONS = 1;
