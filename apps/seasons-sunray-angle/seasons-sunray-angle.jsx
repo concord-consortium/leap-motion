@@ -29,7 +29,8 @@ export default class SeasonsSunrayAngle extends React.Component {
       activeRaysView: 'ground',
       activeViewPanel: 'main',
       instructions: INSTRUCTIONS.INITIAL_GROUND,
-      overlaySize: {width: 300, height:200}
+      overlaySize: { width: 300, height: 200 },
+      leapConnected: false
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -71,6 +72,9 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   handleLeapFrame(frame) {
+    if (!this.state.leapConnected) {
+      this.setState({ leapConnected: true });
+    }
     const data = this.gesturesHelper.processLeapFrame(frame);
     if (this.state.activeRaysView === 'space') {
       this.handleSpaceViewGestures(data);
@@ -152,7 +156,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         <div style={{background: '#f6f6f6', width: '1210px'}}>
           <Seasons ref='seasonsModel'></Seasons>
         </div>
-        <InstructionsOverlay visible={true} width={this.state.overlaySize.width} height={this.state.overlaySize.height} handsOpacity={0.7} className={this.state.overlayStyle}>
+        <InstructionsOverlay visible={this.state.leapConnected} width={this.state.overlaySize.width} height={this.state.overlaySize.height} handsOpacity={0.7} className={this.state.overlayStyle}>
           { instructions }
         </InstructionsOverlay>
         <p>
