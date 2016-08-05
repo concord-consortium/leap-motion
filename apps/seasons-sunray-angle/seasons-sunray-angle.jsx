@@ -12,6 +12,14 @@ const SUNRAY_NORMAL_COLOR = 'orange';
 const GROUND_NORMAL_COLOR = '#4C7F19';
 const GROUND_INACTIVE_COLOR = '#888';
 
+const INITIAL_SEASONS_STATE = {
+  view: {
+    'main': 'orbit',
+    'small-top': 'raysGround',
+    'small-bottom': 'nothing'
+  }
+};
+
 const INSTRUCTIONS = {
   INITIAL_GROUND: 'Use one hand to set sunray angle or two hands to set distance between rays.',
   INITIAL_SPACE: 'Use one hand to set ground angle or distance between rays.',
@@ -126,7 +134,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     return (
       <div>
         <div style={{background: '#f6f6f6', width: '1210px'}}>
-          <Seasons ref='seasonsModel'></Seasons>
+          <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}></Seasons>
         </div>
         <LeapStandardInfo ref='leapInfo' stateMsg={instructions}/>
         <p>
