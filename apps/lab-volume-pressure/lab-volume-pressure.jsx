@@ -9,6 +9,7 @@ import avg from '../common/js/tools/avg';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import LeapStatus from '../common/js/components/leap-status.jsx';
 import interactive from './lab-interactive.json';
+import InteractiveTips from './interactive-tips.jsx';
 import model from './lab-model.json';
 import introSrc from './intro.gif';
 import './lab-voule-pressure.less';
@@ -151,8 +152,11 @@ export default class LabVolumePressure extends React.Component {
                onModelLoad={this.labModelLoaded}
                playing={true}/>
           <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
-            <img className={introVisible ? 'intro' : 'intro hidden'} src={introSrc}/>
-            <p className='text'>{textVisible && this.getStateMsg()}</p>
+            <div className='instructions'>
+              <img className={introVisible ? 'intro' : 'intro hidden'} src={introSrc}/>
+              <p className='text'>{textVisible && this.getStateMsg()}</p>
+            </div>
+            <InteractiveTips rotation={leapState.numberOfHands === 2 && !leapState.verticalHand}/>
           </InstructionsOverlay>
         </div>
         <LeapStatus ref='status'>

@@ -156,7 +156,9 @@ export default class LabHeatTransfer extends React.Component {
                onModelLoad={this.labModelLoaded}
                playing={true}/>
           <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
-            {this.getStateMsg()}
+            <div className='instructions'>
+              {this.getStateMsg()}
+            </div>
           </InstructionsOverlay>
         </div>
         <LeapStatus ref='status'>

@@ -25,12 +25,11 @@ export default class LeapHandsView extends React.Component {
         opacity: handsOpacity
       }
     });
-    leapController.on('riggedHand.meshAdded', function(handMesh){
+    leapController.on('riggedHand.meshAdded', function(handMesh) {
       handMesh.material.color.setHex(SKIN_COLOR);
       handMesh.material.emissive.setHex(0x000000);
       handMesh.material.ambient.setHex(SKIN_COLOR);
     });
-
   }
 
   shouldComponentUpdate() {
