@@ -63,37 +63,6 @@ function getMesh(leapHand) {
   }
 }
 
-// Based on leap.rigged-hand-0.1.7 leapController.on('frame') handler that setups correct hand model positions.
-function setupHandPosition(handMesh, leapHand) {
-  leapHand.fingers = leapHand.fingers.sort(function (a, b) {
-    return a.id - b.id;
-  });
-  const palm = handMesh.children[0];
-  handMesh.scaleFromHand(leapHand);
-  palm.positionLeap.fromArray(leapHand.palmPosition);
-  palm.children.forEach(function (mcp, i) {
-    mcp.positionLeap.fromArray(leapHand.fingers[i].mcpPosition);
-    mcp.pip.positionLeap.fromArray(leapHand.fingers[i].pipPosition);
-    mcp.dip.positionLeap.fromArray(leapHand.fingers[i].dipPosition);
-    mcp.tip.positionLeap.fromArray(leapHand.fingers[i].tipPosition);
-  });
-  palm.worldDirection.fromArray(leapHand.direction);
-  palm.up.fromArray(leapHand.palmNormal).multiplyScalar(-1);
-  palm.worldUp.fromArray(leapHand.palmNormal).multiplyScalar(-1);
-  handMesh.positionRaw.fromArray(leapHand.palmPosition);
-  handMesh.position.copy(handMesh.positionRaw).multiplyScalar(leapController.plugins.riggedHand.positionScale);
-  handMesh.matrix.lookAt(palm.worldDirection, new THREE.Vector3(0, 0, 0), palm.up);
-  palm.worldQuaternion.setFromRotationMatrix(handMesh.matrix);
-  palm.children.forEach(function (mcp) {
-    mcp.traverse(function (bone) {
-      if (bone.children[0]) {
-        bone.worldDirection.subVectors(bone.children[0].positionLeap, bone.positionLeap).normalize();
-        return bone.positionFromWorld(bone.children[0].positionLeap, bone.positionLeap);
-      }
-    });
-  });
-}
-
 // Based on leap.rigged-hand-0.1.7#addMesh function.
 function addMesh(leapHand) {
   const handMesh = getMesh(leapHand);
@@ -128,16 +97,47 @@ function addMesh(leapHand) {
   return handMesh;
 }
 
-function styleHandStyle(handMesh) {
+function setHandStyle(handMesh) {
   handMesh.material.opacity = 0.65;
   handMesh.material.transparent = true;
+}
+
+// Based on leap.rigged-hand-0.1.7 leapController.on('frame') handler that setups correct hand model positions.
+export function setupHand(handMesh, leapHand) {
+  leapHand.fingers = leapHand.fingers.sort(function (a, b) {
+    return a.id - b.id;
+  });
+  const palm = handMesh.children[0];
+  handMesh.scaleFromHand(leapHand);
+  palm.positionLeap.fromArray(leapHand.palmPosition);
+  palm.children.forEach(function (mcp, i) {
+    mcp.positionLeap.fromArray(leapHand.fingers[i].mcpPosition);
+    mcp.pip.positionLeap.fromArray(leapHand.fingers[i].pipPosition);
+    mcp.dip.positionLeap.fromArray(leapHand.fingers[i].dipPosition);
+    mcp.tip.positionLeap.fromArray(leapHand.fingers[i].tipPosition);
+  });
+  palm.worldDirection.fromArray(leapHand.direction);
+  palm.up.fromArray(leapHand.palmNormal).multiplyScalar(-1);
+  palm.worldUp.fromArray(leapHand.palmNormal).multiplyScalar(-1);
+  handMesh.positionRaw.fromArray(leapHand.palmPosition);
+  handMesh.position.copy(handMesh.positionRaw).multiplyScalar(leapController.plugins.riggedHand.positionScale);
+  handMesh.matrix.lookAt(palm.worldDirection, new THREE.Vector3(0, 0, 0), palm.up);
+  palm.worldQuaternion.setFromRotationMatrix(handMesh.matrix);
+  palm.children.forEach(function (mcp) {
+    mcp.traverse(function (bone) {
+      if (bone.children[0]) {
+        bone.worldDirection.subVectors(bone.children[0].positionLeap, bone.positionLeap).normalize();
+        return bone.positionFromWorld(bone.children[0].positionLeap, bone.positionLeap);
+      }
+    });
+  });
 }
 
 // Adds phantom hand to the rigged hands view.
 export function addPhantomHand(leapHandDesc) {
   const mesh = addMesh(leapHandDesc);
-  setupHandPosition(mesh, leapHandDesc);
-  styleHandStyle(mesh);
+  setupHand(mesh, leapHandDesc);
+  setHandStyle(mesh);
   return mesh;
 }
 
@@ -176,6 +176,9 @@ const DEF_FOLLOW_OPTIONS = {
 // Options can be used to bind phantom hand to left or right hand and provide some x/y/z offset.
 export function followHand(phantomMesh, options = {}) {
   const opts = extend({}, DEF_FOLLOW_OPTIONS, options);
+  if (phantomMesh.leapFollowHandler) {
+    leapController.removeListener('frame', phantomMesh.leapFollowHandler);
+  }
   const handler = function(frame) {
     const hands = frame.hands;
     const hand = hands[0] && hands[0].type === opts.type ? hands[0] : (hands[1] && hands[1].type === opts.type ? hands[1] : null);

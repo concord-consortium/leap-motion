@@ -9,7 +9,7 @@ export default class HandsViewRealistic extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      handSnapshot: ''
+      snapshots: []
     };
     this.phantomHands = [];
     this.snapshot = this.snapshot.bind(this);
@@ -18,7 +18,9 @@ export default class HandsViewRealistic extends React.Component {
 
   snapshot() {
     handSnapshot(data => {
-      this.setState({handSnapshot: JSON.stringify(data, null, 2)});
+      const { snapshots } = this.state;
+      const newSnapshots = snapshots.concat(data);
+      this.setState({snapshots: newSnapshots});
       const mesh = addPhantomHand(data);
       followHand(mesh, {type: data.type, xOffset: -100});
       this.phantomHands.push(mesh);
@@ -29,12 +31,15 @@ export default class HandsViewRealistic extends React.Component {
     const mesh = this.phantomHands.pop();
     if (mesh) {
       removePhantomHand(mesh);
-      this.setState({handSnapshot: ''});
+      const { snapshots } = this.state;
+      const newSnapshots = snapshots.slice(0, -1);
+      this.setState({snapshots: newSnapshots});
     }
   }
 
   render() {
-    const { handSnapshot } = this.state;
+    const { snapshots } = this.state;
+    const json = JSON.stringify(snapshots, null, 2);
     return (
       <div className='hands-view-realistic'>
         <div className='view-container'>
@@ -44,7 +49,7 @@ export default class HandsViewRealistic extends React.Component {
           <button onClick={this.snapshot}>Take snapshot</button>
           <button onClick={this.rmPhantomHand}>Remove last snapshot</button>
           <div>
-            <textarea value={handSnapshot} readOnly/>
+            <textarea value={json} readOnly/>
           </div>
         </div>
       </div>

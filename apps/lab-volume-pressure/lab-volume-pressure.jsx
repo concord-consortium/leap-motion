@@ -41,7 +41,7 @@ export default class LabVolumePressure extends React.Component {
     this.state = {
       leapState: {},
       overlayEnabled: true,
-      overlayVisible: true,
+      overlayActive: true,
       gestureEverDetected: false
     }
   }
@@ -53,7 +53,7 @@ export default class LabVolumePressure extends React.Component {
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
-    this.setState({overlayVisible: true, gestureEverDetected: false})
+    this.setState({overlayActive: true, gestureEverDetected: false})
   }
 
   handleLabPropChange(event) {
@@ -91,11 +91,11 @@ export default class LabVolumePressure extends React.Component {
         if (!this.finalGesture) {
           if (leapState.numberOfHands > 0) {
             // Show overlay if user keeps his hands over the Leap.
-            this.setState({overlayVisible: true});
+            this.setState({overlayActive: true});
           } else if (this.state.gestureEverDetected) {
             // But hide it if user removes hands and gesture has been detected before.
             // This might be useful when user simply wants to watch the simulation.
-            this.setState({overlayVisible: false});
+            this.setState({overlayActive: false});
           }
         }
       },
@@ -114,7 +114,7 @@ export default class LabVolumePressure extends React.Component {
         this.setLabProps({volume: volume});
 
         if (freq > MIN_FREQ_TO_HIDE_INSTRUCTIONS) {
-          this.setState({overlayVisible: false, gestureEverDetected: true});
+          this.setState({overlayActive: false, gestureEverDetected: true});
         }
       }
     };
@@ -124,22 +124,33 @@ export default class LabVolumePressure extends React.Component {
     return this.fistBump.handleLeapFrame(frame);
   }
 
-  getStateMsg() {
-    let state = this.state.leapState;
+  getHintName() {
+    const state = this.state.leapState;
+    const overlayActive = this.state.overlayActive;
     if (state.numberOfHands < 2) {
-      return 'Place two hands over the Leap controller.';
+      return 'handsMissing';
     }
     if (!state.verticalHand) {
-      return 'Rotate one hand.';
+      return 'rotate';
     }
     if (!state.closedHand) {
-      return 'Make a fist with the other hand.';
+      return 'fist';
     }
-    return 'Tap fist to palm. Try fast and slow.';
+    return 'tap';
+  }
+
+  getHintText() {
+    switch(this.getHintName()) {
+      case 'handsMissing': return 'Place two hands over the Leap controller.';
+      case 'rotate': return 'Rotate one hand.';
+      case 'fist': return 'Make a fist with the other hand.';
+      default: return 'Tap fist to palm. Try fast and slow.';
+    }
   }
 
   render() {
-    const { overlayEnabled, overlayVisible, labProps, leapState } = this.state;
+    const { overlayEnabled, overlayActive, labProps, leapState } = this.state;
+    const overlayVisible = overlayEnabled && overlayActive;
     const introVisible = overlayVisible && leapState.numberOfHands === 0;
     const textVisible = overlayVisible && leapState.numberOfHands > 0;
     return (
@@ -151,12 +162,12 @@ export default class LabVolumePressure extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
+          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
             <div className='instructions'>
               <img className={introVisible ? 'intro' : 'intro hidden'} src={introSrc}/>
-              <p className='text'>{textVisible && this.getStateMsg()}</p>
+              <p className='text'>{textVisible && this.getHintText()}</p>
             </div>
-            <InteractiveTips rotation={leapState.numberOfHands === 2 && !leapState.verticalHand}/>
+            <InteractiveTips hint={overlayVisible && this.getHintName()}/>
           </InstructionsOverlay>
         </div>
         <LeapStatus ref='status'>
