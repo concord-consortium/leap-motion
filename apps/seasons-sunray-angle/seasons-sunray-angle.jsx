@@ -6,6 +6,7 @@ import InstructionsOverlay from '../common/js/components/instructions-overlay.js
 import GesturesHelper from './gestures-helper';
 import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
+import './seasons-sunray-angle.less';
 
 const SUNRAY_INACTIVE_COLOR = '#888';
 const SUNRAY_NORMAL_COLOR = 'orange';
@@ -29,7 +30,6 @@ export default class SeasonsSunrayAngle extends React.Component {
       activeRaysView: 'ground',
       activeViewPanel: 'main',
       instructions: INSTRUCTIONS.INITIAL_GROUND,
-      overlaySize: { width: 300, height: 200 },
       leapConnected: false
     };
     this.modelController = new ModelController({
@@ -140,12 +140,6 @@ export default class SeasonsSunrayAngle extends React.Component {
       let windowPosition = this.state.activeViewPanel || 'main';
       currentStyles.push(windowPosition);
       this.setState({ overlayStyle: currentStyles.join(' ') });
-      // now get window size
-      let activeWindow = document.getElementsByClassName("view " + windowPosition);
-      if (activeWindow != null) {
-        let size = { width: activeWindow[0].getBoundingClientRect().width, height: activeWindow[0].getBoundingClientRect().height };
-        this.setState({ overlaySize: size });
-      }
     }
   }
 
@@ -156,7 +150,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         <div style={{background: '#f6f6f6', width: '1210px'}}>
           <Seasons ref='seasonsModel'></Seasons>
         </div>
-        <InstructionsOverlay visible={this.state.leapConnected} width={this.state.overlaySize.width} height={this.state.overlaySize.height} handsOpacity={0.7} className={this.state.overlayStyle}>
+        <InstructionsOverlay visible={this.state.leapConnected} handsOpacity={0.7} className={this.state.overlayStyle}>
           { instructions }
         </InstructionsOverlay>
         <p>

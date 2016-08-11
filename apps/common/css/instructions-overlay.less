@@ -1,63 +1,27 @@
 .overlay {
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 10px;
+  left: 10px;
   border-radius: 5px;
   background-color: rgba(200, 200, 200, 0.5);
   pointer-events: none;
   transition: opacity 1.5s, visibility 1.5s;
+  width: 600px;
+  height: 350px;
 
   &.hidden {
     opacity: 0;
     visibility: hidden;
   }
+   .instructions {
+     position: absolute;
+     top: 70%;
+     width: 100%;
+     text-align: center;
+     text-shadow: 1px 1px 10px #000;
+     color: white;
+     font-size: 1.2em;
+   }
 
-  &.grasp-seasons {
-    position: fixed;
-    background-color: transparent;
 
-    &.main{
-      top: 10px;
-      left: 10px;
-      width: 795px;
-      height: 600px;
-    }
-    &.small-top{
-      top: 10px;
-      left: 815px;
-      width: 395px;
-      height: 300px;
-    }
-    &.small-bottom{
-      top: 340px;
-      left: 815px;
-      width: 395px;
-      height: 300px;
-    }
-    &.active{
-      background-color: transparent;
-    }
-      .hands-view{
-        background-color:transparent;
-      }
-      .instructions {
-        padding: 3px 10px 3px 3px;
-        text-shadow:
-          -1px -1px 0 #000,
-          1px -1px 0 #000,
-          -1px 1px 0 #000,
-          1px 1px 0 #000;
-      }
-  }
-
-  .instructions {
-    position: absolute;
-    bottom: 0;
-    margin-bottom:4px;
-    width: 100%;
-    text-align: center;
-    text-shadow: 1px 1px 10px #000;
-    color: white;
-    font-size: 1.3em;
-  }
 }
