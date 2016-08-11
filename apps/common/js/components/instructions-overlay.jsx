@@ -12,12 +12,12 @@ export default class InstructionsOverlay extends React.Component {
     }
   }
   render() {
-    const { visible, className, children, } = this.props;
+    const { visible, className, children, width, height } = this.props;
     const { handsOpacity = 0.85} = this.state;
 
     return (
       <div className={`overlay ${className} ${visible ? '' : 'hidden'}`}>
-        <LeapHandsView handsOpacity={handsOpacity}/>
+        <LeapHandsView width={width} height={height} handsOpacity={handsOpacity}/>
         <div className='instructions'>
           {children}
         </div>

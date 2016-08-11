@@ -82,6 +82,10 @@ export default class LeapHandsView extends React.Component {
   render() {
     let width = this.width;
     let height = this.height;
+    if (this.props.width != null){
+      width = this.props.width;
+      height = this.props.height;
+    }
     return (
       <div className='hands-view' ref='container' style={{width, height}}></div>
     )
@@ -89,7 +93,5 @@ export default class LeapHandsView extends React.Component {
 }
 
 LeapHandsView.defaultProps = {
-  width: '100%',
-  height: '100%',
   handsOpacity: 1
 };
