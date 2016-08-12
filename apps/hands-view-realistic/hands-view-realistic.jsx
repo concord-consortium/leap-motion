@@ -2,7 +2,7 @@ import React from 'react';
 import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
 import LeapHandsView from '../common/js/components/leap-hands-view.jsx';
-import {handSnapshot, addPhantomHand, followHand, removePhantomHand} from '../common/js/tools/leap-phantom-hand';
+import {snapshotHand, addPhantomHand, followRealHand, removePhantomHand} from '../common/js/tools/leap-phantom-hand';
 import './hands-view-realistic.less'
 
 export default class HandsViewRealistic extends React.Component {
@@ -17,12 +17,12 @@ export default class HandsViewRealistic extends React.Component {
   }
 
   snapshot() {
-    handSnapshot(data => {
+    snapshotHand(data => {
       const { snapshots } = this.state;
       const newSnapshots = snapshots.concat(data);
       this.setState({snapshots: newSnapshots});
       const mesh = addPhantomHand(data);
-      followHand(mesh, {type: data.type, xOffset: -100});
+      followRealHand(mesh, {type: data.type, xOffset: -100});
       this.phantomHands.push(mesh);
     });
   }

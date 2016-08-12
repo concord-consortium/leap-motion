@@ -66,7 +66,7 @@ function getMesh(leapHand) {
 // Based on leap.rigged-hand-0.1.7#addMesh function.
 function addMesh(leapHand) {
   const handMesh = getMesh(leapHand);
-  handMesh.leapData = leapHand;
+  handMesh._leapData = leapHand;
   leapController.plugins.riggedHand.parent.add(handMesh);
   const palm = handMesh.children[0];
   palm.worldUp = new THREE.Vector3;
@@ -103,7 +103,7 @@ function setHandStyle(handMesh) {
 }
 
 // Based on leap.rigged-hand-0.1.7 leapController.on('frame') handler that setups correct hand model positions.
-export function setupHand(handMesh, leapHand) {
+export function setupPhantomHand(handMesh, leapHand) {
   leapHand.fingers = leapHand.fingers.sort(function (a, b) {
     return a.id - b.id;
   });
@@ -136,14 +136,14 @@ export function setupHand(handMesh, leapHand) {
 // Adds phantom hand to the rigged hands view.
 export function addPhantomHand(leapHandDesc) {
   const mesh = addMesh(leapHandDesc);
-  setupHand(mesh, leapHandDesc);
+  setupPhantomHand(mesh, leapHandDesc);
   setHandStyle(mesh);
   return mesh;
 }
 
 // Returns the current hand description (via callback). Always pick the first hand available.
-// This describion can be passed later to the addPhantomHand function.
-export function handSnapshot(callback) {
+// This description can be passed later to the addPhantomHand function.
+export function snapshotHand(callback) {
   leapController.once('frame', function(frame) {
     const hand = frame && frame.hands && frame.hands[0];
     if (!hand) return;
@@ -167,41 +167,41 @@ export function handSnapshot(callback) {
 }
 
 const DEF_FOLLOW_OPTIONS = {
-  type: 'left',
   xOffset: 0,
   yOffset: 0,
   zOffset: 0
 };
 // Accepts phantom hand mesh and options. Makes sure that phantom hand follows the real hand position.
 // Options can be used to bind phantom hand to left or right hand and provide some x/y/z offset.
-export function followHand(phantomMesh, options = {}) {
+export function followRealHand(handMesh, options = {}) {
   const opts = extend({}, DEF_FOLLOW_OPTIONS, options);
-  if (phantomMesh.leapFollowHandler) {
-    leapController.removeListener('frame', phantomMesh.leapFollowHandler);
+  const type = handMesh._leapData.type;
+  if (handMesh._leapFollowHandler) {
+    leapController.removeListener('frame', handMesh._leapFollowHandler);
   }
   const handler = function(frame) {
     const hands = frame.hands;
-    const hand = hands[0] && hands[0].type === opts.type ? hands[0] : (hands[1] && hands[1].type === opts.type ? hands[1] : null);
+    const hand = hands[0] && hands[0].type === type ? hands[0] : (hands[1] && hands[1].type === type ? hands[1] : null);
     if (hand) {
-      phantomMesh.positionRaw.fromArray(hand.palmPosition);
-      phantomMesh.positionRaw.x += opts.xOffset;
-      phantomMesh.positionRaw.y += opts.yOffset;
-      phantomMesh.positionRaw.z += opts.zOffset;
-      phantomMesh.position.copy(phantomMesh.positionRaw).multiplyScalar(leapController.plugins.riggedHand.positionScale);
+      handMesh.positionRaw.fromArray(hand.palmPosition);
+      handMesh.positionRaw.x += opts.xOffset;
+      handMesh.positionRaw.y += opts.yOffset;
+      handMesh.positionRaw.z += opts.zOffset;
+      handMesh.position.copy(handMesh.positionRaw).multiplyScalar(leapController.plugins.riggedHand.positionScale);
       leapController.plugins.riggedHand.renderFn();
     }
   };
   leapController.on('frame', handler);
-  // Save reference so we can clean it up later.
-  phantomMesh.leapFollowHandler = handler;
+  // Save handler reference so we can clean it up later.
+  handMesh._leapFollowHandler = handler;
 }
 
 // Based on leap.rigged-hand-0.1.7#removeMesh function.
 export function removePhantomHand(handMesh) {
   leapController.plugins.riggedHand.parent.remove(handMesh);
-  spareMeshes[handMesh.leapData.type].push(handMesh);
-  if (handMesh.leapFollowHandler) {
-    leapController.removeListener('frame', handMesh.leapFollowHandler);
-    handMesh.leapFollowHandler = null;
+  spareMeshes[handMesh._leapData.type].push(handMesh);
+  if (handMesh._leapFollowHandler) {
+    leapController.removeListener('frame', handMesh._leapFollowHandler);
+    handMesh._leapFollowHandler = null;
   }
 }

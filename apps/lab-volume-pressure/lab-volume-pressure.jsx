@@ -11,7 +11,6 @@ import LeapStatus from '../common/js/components/leap-status.jsx';
 import interactive from './lab-interactive.json';
 import InteractiveTips from './interactive-tips.jsx';
 import model from './lab-model.json';
-import introSrc from './intro.gif';
 import './lab-voule-pressure.less';
 
 const MAX_VOL = 0.82;
@@ -126,9 +125,11 @@ export default class LabVolumePressure extends React.Component {
 
   getHintName() {
     const state = this.state.leapState;
-    const overlayActive = this.state.overlayActive;
+    if (state.numberOfHands === 0) {
+      return 'noHands';
+    }
     if (state.numberOfHands < 2) {
-      return 'handsMissing';
+      return 'handMissing';
     }
     if (!state.verticalHand) {
       return 'rotate';
@@ -141,7 +142,8 @@ export default class LabVolumePressure extends React.Component {
 
   getHintText() {
     switch(this.getHintName()) {
-      case 'handsMissing': return 'Place two hands over the Leap controller.';
+      case 'noHands': return 'Place hands six inches over the Leap controller.';
+      case 'handMissing': return 'Place two hands over the Leap controller.';
       case 'rotate': return 'Rotate one hand.';
       case 'fist': return 'Make a fist with the other hand.';
       default: return 'Tap fist to palm. Try fast and slow.';
@@ -151,8 +153,6 @@ export default class LabVolumePressure extends React.Component {
   render() {
     const { overlayEnabled, overlayActive, labProps, leapState } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
-    const introVisible = overlayVisible && leapState.numberOfHands === 0;
-    const textVisible = overlayVisible && leapState.numberOfHands > 0;
     return (
       <div>
         <div className='container'>
@@ -164,8 +164,7 @@ export default class LabVolumePressure extends React.Component {
                playing={true}/>
           <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
             <div className='instructions'>
-              <img className={introVisible ? 'intro' : 'intro hidden'} src={introSrc}/>
-              <p className='text'>{textVisible && this.getHintText()}</p>
+              <p className='text'>{this.getHintText()}</p>
             </div>
             <InteractiveTips hint={overlayVisible && this.getHintName()}/>
           </InstructionsOverlay>

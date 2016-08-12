@@ -1,44 +1,25 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
-import leapController from '../common/js/tools/leap-controller';
-import {plungerHand, fist, tappingHand} from './phantom-hands';
-import {addPhantomHand, followHand, setupHand, removePhantomHand} from '../common/js/tools/leap-phantom-hand';
+import rotate from './phantom-hands/rotate.json';
+import introLeft from './phantom-hands/intro-left.json';
+import introRight from './phantom-hands/intro-right.json';
+import fist from './phantom-hands/fist.json';
+import bump from './phantom-hands/bump.json';
+import {addPhantomHand, followRealHand, setupPhantomHand, removePhantomHand} from '../common/js/tools/leap-phantom-hand';
 import './interactive-tips.less';
 
+// This component doesn't render anything directly. It's meant to be used together with HandsViewRealistic.
+// It adds phantom hands directly to its view (since Leap Controller and its plugins are globally available).
 export default class InteractiveTips extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      x: 0,
-      y: 0
-    };
-  }
-
-  componentDidMount() {
-    leapController.on('frame', (frame) => {
-      const convertHandPos = (hand) => {
-        const handMesh = hand.data('riggedHand.mesh');
-        const screenPosition = handMesh.screenPosition(hand.palmPosition);
-        this.onHandPositionChange(hand, screenPosition);
-      };
-      const hands = frame.hands;
-      let hand;
-      if (hand = hands[0]) {
-        convertHandPos(hand);
-      }
-      if (hand = hands[1]) {
-        convertHandPos(hand);
-      }
-    });
-  }
-
   componentDidUpdate(prevProps) {
     const oldHint = prevProps.hint;
     const newHint = this.props.hint;
     if (oldHint !== newHint) {
       this.cleanupPhantomHand();
       switch(newHint) {
+        case 'noHands': return this.renderIntro();
+        case 'handMissing': return this.renderIntro();
         case 'rotate': return this.renderPlungerHand();
         case 'fist': return this.renderFistHand();
         case 'tap': return this.renderTappingHand();
@@ -46,10 +27,17 @@ export default class InteractiveTips extends React.Component {
     }
   }
 
+  setupAnimation(callback, interval) {
+    this.frameId = 0;
+    this.animInterval = setInterval(() => {
+      callback(this.frameId);
+      this.frameId += 1;
+    }, interval);
+  }
+
   cleanupPhantomHand() {
-    if (this.phantomHand) {
-      removePhantomHand(this.phantomHand);
-      this.phantomHand = null;
+    while (this.phantomHands && this.phantomHands.length > 0) {
+      removePhantomHand(this.phantomHands.pop());
     }
     if (this.animInterval) {
       clearInterval(this.animInterval);
@@ -57,60 +45,44 @@ export default class InteractiveTips extends React.Component {
     }
   }
 
+  renderIntro() {
+    this.phantomHands = [addPhantomHand(introLeft[0]), addPhantomHand(introRight[0])];
+    this.setupAnimation((frame) => {
+      setupPhantomHand(this.phantomHands[0], introLeft[frame % introLeft.length]);
+      setupPhantomHand(this.phantomHands[1], introRight[frame % introRight.length]);
+    }, 250);
+  }
+
+
   renderPlungerHand() {
-    this.phantomHand = addPhantomHand(plungerHand[0]);
-    followHand(this.phantomHand, {type: plungerHand[0].type, xOffset: -70});
-    this.frameId = 0;
-    this.animInterval = setInterval(() => {
-      setupHand(this.phantomHand, plungerHand[this.frameId % plungerHand.length]);
-      this.frameId += 1;
+    this.phantomHands = [addPhantomHand(rotate[0])];
+    followRealHand(this.phantomHands[0], {xOffset: -70});
+    this.setupAnimation((frame) => {
+      setupPhantomHand(this.phantomHands[0], rotate[frame % rotate.length]);
     }, 200);
   }
 
   renderFistHand() {
-    this.phantomHand = addPhantomHand(fist[0]);
-    followHand(this.phantomHand, {type: fist[0].type, xOffset: 100});
-    this.frameId = 0;
-    this.animInterval = setInterval(() => {
-      setupHand(this.phantomHand, fist[this.frameId % fist.length]);
-      this.frameId += 1;
-    }, 250);
+    this.phantomHands = [addPhantomHand(fist[0])];
+    followRealHand(this.phantomHands[0], {xOffset: 100});
+    this.setupAnimation((frame) => {
+      setupPhantomHand(this.phantomHands[0], fist[frame % fist.length]);
+    }, 220);
   }
 
   renderTappingHand() {
-    this.phantomHand = addPhantomHand(tappingHand[0]);
-    followHand(this.phantomHand, {type: tappingHand[0].type, xOffset: 0});
-    this.frameId = 0;
-    this.animInterval = setInterval(() => {
-      const steps = 12;
-      let mult = this.frameId % steps;
+    this.phantomHands = [addPhantomHand(bump[0])];
+    followRealHand(this.phantomHands[0], {xOffset: 0});
+    const steps = 12;
+    this.setupAnimation((frame) => {
+      let mult = frame % steps;
       if (mult > steps * 0.5) mult = steps - mult;
-      followHand(this.phantomHand, {type: tappingHand[0].type, xOffset: (mult / steps) * -300});
-      this.frameId += 1;
+      followRealHand(this.phantomHands[0], {xOffset: (mult / steps) * -300});
     }, 120);
   }
 
-  onHandPositionChange(hand, position) {
-    if (hand.type === 'left') {
-      this.setState({x: position.x + 'px', y: position.y + 'px'});
-    }
-  }
-
-  renderHandRotationArrow() {
-    const { x, y } = this.state;
-    const transform = `translate3d(${x}, -${y}, 0)`;
-    return (
-      <div className='interactive-tips left-hand-rotation' style={{transform}}>
-      </div>
-    );
-  }
-
   render() {
-    const { hint } = this.props;
-    switch(hint) {
-      case 'rotate': return this.renderHandRotationArrow();
-      default: return null;
-    }
+    return null;
   }
 }
 
