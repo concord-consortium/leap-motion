@@ -24,7 +24,7 @@ const DEF_LAB_PROPS = {
 
 const MIN_FREQ_TO_HIDE_INSTRUCTIONS = 1;
 const IFRAME_WIDTH = 610;
-const IFRAME_HEIGHT = 350;
+const IFRAME_HEIGHT = 450;
 
 function freq2temp(freq) {
   // + Math.random() ensures that we won't skip Lab property update due to caching

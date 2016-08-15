@@ -1,8 +1,8 @@
 {
   "type": "md2d",
-  "imagePath": "",
+  "imagePath": "../",
   "width": 3.5,
-  "height": 2,
+  "height": 2.68,
   "unitsScheme": "md2d",
   "lennardJonesForces": true,
   "coulombForces": true,
@@ -28,7 +28,7 @@
   "skipPECheckOnAddAtom": false,
   "viewOptions": {
     "viewPortWidth": 3.5,
-    "viewPortHeight": 2,
+    "viewPortHeight": 2.68,
     "viewPortZoom": 1,
     "viewPortX": 0,
     "viewPortY": 0,
@@ -37,6 +37,19 @@
     "showClock": false,
     "markColor": "#f8b500",
     "atomRadiusScale": 1.13,
+    "images": [
+      {
+        "imageUri": "spoon-no-bg.png",
+        "imageX": 0.2,
+        "imageY": 2.65,
+        "imageLayer": 1,
+        "imageLayerPosition": 1,
+        "visible": true,
+        "rotation": 0,
+        "opacity": 1,
+        "scale": 0.11
+      }
+    ],
     "keShading": false,
     "keShadingMinEnergy": 0,
     "keShadingMaxEnergy": 0.2,
@@ -53,7 +66,6 @@
     "electricFieldDensity": 18,
     "electricFieldColor": "auto",
     "showAtomTrace": false,
-    "images": [],
     "imageMapping": {},
     "textBoxes": [],
     "xlabel": false,
