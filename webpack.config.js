@@ -9,6 +9,7 @@ module.exports = {
     'lab-temperature-absolute': './apps/lab-temperature-absolute/main.jsx',
     'lab-volume-pressure': './apps/lab-volume-pressure/main.jsx',
     'lab-heat-transfer': './apps/lab-heat-transfer/main.jsx',
+    'lab-heat-transfer-two-hands': './apps/lab-heat-transfer-two-hands/main.jsx',
     'lab-heat-transfer-micro': './apps/lab-heat-transfer-micro/main.jsx',
     'lab-heat-transfer-micro-direct': './apps/lab-heat-transfer-micro-direct/main.jsx',
     'lab-heat-transfer-micro-two-atoms': './apps/lab-heat-transfer-micro-two-atoms/main.jsx',
