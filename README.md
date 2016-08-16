@@ -69,6 +69,14 @@ Follow previous instructions, but replace `production.zip` segment in the URL wi
 - https://github.com/concord-consortium/leap-motion/archive/master.zip
 - https://github.com/concord-consortium/leap-motion/archive/two-hands-angle.zip
 
+## Releases
+
+- [0.4.0 (Jun 9, 2016)](http://models-resources.concord.org/leap-motion/version/0.4.0/index.html)
+- [0.3.0 (Feb 18, 2016)](http://models-resources.concord.org/leap-motion/version/0.3.0/index.html)
+- [0.2.2 (Feb 17, 2016)](http://models-resources.concord.org/leap-motion/version/0.2.2/index.html)
+- [0.2.0 (Feb 13, 2016)](http://models-resources.concord.org/leap-motion/version/0.2.0/index.html)
+- [0.1.0 (Feb 2, 2016)](http://models-resources.concord.org/leap-motion/version/0.1.0/index.html)
+
 ## License 
 
 [MIT](https://github.com/concord-consortium/grasp-seasons/blob/master/LICENSE)
