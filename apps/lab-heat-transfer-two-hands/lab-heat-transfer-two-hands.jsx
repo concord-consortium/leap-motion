@@ -41,7 +41,6 @@ export default class LabHeatTransfer extends React.Component {
     this.labModelLoaded = this.labModelLoaded.bind(this);
     this.soundEnabledChanged = this.soundEnabledChanged.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleGestureData = this.handleGestureData.bind(this);
     this.state = {
       leapState: 'initial',
       overlayEnabled: true,
@@ -51,34 +50,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   handleLeapFrame(frame) {
-    this.fistsShaking.handleLeapFrame(frame, this.handleGestureData);
-  }
-
-  get plotter() {
-    return this.refs.status.plotter;
-  }
-
-  setLeapState(v) {
-    if (v !== this.state.leapState) this.setState({leapState: v});
-  }
-
-  labModelLoaded() {
-    // Reset Lab properties when model is reloaded.
-    this.setLabProps(DEF_LAB_PROPS);
-    this.setState({overlayVisible: true, gestureEverDetected: false})
-  }
-
-  handleInputChange(event) {
-    let props = {};
-    props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-    this.setState(props);
-  }
-
-  soundEnabledChanged(event) {
-    this.fistsShaking.config.soundEnabled = event.target.checked;
-  }
-
-  handleGestureData(data) {
+    const data = this.fistsShaking.handleLeapFrame(frame);
     if (data.numberOfClosedHands === 2 && data.selectedSide) {
       this.gestureDetected(data);
     } else {
@@ -131,6 +103,30 @@ export default class LabHeatTransfer extends React.Component {
       // This might be useful when user simply wants to watch the simulation.
       this.setState({overlayVisible: false});
     }
+  }
+
+  get plotter() {
+    return this.refs.status.plotter;
+  }
+
+  setLeapState(v) {
+    if (v !== this.state.leapState) this.setState({leapState: v});
+  }
+
+  labModelLoaded() {
+    // Reset Lab properties when model is reloaded.
+    this.setLabProps(DEF_LAB_PROPS);
+    this.setState({overlayVisible: true, gestureEverDetected: false})
+  }
+
+  handleInputChange(event) {
+    let props = {};
+    props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+    this.setState(props);
+  }
+
+  soundEnabledChanged(event) {
+    this.fistsShaking.config.soundEnabled = event.target.checked;
   }
 
   getStateMsg() {

@@ -10,7 +10,7 @@ import LeapStatus from '../common/js/components/leap-status.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
-import './lab-heat-transfer-micro.less'
+import './lab-heat-transfer-long.less'
 
 const IFRAME_WIDTH = 510;
 const IFRAME_HEIGHT = 400;

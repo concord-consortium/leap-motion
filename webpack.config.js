@@ -13,6 +13,7 @@ module.exports = {
     'lab-heat-transfer-micro': './apps/lab-heat-transfer-micro/main.jsx',
     'lab-heat-transfer-micro-direct': './apps/lab-heat-transfer-micro-direct/main.jsx',
     'lab-heat-transfer-micro-two-atoms': './apps/lab-heat-transfer-micro-two-atoms/main.jsx',
+    'lab-heat-transfer-long': './apps/lab-heat-transfer-long/main.jsx',
     'lab-add-rm-atom-test': './apps/lab-add-rm-atom-test/main.jsx',
     'lab-add-rm-atom-test-swipe': './apps/lab-add-rm-atom-test-swipe/main.jsx',
     'lab-pressure-equilibrium': './apps/lab-pressure-equilibrium/main.jsx',

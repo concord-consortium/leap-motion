@@ -44,7 +44,7 @@ export default class FistsShaking {
     return 'unclear';
   }
 
-  handleLeapFrame(frame, dataCallback) {
+  handleLeapFrame(frame) {
     let hand1 = frame.hands[0];
     let hand2 = frame.hands[1];
     if (hand1 && hand2 && hand1.palmPosition[0] > hand2.palmPosition[0]) {
@@ -65,17 +65,16 @@ export default class FistsShaking {
     if (newSelectedSide !== 'unclear') {
       this.lastSelectedSide = newSelectedSide;
     }
-    let frequency = null;
+    const gestureData = {
+      numberOfHands: frame.hands.length,
+      numberOfClosedHands: closedHands,
+      selectedSide: this.lastSelectedSide
+    };
     if (closedHands === 2) {
       const xVelDiff = hand2.palmVelocity[0] - hand1.palmVelocity[0];
       this.freqCalc.addSample(xVelDiff);
-      frequency = this.freqCalc.frequency;
+      gestureData.frequency = this.freqCalc.frequency;
     }
-    dataCallback({
-      numberOfHands: frame.hands.length,
-      numberOfClosedHands: closedHands,
-      selectedSide: this.lastSelectedSide,
-      frequency: frequency
-    });
+    return gestureData;
   }
 }

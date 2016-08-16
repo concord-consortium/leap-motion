@@ -10,9 +10,8 @@ const DEFAULT_CONFIG = {
 };
 
 export default class FistBump {
-  constructor(config, callbacks) {
+  constructor(config) {
     this.config = extend({}, DEFAULT_CONFIG, config);
-    this.callbacks = callbacks;
     this._setupDirectionChangeAlg();
   }
 
@@ -40,16 +39,15 @@ export default class FistBump {
     if (hand2 && hand2.grabStrength > this.config.closedGrabStrength) {
       closedHands += 1;
     }
-    this.callbacks.leapState({
+    const gestureData = {
       numberOfHands: frame.hands.length,
-      numberOfClosedHands: closedHands
-    });
+      numberOfClosedHands: closedHands,
+    };
     if (frame.hands.length === 2 && closedHands === 2) {
       const velocityDiff = hand1.palmVelocity[0] - hand2.palmVelocity[0];
       this.freqCalc.addSample(velocityDiff);
-      this.callbacks.gestureDetected({
-        frequency: this.freqCalc.frequency
-      });
+      gestureData.frequency = this.freqCalc.frequency;
     }
+    return gestureData;
   }
 }
