@@ -40,12 +40,12 @@
     "images": [
       {
         "imageUri": "spoon-no-bg.png",
-        "imageX": 0.2,
+        "imageX": 0,
         "imageY": 2.65,
         "imageLayer": 1,
         "imageLayerPosition": 1,
         "visible": true,
-        "rotation": 0,
+        "rotation": 180,
         "opacity": 1,
         "scale": 0.11
       }
