@@ -2,6 +2,7 @@ import React from 'react';
 import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
 import {addPhantomHand, followRealHand, setupPhantomHand, removePhantomHand} from '../tools/leap-phantom-hand';
+import '../../css/phantom-hands-base.less';
 
 // Accepts range (array), animation duration, interval and the current frame number.
 // Returns value within provided range.
@@ -133,7 +134,8 @@ export default class PhantomHandsBase extends React.Component {
   }
 
   render() {
-    return null;
+    // Render Leap device image.
+    return <img src='leap.png' className='leap-img'/>;
   }
 }
 
