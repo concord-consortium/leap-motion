@@ -9,7 +9,7 @@ import avg from '../common/js/tools/avg';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import LeapStatus from '../common/js/components/leap-status.jsx';
 import interactive from './lab-interactive.json';
-import InteractiveTips from './interactive-tips.jsx';
+import PhantomHands from './phantom-hands.jsx';
 import model from './lab-model.json';
 import './lab-voule-pressure.less';
 
@@ -151,7 +151,7 @@ export default class LabVolumePressure extends React.Component {
   }
 
   render() {
-    const { overlayEnabled, overlayActive, labProps, leapState } = this.state;
+    const { overlayEnabled, overlayActive, labProps } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
@@ -166,7 +166,7 @@ export default class LabVolumePressure extends React.Component {
             <div className='instructions'>
               <p className='text'>{this.getHintText()}</p>
             </div>
-            <InteractiveTips hint={overlayVisible && this.getHintName()}/>
+            <PhantomHands hint={overlayVisible && this.getHintName()}/>
           </InstructionsOverlay>
         </div>
         <LeapStatus ref='status'>

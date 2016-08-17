@@ -5,7 +5,7 @@ import extend from '../common/js/tools/extend';
 
 const DEFAULT_CONFIG = {
   closedGrabStrength: 0.7,
-  minAmplitude: 20,
+  minAmplitude: 40,
   soundEnabled: false,
   sideOffset: 100
 };

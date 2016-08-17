@@ -8,6 +8,7 @@ import FistsShaking from './fists-shaking';
 import avg from '../common/js/tools/avg';
 import LeapStatus from '../common/js/components/leap-status.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
+import PhantomHands from './phantom-hands.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
 import './lab-heat-transfer-two-hands.less'
@@ -44,9 +45,9 @@ export default class LabHeatTransfer extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleLabPropChange = this.handleLabPropChange.bind(this);
     this.state = {
-      leapState: 'initial',
+      leapState: null,
       overlayEnabled: true,
-      overlayVisible: true,
+      overlayActive: true,
       gestureEverDetected: false,
       gestureDetectedTimestamp: null
     };
@@ -86,7 +87,7 @@ export default class LabHeatTransfer extends React.Component {
     }
     if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
       // Disable overlay after gesture has been detected for some time.
-      this.setState({overlayVisible: false, gestureEverDetected: true});
+      this.setState({overlayActive: false, gestureEverDetected: true});
     }
   }
 
@@ -105,11 +106,11 @@ export default class LabHeatTransfer extends React.Component {
 
     if (data.numberOfHands > 0) {
       // Show overlay if user keeps his hands over the Leap.
-      this.setState({overlayVisible: true});
+      this.setState({overlayActive: true});
     } else if (this.state.gestureEverDetected) {
       // But hide it if user removes hands and gesture has been detected before.
       // This might be useful when user simply wants to watch the simulation.
-      this.setState({overlayVisible: false});
+      this.setState({overlayActive: false});
     }
   }
 
@@ -124,7 +125,7 @@ export default class LabHeatTransfer extends React.Component {
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
-    this.setState({overlayVisible: true, gestureEverDetected: false, gestureDetectedTimestamp: null})
+    this.setState({overlayVisible: true, gestureEverDetected: false, gestureDetectedTimestamp: null});
   }
 
   handleLabPropChange(event) {
@@ -143,7 +144,7 @@ export default class LabHeatTransfer extends React.Component {
     this.fistsShaking.config.soundEnabled = event.target.checked;
   }
 
-  getStateMsg() {
+  getHintText() {
     switch(this.state.leapState) {
       case 'initial':
         return 'Please keep you hands steady above the Leap device.';
@@ -159,7 +160,8 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { overlayEnabled, overlayVisible, labProps } = this.state;
+    const { overlayEnabled, overlayActive, labProps, leapState } = this.state;
+    const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
         <div className='container'>
@@ -169,8 +171,11 @@ export default class LabHeatTransfer extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
-            {this.getStateMsg()}
+          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
+            <div className='instructions'>
+              <p className='text'>{this.getHintText()}</p>
+            </div>
+            <PhantomHands hint={overlayVisible && leapState}/>
           </InstructionsOverlay>
         </div>
         <LeapStatus ref='status'>
