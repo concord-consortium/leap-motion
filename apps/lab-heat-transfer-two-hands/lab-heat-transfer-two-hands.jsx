@@ -23,7 +23,7 @@ const DEF_LAB_PROPS = {
   spoonEnabled: false
 };
 
-const MIN_FREQ_TO_HIDE_INSTRUCTIONS = 1;
+const MIN_GESTURE_TIME = 3000;
 const IFRAME_WIDTH = 610;
 const IFRAME_HEIGHT = 450;
 
@@ -47,7 +47,8 @@ export default class LabHeatTransfer extends React.Component {
       leapState: 'initial',
       overlayEnabled: true,
       overlayVisible: true,
-      gestureEverDetected: false
+      gestureEverDetected: false,
+      gestureDetectedTimestamp: null
     };
   }
 
@@ -79,7 +80,12 @@ export default class LabHeatTransfer extends React.Component {
     this.plotter.plot('frequency', avgFreq, {min: 0, max: 9, precision: 2});
     this.plotter.update();
 
-    if (avgFreq > MIN_FREQ_TO_HIDE_INSTRUCTIONS) {
+    const { gestureDetectedTimestamp } = this.state;
+    if (!gestureDetectedTimestamp) {
+      this.setState({gestureDetectedTimestamp: Date.now()});
+    }
+    if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
+      // Disable overlay after gesture has been detected for some time.
       this.setState({overlayVisible: false, gestureEverDetected: true});
     }
   }
@@ -118,7 +124,7 @@ export default class LabHeatTransfer extends React.Component {
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
-    this.setState({overlayVisible: true, gestureEverDetected: false})
+    this.setState({overlayVisible: true, gestureEverDetected: false, gestureDetectedTimestamp: null})
   }
 
   handleLabPropChange(event) {
@@ -140,15 +146,15 @@ export default class LabHeatTransfer extends React.Component {
   getStateMsg() {
     switch(this.state.leapState) {
       case 'initial':
-        return 'Please keep you hands steady above the Leap device';
+        return 'Please keep you hands steady above the Leap device.';
       case 'oneHand':
-        return 'Use two hands';
+        return 'Use two hands.';
       case 'twoHands':
-        return 'Close your fists';
+        return 'Close your fists to become molecules.';
       case 'sideUnclear':
         return 'Move your hands to the left or right to select one block of the molecules';
       case 'closedFists':
-        return 'Shake your fists';
+        return 'Bump your fists to shake the molecules. Try fast and slow.';
     }
   }
 
