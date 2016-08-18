@@ -57,7 +57,7 @@ export default class LabVolumePressure extends React.Component {
 
   handleLabPropChange(event) {
     let props = {};
-    props[event.target.name] = event.target.value;
+    props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
     this.setLabProps(props);
   }
 

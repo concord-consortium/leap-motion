@@ -19,7 +19,8 @@ const FREQ_AVG = 120;
 const DEF_LAB_PROPS = {
   markedBlock: 'none',
   leftAtomsTargetTemp: 500,
-  rightAtomsTargetTemp: 50
+  rightAtomsTargetTemp: 50,
+  spoonEnabled: false
 };
 
 const MIN_FREQ_TO_HIDE_INSTRUCTIONS = 1;
@@ -42,6 +43,7 @@ export default class LabHeatTransfer extends React.Component {
     this.soundEnabledChanged = this.soundEnabledChanged.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.resetHandTimeoutChanged = this.resetHandTimeoutChanged.bind(this);
+    this.handleLabPropChange = this.handleLabPropChange.bind(this);
     this.state = {
       leapState: 'initial',
       overlayEnabled: true,
@@ -66,6 +68,12 @@ export default class LabHeatTransfer extends React.Component {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
     this.setState({overlayVisible: true, gestureEverDetected: false})
+  }
+
+  handleLabPropChange(event) {
+    let props = {};
+    props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+    this.setLabProps(props);
   }
 
   resetHandTimeoutChanged(event) {
@@ -160,6 +168,14 @@ export default class LabHeatTransfer extends React.Component {
                 <input type='checkbox' name='overlayEnabled'
                        checked={overlayEnabled}
                        onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            <tr>
+              <td>Spoon:</td>
+              <td>
+                <input type='checkbox' name='spoonEnabled'
+                       checked={labProps.spoonEnabled || false}
+                       onChange={this.handleLabPropChange}/>
               </td>
             </tr>
             <tr>

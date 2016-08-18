@@ -28,11 +28,23 @@
         "  }",
         "}",
         "set('leftAtomsIndices', leftAtoms);",
-        "set('rightAtomsIndices', rightAtoms);"
+        "set('rightAtomsIndices', rightAtoms);",
+        "function updateSpoonVis() {",
+        "  var bar = get('bar') !== 'none';",
+        "  var spoonEnabled = get('spoonEnabled');",
+        "  setImageProperties(0, {opacity: bar && spoonEnabled ? 1 : 0});",
+        "}",
+        "onPropertyChange('bar', updateSpoonVis);",
+        "onPropertyChange('spoonEnabled', updateSpoonVis);",
+        "updateSpoonVis();"
       ]
     }
   ],
   "parameters": [
+    {
+      "name": "spoonEnabled",
+      "initialValue": false
+    },
     {
       "name": "leftAtomsIndices",
       "initialValue": []
