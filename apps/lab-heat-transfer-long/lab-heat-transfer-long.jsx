@@ -15,6 +15,7 @@ import './lab-heat-transfer-long.less'
 const IFRAME_WIDTH = 510;
 const IFRAME_HEIGHT = 400;
 const FREQ_AVG = 120;
+const MIN_GESTURE_TIME = 3000;
 
 export default class LabHeatTransfer extends React.Component {
   constructor(props) {
@@ -28,6 +29,7 @@ export default class LabHeatTransfer extends React.Component {
       overlayEnabled: true,
       overlayVisible: true,
       gestureEverDetected: false,
+      gestureDetectedTimestamp: null,
       freqCooling: 2,
       freqHeating: 2
     }
@@ -54,8 +56,12 @@ export default class LabHeatTransfer extends React.Component {
     this.plotter.plot('frequency', avgFreq, {min: 0, max: 9, precision: 2});
     this.plotter.update();
 
-    if (avg.getLen('freq') > 80) {
-      // Disable overlay after gesture has been detected for some time (80 samples, around 2 seconds).
+    const { gestureDetectedTimestamp } = this.state;
+    if (!gestureDetectedTimestamp) {
+      this.setState({gestureDetectedTimestamp: Date.now()});
+    }
+    if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
+      // Disable overlay after gesture has been detected for some time.
       this.setState({overlayVisible: false, gestureEverDetected: true});
     }
   }
@@ -94,7 +100,7 @@ export default class LabHeatTransfer extends React.Component {
 
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
-    this.setState({overlayVisible: true, gestureEverDetected: false})
+    this.setState({overlayVisible: true, gestureEverDetected: false, gestureDetectedTimestamp: null});
   }
 
   soundEnabledChanged(event) {
@@ -121,15 +127,15 @@ export default class LabHeatTransfer extends React.Component {
   getStateMsg() {
     switch(this.state.leapState) {
       case 'initial':
-        return 'Please keep you hands steady above the Leap device';
+        return 'Please keep you hands steady above the Leap device.';
       case 'oneHandDetected':
-        return 'Put the other hand above the Leap device';
+        return 'Put the other hand above the Leap device.';
       case 'twoHandsDetected':
-        return 'Close your fists';
+        return 'Close your fists.';
       case 'oneClosedFist':
-        return 'Close the other fist';
+        return 'Close the other fist.';
       case 'closedFists':
-        return 'Bump your fists together';
+        return 'Bump the molecules together. Try fast and slow.';
     }
   }
 

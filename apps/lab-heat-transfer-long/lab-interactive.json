@@ -144,11 +144,10 @@
         "",
         "    switch(get('keChange')) {",
         "      case 'increasing': ",
-        "        addKEToAtoms(KE_CHANGE, [4, 9]); break;",
+        "        addKEToAtoms(KE_CHANGE, [4]); break;",
         "      case 'decreasing': ",
         "        addKEToAtoms(-0.5 * KE_CHANGE);",
         "        setAtomProperties(4, {vx: 0, vy: 0});",
-        "        setAtomProperties(9, {vx: 0, vy: 0});",
         "        break;",
         "    }",
         "  });",
@@ -156,10 +155,8 @@
         "onPropertyChange('keDiff', function(value) {",
         "  if (value === '+') {",
         "    addPlusSign(4);",
-        "    addPlusSign(9);",
         "  } else {",
         "    addMinusSign(4);",
-        "    addMinusSign(9);",
         "  }",
         "});"
       ]
@@ -194,7 +191,7 @@
       "id": "add-ke",
       "text": "+",
       "action": [
-        "addKEToAtoms(0.1, [4, 9]);",
+        "addKEToAtoms(0.1, [4]);",
         "set('keDiff', '+');"
       ]
     },
@@ -204,7 +201,6 @@
       "text": "-",
       "action": [
         "setAtomProperties(4, {vx: 0, vy: 0});",
-        "setAtomProperties(9, {vx: 0, vy: 0});",
         "set('keDiff', '-');"
       ]
     }
