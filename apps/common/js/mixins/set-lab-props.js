@@ -7,6 +7,11 @@ export default {
     };
   },
 
+  componentDidMount() {
+    this.setLabProps = this.setLabProps.bind(this);
+    this.handleLabPropChange = this.handleLabPropChange.bind(this);
+  },
+
   setLabProps(newProps) {
     let updateDef = {};
     Object.keys(newProps).forEach((key) => {
@@ -19,5 +24,11 @@ export default {
       // LabInteractive component sends only updated properties to the model anyway.
       this.setState({labProps: update(this.state.labProps, updateDef)});
     }
+  },
+
+  handleLabPropChange(event) {
+    let props = {};
+    props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+    this.setLabProps(props);
   }
 }

@@ -43,7 +43,6 @@ export default class LabHeatTransfer extends React.Component {
     this.labModelLoaded = this.labModelLoaded.bind(this);
     this.soundEnabledChanged = this.soundEnabledChanged.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleLabPropChange = this.handleLabPropChange.bind(this);
     this.state = {
       leapState: null,
       overlayEnabled: true,
@@ -128,12 +127,6 @@ export default class LabHeatTransfer extends React.Component {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
     this.setState({overlayActive: true, gestureEverDetected: false, gestureDetectedTimestamp: null});
-  }
-
-  handleLabPropChange(event) {
-    let props = {};
-    props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-    this.setLabProps(props);
   }
 
   handleInputChange(event) {

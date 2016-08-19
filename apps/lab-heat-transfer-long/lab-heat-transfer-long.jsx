@@ -16,6 +16,9 @@ const IFRAME_WIDTH = 510;
 const IFRAME_HEIGHT = 400;
 const FREQ_AVG = 120;
 const MIN_GESTURE_TIME = 3000;
+const DEF_LAB_PROPS = {
+  epsilon: 2
+};
 
 export default class LabHeatTransfer extends React.Component {
   constructor(props) {
@@ -100,6 +103,7 @@ export default class LabHeatTransfer extends React.Component {
 
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
+    this.setLabProps(DEF_LAB_PROPS);
     this.setState({overlayVisible: true, gestureEverDetected: false, gestureDetectedTimestamp: null});
   }
 
@@ -199,6 +203,18 @@ export default class LabHeatTransfer extends React.Component {
                        min='0' max='8' step='0.1'
                        value={this.state.freqHeating}
                        onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            <tr>
+              <td>Epsilon (attractive force):</td>
+              <td>
+                <input type='text' name='epsilon' size='7'
+                       value={labProps.epsilon}
+                       onChange={this.handleLabPropChange}/>
+                <input type='range' name='epsilon'
+                       min='0.2' max='5' step='0.1'
+                       value={labProps.epsilon}
+                       onChange={this.handleLabPropChange}/>
               </td>
             </tr>
             </tbody>

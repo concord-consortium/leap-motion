@@ -164,6 +164,14 @@
   ],
   "parameters": [
     {
+      "name": "epsilon",
+      "initialValue": 2,
+      "onChange": [
+        "setElementProperties(0, {epsilon: -value});",
+        "setElementProperties(1, {epsilon: -value});"
+      ]
+    },
+    {
       "name": "keChange",
       "initialValue": false,
       "onChange": [
