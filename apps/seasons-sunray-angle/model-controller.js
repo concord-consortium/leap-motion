@@ -52,6 +52,19 @@ export default class ModelController {
     return result;
   }
 
+  get activeViewPanel() {
+    let result = 'main';
+    if (!this.seasons) {
+      // If seasons isn't loaded yet, return 'main' since the view control is the default view.
+      return result;
+    }
+    let viewState = this.seasons.state.view;
+    ['small-bottom', 'small-top', 'main'].forEach(function (pos) {
+      if (viewState[pos] === 'raysGround' || viewState[pos] === 'raysSpace') result = pos;
+    });
+    return result;
+  }
+
   resetInteractionState() {
     this.outOfRange = false;
     this.prevDay = null;
@@ -64,7 +77,8 @@ export default class ModelController {
     this.seasons.on('simState.change', this.handleSimStateUpdate.bind(this));
     this.seasons.on('viewState.change', () => {
       this.handleSimStateUpdate();
-      this.callbacks.activeRayViewChanged(this.activeRaysView)
+      this.callbacks.activeRayViewChanged(this.activeRaysView);
+      this.callbacks.activeViewPanelChanged(this.activeViewPanel);
     });
     this.handleSimStateUpdate();
   }

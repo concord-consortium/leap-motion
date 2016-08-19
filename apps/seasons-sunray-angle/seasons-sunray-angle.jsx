@@ -1,10 +1,11 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
-import LeapStandardInfo from '../common/js/components/leap-standard-info.jsx';
+import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import GesturesHelper from './gestures-helper';
 import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
+import './seasons-sunray-angle.less';
 
 const SUNRAY_INACTIVE_COLOR = '#888';
 const SUNRAY_NORMAL_COLOR = 'orange';
@@ -29,15 +30,23 @@ const INSTRUCTIONS = {
   DISTANCE: 'Your hands represent distance between rays.'
 };
 
+const OVERLAY_SIZE = {
+  'main': {width: '795px', height: '600px'},
+  'small-top': {width: '395px', height: '296px'},
+  'small-bottom': {width: '395px', height: '296px'}
+};
+
 export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       activeRaysView: 'ground',
+      activeViewPanel: 'small-top',
       instructions: INSTRUCTIONS.INITIAL_GROUND
     };
     this.modelController = new ModelController({
-      activeRayViewChanged: this.activeRaysViewChanged.bind(this)
+      activeRayViewChanged: this.activeRaysViewChanged.bind(this),
+      activeViewPanelChanged: this.activeViewPanelChanged.bind(this)
     });
     this.gesturesHelper = new GesturesHelper();
     this.handleConfigChange = this.handleConfigChange.bind(this);
@@ -53,6 +62,10 @@ export default class SeasonsSunrayAngle extends React.Component {
 
   activeRaysViewChanged(viewName) {
     this.setState({activeRaysView: viewName})
+  }
+
+  activeViewPanelChanged(panelName) {
+    this.setState({activeViewPanel: panelName})
   }
 
   setInstructions(text) {
@@ -130,13 +143,24 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions } = this.state;
+    const { instructions, activeViewPanel } = this.state;
+    // Each time user changes position of the rays view, we need to reposition and resize overlay.
+    // Position is updated using CSS styles (set by class name, see seasons-sunray-angle.less).
+    // Width and height need to be set using React properties, so overlay component can resize its 3D renderer.
+    const overlayWidth = OVERLAY_SIZE[activeViewPanel].width;
+    const overlayHeight = OVERLAY_SIZE[activeViewPanel].height;
+    const overlayClassName = `grasp-seasons ${activeViewPanel}`;
     return (
       <div>
         <div style={{background: '#f6f6f6', width: '1210px'}}>
-          <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}></Seasons>
+          <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}/>
         </div>
-        <LeapStandardInfo ref='leapInfo' stateMsg={instructions}/>
+        <InstructionsOverlay handsOpacity={0.7} className={overlayClassName}
+                             width={overlayWidth} height={overlayHeight}>
+          <div className='instructions'>
+            {instructions}
+          </div>
+        </InstructionsOverlay>
         <p>
           Min distance between hands [mm]: <input type='text' name='minDist'
                                                   defaultValue={this.gesturesHelper.config.minDist}

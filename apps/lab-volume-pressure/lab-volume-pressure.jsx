@@ -162,7 +162,7 @@ export default class LabVolumePressure extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
+          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}>
             <div className='instructions'>
               <p className='text'>{this.getHintText()}</p>
             </div>
