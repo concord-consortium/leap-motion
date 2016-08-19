@@ -5,7 +5,7 @@ const DEFAULT_OPTIONS = {
   minAmplitude: 20
 };
 
-class DirectionChange {
+export default class DirectionChange {
   constructor(options) {
     this.options = extend({}, DEFAULT_OPTIONS, options);
     this._vel = [];
@@ -96,5 +96,3 @@ class DirectionChange {
 
 DirectionChange.LEFT_TO_RIGHT = 0;
 DirectionChange.RIGHT_TO_LEFT = 1;
-
-export default DirectionChange;

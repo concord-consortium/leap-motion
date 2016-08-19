@@ -5,7 +5,7 @@ import extend from '../common/js/tools/extend';
 
 const DEFAULT_CONFIG = {
   closedGrabStrength: 0.7,
-  minAmplitude: 40,
+  minAmplitude: 60,
   soundEnabled: false,
   sideOffset: 100
 };
@@ -13,7 +13,7 @@ const DEFAULT_CONFIG = {
 export default class FistsShaking {
   constructor(config) {
     this.config = extend({}, DEFAULT_CONFIG, config);
-    this.lastSelectedSide = null;
+    this.currentlySelectedSide = null;
     this._setupDirectionChangeAlg();
   }
 
@@ -21,7 +21,30 @@ export default class FistsShaking {
     let sound = new Howl({
       urls: [tapSound]
     });
-    this.freqCalc = new DirectionChange({
+    const soundOnDirChange = (data) => {
+      if (this.config.soundEnabled && data.type === DirectionChange.LEFT_TO_RIGHT) {
+        sound.play();
+      }
+    };
+    this.freqCalc = {
+      left:  new DirectionChange({
+        minAmplitude: this.config.minAmplitude,
+        onDirChange: soundOnDirChange
+      }),
+      right: new DirectionChange({
+        minAmplitude: this.config.minAmplitude,
+        onDirChange: soundOnDirChange
+      })
+    };
+    this.freqCalc.left = new DirectionChange({
+      minAmplitude: this.config.minAmplitude,
+      onDirChange: (data) => {
+        if (this.config.soundEnabled && data.type === DirectionChange.LEFT_TO_RIGHT) {
+          sound.play();
+        }
+      }
+    });
+    this.freqCalc.right = new DirectionChange({
       minAmplitude: this.config.minAmplitude,
       onDirChange: (data) => {
         if (this.config.soundEnabled && data.type === DirectionChange.LEFT_TO_RIGHT) {
@@ -63,17 +86,18 @@ export default class FistsShaking {
     const newSelectedSide = closedHands === 2 ? this.selectedSide(hand1, hand2) : null;
     // Update selected side only if it's clearly defined.
     if (newSelectedSide !== 'unclear') {
-      this.lastSelectedSide = newSelectedSide;
+      this.currentlySelectedSide = newSelectedSide;
     }
     const gestureData = {
       numberOfHands: frame.hands.length,
       numberOfClosedHands: closedHands,
-      selectedSide: this.lastSelectedSide
+      selectedSide: this.currentlySelectedSide
     };
-    if (closedHands === 2) {
+    if (closedHands === 2 && this.currentlySelectedSide) {
+      const freqCalc = this.freqCalc[this.currentlySelectedSide];
       const xVelDiff = hand2.palmVelocity[0] - hand1.palmVelocity[0];
-      this.freqCalc.addSample(xVelDiff);
-      gestureData.frequency = this.freqCalc.frequency;
+      freqCalc.addSample(xVelDiff);
+      gestureData.frequency = freqCalc.frequency;
     }
     return gestureData;
   }

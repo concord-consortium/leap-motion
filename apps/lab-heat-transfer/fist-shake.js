@@ -23,14 +23,21 @@ export default class FistBump {
     let sound = new Howl({
       urls: [tapSound]
     });
-    this.freqCalc = new DirectionChange({
-      minAmplitude: this.config.minAmplitude,
-      onDirChange: (data) => {
-        if (this.config.soundEnabled && data.type === DirectionChange.LEFT_TO_RIGHT) {
-          sound.play();
-        }
+    const soundOnDirChange = (data) => {
+      if (this.config.soundEnabled && data.type === DirectionChange.LEFT_TO_RIGHT) {
+        sound.play();
       }
-    });
+    };
+    this.freqCalc = {
+      left:  new DirectionChange({
+        minAmplitude: this.config.minAmplitude,
+        onDirChange: soundOnDirChange
+      }),
+      right: new DirectionChange({
+        minAmplitude: this.config.minAmplitude,
+        onDirChange: soundOnDirChange
+      })
+    };
   }
 
   updateSavedHandType(type) {
@@ -60,13 +67,14 @@ export default class FistBump {
     let closedHand = hand && hand.grabStrength > this.config.closedGrabStrength ? hand : null;
     if (frame.hands.length === 1 && closedHand) {
       this.updateSavedHandType(closedHand.type);
-      this.freqCalc.addSample(closedHand.palmVelocity[0]);
+      const freqCalc = this.freqCalc[this.savedHandType];
+      freqCalc.addSample(closedHand.palmVelocity[0]);
       this.callbacks.leapState({
         numberOfHands: frame.hands.length,
         closedHandType: this.savedHandType
       });
       this.callbacks.gestureDetected({
-        frequency: this.freqCalc.frequency,
+        frequency: freqCalc.frequency,
         closedHandType: this.savedHandType
       });
     } else {
