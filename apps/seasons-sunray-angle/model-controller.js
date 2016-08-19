@@ -77,8 +77,8 @@ export default class ModelController {
     this.seasons.on('simState.change', this.handleSimStateUpdate.bind(this));
     this.seasons.on('viewState.change', () => {
       this.handleSimStateUpdate();
-      this.callbacks.activeRayViewChanged(this.activeRaysView)
-      this.callbacks.activeViewPanelChanged(this.activeViewPanel)
+      this.callbacks.activeRayViewChanged(this.activeRaysView);
+      this.callbacks.activeViewPanelChanged(this.activeViewPanel);
     });
     this.handleSimStateUpdate();
   }

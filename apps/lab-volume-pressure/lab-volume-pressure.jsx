@@ -150,7 +150,7 @@ export default class LabVolumePressure extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT - 3}>
+          <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}>
             <img className={introVisible ? 'intro' : 'intro hidden'} src={introSrc}/>
             <p className='text'>{textVisible && this.getStateMsg()}</p>
           </InstructionsOverlay>

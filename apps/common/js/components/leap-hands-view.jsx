@@ -1,6 +1,5 @@
 import React from 'react';
 import THREE from 'three';
-import $ from 'jquery';
 import leapController from '../tools/leap-controller';
 import 'leapjs-plugins';
 import 'leapjs-plugins/main/version-check/leap.version-check';
@@ -32,12 +31,12 @@ export default class LeapHandsView extends React.Component {
       handMesh.material.ambient.setHex(SKIN_COLOR);
     });
   }
-  componentWillReceiveProps(newProps) {
-    this.resize();
-  }
 
-  shouldComponentUpdate() {
-    return false;
+  componentDidUpdate(prevProps) {
+    const { width, height } = this.props;
+    if (width !== prevProps.width || height !== prevProps.height) {
+      this.resize3DView();
+    }
   }
 
   get width() {
@@ -48,29 +47,30 @@ export default class LeapHandsView extends React.Component {
     return this.refs.container.clientHeight;
   }
 
-  resize() {
-    let $parent = $(this.renderer.domElement).parent();
-    let newWidth = $parent.width();
-    let newHeight = $parent.height();
-    this.camera.aspect = newWidth / newHeight;
+  resize3DView() {
+    const width = this.width;
+    const height = this.height;
+    this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(newWidth, newHeight);
+    this.renderer.setSize(width, height);
   }
 
   initScene() {
+    const width = this.width;
+    const height = this.height;
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setClearColor(0x000000, 0);
-    this.renderer.setSize(this.width, this.height);
+    this.renderer.setSize(width, height);
 
-    this.camera = new THREE.PerspectiveCamera(45, this.width / this.height, 1, 10000);
+    this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
     this.camera.position.fromArray([0, 500, 400]);
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
-    this.pointLight = new THREE.PointLight(0xFFFFFF, 0.8);
-    this.pointLight.position.set(-20, 400, 0);
-    this.pointLight.lookAt(new THREE.Vector3(0, 0, 0));
+    const pointLight = new THREE.PointLight(0xFFFFFF, 0.8);
+    pointLight.position.set(-20, 400, 0);
+    pointLight.lookAt(new THREE.Vector3(0, 0, 0));
 
-    this.scene.add(this.pointLight);
+    this.scene.add(pointLight);
     this.scene.add(new THREE.AmbientLight(0x777777));
     this.scene.add(this.camera);
   }
