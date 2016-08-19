@@ -27,7 +27,7 @@ const DEF_LAB_PROPS = {
   markerSensitivity: 1
 };
 
-const MIN_FREQ_TO_HIDE_INSTRUCTIONS = 1;
+const MIN_GESTURE_TIME = 2500;
 const IFRAME_WIDTH = 610;
 const IFRAME_HEIGHT = 350;
 
@@ -41,7 +41,8 @@ export default class LabVolumePressure extends React.Component {
       leapState: {},
       overlayEnabled: true,
       overlayActive: true,
-      gestureEverDetected: false
+      gestureEverDetected: false,
+      gestureDetectedTimestamp: null
     }
   }
 
@@ -112,8 +113,15 @@ export default class LabVolumePressure extends React.Component {
 
         this.setLabProps({volume: volume});
 
-        if (freq > MIN_FREQ_TO_HIDE_INSTRUCTIONS) {
-          this.setState({overlayActive: false, gestureEverDetected: true});
+        const { overlayActive, gestureDetectedTimestamp } = this.state;
+        if (overlayActive) {
+          if (!gestureDetectedTimestamp) {
+            this.setState({gestureDetectedTimestamp: Date.now()});
+          }
+          if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
+            // Disable overlay after gesture has been detected for some time.
+            this.setState({overlayActive: false, gestureEverDetected: true});
+          }
         }
       }
     };
@@ -144,9 +152,9 @@ export default class LabVolumePressure extends React.Component {
     switch(this.getHintName()) {
       case 'noHands': return 'Place hands six inches over the Leap controller.';
       case 'handMissing': return 'Place two hands over the Leap controller.';
-      case 'rotate': return 'Rotate one hand.';
-      case 'fist': return 'Make a fist with the other hand.';
-      default: return 'Tap fist to palm. Try fast and slow.';
+      case 'rotate': return 'Rotate one hand to become the plunger.';
+      case 'fist': return 'Make fist with the other hand to become the molecules.';
+      default: return 'Tap fist to palm to change how molecules hit the plunger. Try fast and slow.';
     }
   }
 

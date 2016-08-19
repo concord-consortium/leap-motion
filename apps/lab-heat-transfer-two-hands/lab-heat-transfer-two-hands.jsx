@@ -81,13 +81,15 @@ export default class LabHeatTransfer extends React.Component {
     this.plotter.plot('frequency', avgFreq, {min: 0, max: 9, precision: 2});
     this.plotter.update();
 
-    const { gestureDetectedTimestamp } = this.state;
-    if (!gestureDetectedTimestamp) {
-      this.setState({gestureDetectedTimestamp: Date.now()});
-    }
-    if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
-      // Disable overlay after gesture has been detected for some time.
-      this.setState({overlayActive: false, gestureEverDetected: true});
+    const { overlayActive, gestureDetectedTimestamp } = this.state;
+    if (overlayActive) {
+      if (!gestureDetectedTimestamp) {
+        this.setState({gestureDetectedTimestamp: Date.now()});
+      }
+      if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
+        // Disable overlay after gesture has been detected for some time.
+        this.setState({overlayActive: false, gestureEverDetected: true});
+      }
     }
   }
 
@@ -125,7 +127,7 @@ export default class LabHeatTransfer extends React.Component {
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
-    this.setState({overlayVisible: true, gestureEverDetected: false, gestureDetectedTimestamp: null});
+    this.setState({overlayActive: true, gestureEverDetected: false, gestureDetectedTimestamp: null});
   }
 
   handleLabPropChange(event) {

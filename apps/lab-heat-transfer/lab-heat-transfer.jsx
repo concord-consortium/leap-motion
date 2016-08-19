@@ -23,7 +23,7 @@ const DEF_LAB_PROPS = {
   spoonEnabled: false
 };
 
-const MIN_FREQ_TO_HIDE_INSTRUCTIONS = 1;
+const MIN_GESTURE_TIME = 2500;
 const IFRAME_WIDTH = 610;
 const IFRAME_HEIGHT = 450;
 
@@ -47,7 +47,7 @@ export default class LabHeatTransfer extends React.Component {
     this.state = {
       leapState: 'initial',
       overlayEnabled: true,
-      overlayVisible: true,
+      overlayActive: true,
       gestureEverDetected: false
     }
   }
@@ -67,7 +67,7 @@ export default class LabHeatTransfer extends React.Component {
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
-    this.setState({overlayVisible: true, gestureEverDetected: false})
+    this.setState({overlayActive: true, gestureEverDetected: false})
   }
 
   handleLabPropChange(event) {
@@ -103,11 +103,11 @@ export default class LabHeatTransfer extends React.Component {
 
           if (data.numberOfHands > 0) {
             // Show overlay if user keeps his hands over the Leap.
-            this.setState({overlayVisible: true});
+            this.setState({overlayActive: true});
           } else if (this.state.gestureEverDetected) {
             // But hide it if user removes hands and gesture has been detected before.
             // This might be useful when user simply wants to watch the simulation.
-            this.setState({overlayVisible: false});
+            this.setState({overlayActive: false});
           }
         }
       },
@@ -126,8 +126,15 @@ export default class LabHeatTransfer extends React.Component {
         this.plotter.plot('frequency', avgFreq, {min: 0, max: 9, precision: 2});
         this.plotter.update();
 
-        if (avgFreq > MIN_FREQ_TO_HIDE_INSTRUCTIONS) {
-          this.setState({overlayVisible: false, gestureEverDetected: true});
+        const { overlayActive, gestureDetectedTimestamp } = this.state;
+        if (overlayActive) {
+          if (!gestureDetectedTimestamp) {
+            this.setState({gestureDetectedTimestamp: Date.now()});
+          }
+          if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
+            // Disable overlay after gesture has been detected for some time.
+            this.setState({overlayActive: false, gestureEverDetected: true});
+          }
         }
       }
     };
@@ -145,7 +152,8 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { overlayEnabled, overlayVisible, labProps } = this.state;
+    const { overlayEnabled, overlayActive, labProps } = this.state;
+    const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
         <div className='container'>
@@ -155,7 +163,7 @@ export default class LabHeatTransfer extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}>
+          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}>
             <div className='instructions'>
               {this.getStateMsg()}
             </div>

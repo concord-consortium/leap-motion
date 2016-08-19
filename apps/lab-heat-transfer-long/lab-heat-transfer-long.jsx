@@ -131,7 +131,7 @@ export default class LabHeatTransfer extends React.Component {
       case 'oneHandDetected':
         return 'Put the other hand above the Leap device.';
       case 'twoHandsDetected':
-        return 'Close your fists.';
+        return 'Close your fists to become molecules.';
       case 'oneClosedFist':
         return 'Close the other fist.';
       case 'closedFists':
@@ -153,7 +153,7 @@ export default class LabHeatTransfer extends React.Component {
           <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}>
             <div className='instructions'>
               {this.getStateMsg()}
-            </div>
+              </div>
           </InstructionsOverlay>
         </div>
         <LeapStatus ref='status'>
