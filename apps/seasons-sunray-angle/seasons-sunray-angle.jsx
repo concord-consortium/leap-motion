@@ -36,13 +36,18 @@ const OVERLAY_SIZE = {
   'small-bottom': {width: '395px', height: '296px'}
 };
 
+const MIN_GESTURE_TIME = 3000;
+
 export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       activeRaysView: 'ground',
       activeViewPanel: 'small-top',
-      instructions: INSTRUCTIONS.INITIAL_GROUND
+      instructions: INSTRUCTIONS.INITIAL_GROUND,
+      overlayVisible: true,
+      gestureEverDetected: false,
+      gestureDetectedTimestamp: null
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -85,14 +90,32 @@ export default class SeasonsSunrayAngle extends React.Component {
 
   handleLeapFrame(frame) {
     const data = this.gesturesHelper.processLeapFrame(frame);
+    let gestureDetected = false;
     if (this.state.activeRaysView === 'space') {
-      this.handleSpaceViewGestures(data);
+      gestureDetected = this.handleSpaceViewGestures(data);
     } else { // ground view
-      this.handleGroundViewGestures(data);
+      gestureDetected = this.handleGroundViewGestures(data);
+    }
+
+    if (gestureDetected) {
+      const { gestureDetectedTimestamp } = this.state;
+      if (!gestureDetectedTimestamp) {
+        this.setState({gestureDetectedTimestamp: Date.now()});
+      }
+      if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
+        // Disable overlay after gesture has been detected for some time.
+        this.setState({overlayVisible: false, gestureEverDetected: true});
+      }
+    } else if (data.numberOfHands > 0) {
+      this.setState({overlayVisible: true});
+    } else if (this.state.gestureEverDetected) {
+      this.setState({overlayVisible: false});
     }
   }
 
+
   handleSpaceViewGestures(data) {
+    let gestureDetected = false;
     if (data.numberOfHands === 0) {
       // Ground inactive.
       this.setSeasonsState(false, true, false, true);
@@ -103,6 +126,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       const angleChanged = this.modelController.setHandAngle(data.handAngle);
       this.setSeasonsState(angleChanged, true, false, false);
       this.setInstructions(INSTRUCTIONS.ROTATE_GROUND);
+      gestureDetected = angleChanged;
     } else if (data.numberOfHands === 1) {
       // Hand moving too fast.
       this.setSeasonsState(false, true, false, true);
@@ -110,14 +134,17 @@ export default class SeasonsSunrayAngle extends React.Component {
       const distanceChanged = this.modelController.setHandDistance(data.handsDistance);
       this.setSeasonsState(distanceChanged, true, true, false);
       this.setInstructions(INSTRUCTIONS.DISTANCE);
+      gestureDetected = distanceChanged;
     } else if (data.numberOfHands === 2) {
       // Ground inactive.
       this.setSeasonsState(false, true, false, true);
       this.setInstructions(INSTRUCTIONS.TWO_HANDS);
     }
+    return gestureDetected;
   }
 
   handleGroundViewGestures(data) {
+    let gestureDetected = false;
     if (data.numberOfHands === 0) {
       // Sunrays inactive.
       this.setSeasonsState(true, false, false, true);
@@ -128,6 +155,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       const angleChanged = this.modelController.setHandAngle(data.handAngle);
       this.setSeasonsState(true, angleChanged, false, false);
       this.setInstructions(INSTRUCTIONS.ROTATE_GROUND);
+      gestureDetected = angleChanged;
     } else if (data.numberOfHands === 1) {
       // Hand moving too fast.
       this.setSeasonsState(true, false, false, true);
@@ -135,15 +163,17 @@ export default class SeasonsSunrayAngle extends React.Component {
       const distanceChanged = this.modelController.setHandDistance(data.handsDistance);
       this.setSeasonsState(true, distanceChanged, true, false);
       this.setInstructions(INSTRUCTIONS.DISTANCE);
+      gestureDetected = distanceChanged;
     } else if (data.numberOfHands === 2) {
       // Sunrays inactive.
       this.setSeasonsState(true, false, false, true);
       this.setInstructions(INSTRUCTIONS.TWO_HANDS);
     }
+    return gestureDetected;
   }
 
   render() {
-    const { instructions, activeViewPanel } = this.state;
+    const { instructions, activeViewPanel, overlayVisible } = this.state;
     // Each time user changes position of the rays view, we need to reposition and resize overlay.
     // Position is updated using CSS styles (set by class name, see seasons-sunray-angle.less).
     // Width and height need to be set using React properties, so overlay component can resize its 3D renderer.
@@ -155,7 +185,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         <div style={{background: '#f6f6f6', width: '1210px'}}>
           <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}/>
         </div>
-        <InstructionsOverlay handsOpacity={0.7} className={overlayClassName}
+        <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
                              width={overlayWidth} height={overlayHeight}>
           <div className='instructions'>
             {instructions}
