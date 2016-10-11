@@ -10,16 +10,17 @@ const SKIN_COLOR = 0x93603F;
 
 export default class LeapHandsView extends React.Component {
   componentDidMount() {
-    const { handsOpacity } = this.props;
+    const { handsOpacity, positionScale, cameraPosition } = this.props;
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
     this.refs.container.appendChild(this.renderer.domElement);
-    this.initScene();
+    this.initScene(cameraPosition);
 
     leapController.use('riggedHand', {
       renderer: this.renderer,
       parent: this.scene,
       scene: this.scene,
+      positionScale: positionScale,
       camera: this.camera,
       materialOptions: {
         opacity: handsOpacity
@@ -55,15 +56,16 @@ export default class LeapHandsView extends React.Component {
     this.renderer.setSize(width, height);
   }
 
-  initScene() {
+  initScene(cameraPosition) {
     const width = this.width;
     const height = this.height;
+
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.setSize(width, height);
 
     this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
-    this.camera.position.fromArray([0, 500, 400]);
+    this.camera.position.fromArray(cameraPosition);
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     const pointLight = new THREE.PointLight(0xFFFFFF, 0.8);
@@ -86,5 +88,8 @@ export default class LeapHandsView extends React.Component {
 LeapHandsView.defaultProps = {
   width: '100%',
   height: '100%',
-  handsOpacity: 1
+  // Following props are not dynamic, you can change them only while initializing hands view.
+  handsOpacity: 0.85,
+  positionScale: 1,
+  cameraPosition: [0, 500, 400]
 };

@@ -185,8 +185,8 @@ export default class SeasonsSunrayAngle extends React.Component {
         <div style={{background: '#f6f6f6', width: '1210px'}}>
           <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}/>
         </div>
-        <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
-                             width={overlayWidth} height={overlayHeight}>
+        <InstructionsOverlay visible={overlayVisible} className={overlayClassName} width={overlayWidth} height={overlayHeight}
+                             handsViewProps={{positionScale: 0.5, cameraPosition: [0, 150, 500]}}>
           <div className='instructions'>
             {instructions}
           </div>
