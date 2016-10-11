@@ -45,6 +45,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       activeRaysView: 'ground',
       activeViewPanel: 'small-top',
       instructions: INSTRUCTIONS.INITIAL_GROUND,
+      overlayEnabled: true,
       overlayVisible: true,
       gestureEverDetected: false,
       gestureDetectedTimestamp: null
@@ -55,6 +56,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     });
     this.gesturesHelper = new GesturesHelper();
     this.handleConfigChange = this.handleConfigChange.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
   componentDidMount() {
@@ -63,6 +65,12 @@ export default class SeasonsSunrayAngle extends React.Component {
 
   handleConfigChange(event) {
     this.gesturesHelper.config[event.target.name] = event.target.value;
+  }
+
+  handleInputChange(event) {
+    let props = {};
+    props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+    this.setState(props);
   }
 
   activeRaysViewChanged(viewName) {
@@ -173,7 +181,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions, activeViewPanel, overlayVisible } = this.state;
+    const { instructions, activeViewPanel, overlayEnabled, overlayVisible } = this.state;
     // Each time user changes position of the rays view, we need to reposition and resize overlay.
     // Position is updated using CSS styles (set by class name, see seasons-sunray-angle.less).
     // Width and height need to be set using React properties, so overlay component can resize its 3D renderer.
@@ -185,12 +193,16 @@ export default class SeasonsSunrayAngle extends React.Component {
         <div style={{background: '#f6f6f6', width: '1210px'}}>
           <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}/>
         </div>
-        <InstructionsOverlay visible={overlayVisible} className={overlayClassName} width={overlayWidth} height={overlayHeight}
+        <InstructionsOverlay visible={overlayEnabled && overlayVisible} className={overlayClassName}
+                             width={overlayWidth} height={overlayHeight}
                              handsViewProps={{positionScale: 0.5, cameraPosition: [0, 150, 500]}}>
           <div className='instructions'>
             {instructions}
           </div>
         </InstructionsOverlay>
+        <p>
+          Overlay: <input type='checkbox' name='overlayEnabled' checked={overlayEnabled} onChange={this.handleInputChange}/>
+        </p>
         <p>
           Min distance between hands [mm]: <input type='text' name='minDist'
                                                   defaultValue={this.gesturesHelper.config.minDist}
