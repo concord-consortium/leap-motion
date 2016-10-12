@@ -195,7 +195,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         </div>
         <InstructionsOverlay visible={overlayEnabled && overlayVisible} className={overlayClassName}
                              width={overlayWidth} height={overlayHeight}
-                             handsViewProps={{positionScale: 0.5, cameraPosition: [0, 150, 500]}}>
+                             handsViewProps={{positionOffset: [0, -150, 0], cameraPosition: [0, 100, 500]}}>
           <div className='instructions'>
             {instructions}
           </div>

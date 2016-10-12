@@ -10,11 +10,12 @@ const SKIN_COLOR = 0x93603F;
 
 export default class LeapHandsView extends React.Component {
   componentDidMount() {
-    const { handsOpacity, positionScale, cameraPosition } = this.props;
+    const { handsOpacity, positionOffset, positionScale, cameraPosition } = this.props;
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
     this.refs.container.appendChild(this.renderer.domElement);
     this.initScene(cameraPosition);
+    this.handMeshes = new Set();
 
     leapController.use('riggedHand', {
       renderer: this.renderer,
@@ -24,20 +25,37 @@ export default class LeapHandsView extends React.Component {
       camera: this.camera,
       materialOptions: {
         opacity: handsOpacity
+      },
+      renderFn: () => {
+        // Provide custom rendererFn to apply transformations to hand meshes. Theoretically position offset
+        // should be supported (it's in the docs), but in practice it isn't (I've double checked that in code)...
+        this.handMeshes.forEach(handMesh => {
+          handMesh.position.add((new THREE.Vector3()).fromArray(positionOffset))
+        });
+        this.renderer.render(this.scene, this.camera);
       }
     });
-    leapController.on('riggedHand.meshAdded', function (handMesh) {
+    leapController.on('riggedHand.meshAdded', (handMesh) => {
       handMesh.material.color.setHex(SKIN_COLOR);
       handMesh.material.emissive.setHex(0x000000);
       handMesh.material.ambient.setHex(SKIN_COLOR);
+      this.handMeshes.add(handMesh);
+    });
+    leapController.on('riggedHand.meshRemoved', (handMesh) => {
+      this.handMeshes.delete(handMesh);
     });
   }
 
   componentDidUpdate(prevProps) {
-    const { width, height } = this.props;
+    const { width, height, positionScale, cameraPosition } = this.props;
     if (width !== prevProps.width || height !== prevProps.height) {
       this.resize3DView();
     }
+    const scope = leapController.plugins.riggedHand;
+    if (scope) {
+      scope.positionScale = positionScale;
+    }
+    this.camera.position.fromArray(cameraPosition);
   }
 
   get width() {
@@ -91,5 +109,6 @@ LeapHandsView.defaultProps = {
   // Following props are not dynamic, you can change them only while initializing hands view.
   handsOpacity: 0.85,
   positionScale: 1,
+  positionOffset: [0, 0, 0],
   cameraPosition: [0, 500, 400]
 };
