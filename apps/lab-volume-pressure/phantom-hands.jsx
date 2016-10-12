@@ -1,6 +1,6 @@
 import React from 'react';
 import PhantomHandsBase from '../common/js/components/phantom-hands-base.jsx';
-import rotateLeft from './phantom-hands/rotate-left.json';
+import rotateLeft from '../common/phantom-hands/rotate-left.json';
 import introLeft from '../common/phantom-hands/intro-left.json';
 import introRight from '../common/phantom-hands/intro-right.json';
 import fistRight from '../common/phantom-hands/fist-right.json';

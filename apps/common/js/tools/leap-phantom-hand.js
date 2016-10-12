@@ -188,7 +188,7 @@ export function followRealHand(handMesh, options = {}) {
       handMesh.positionRaw.y += opts.yOffset;
       handMesh.positionRaw.z += opts.zOffset;
       handMesh.position.copy(handMesh.positionRaw).multiplyScalar(leapController.plugins.riggedHand.positionScale);
-      leapController.plugins.riggedHand.renderFn();
+      leapController.plugins.riggedHand.renderFn({skipTransform: true});
     }
   };
   leapController.on('frame', handler);

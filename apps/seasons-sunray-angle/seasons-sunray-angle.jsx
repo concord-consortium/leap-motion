@@ -2,6 +2,7 @@ import React from 'react';
 import reactMixin from 'react-mixin';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
+import PhantomHands from './phantom-hands.jsx';
 import GesturesHelper from './gestures-helper';
 import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
@@ -48,7 +49,8 @@ export default class SeasonsSunrayAngle extends React.Component {
       overlayEnabled: true,
       overlayVisible: true,
       gestureEverDetected: false,
-      gestureDetectedTimestamp: null
+      gestureDetectedTimestamp: null,
+      phantomHandsHint: null
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -105,6 +107,11 @@ export default class SeasonsSunrayAngle extends React.Component {
       gestureDetected = this.handleGroundViewGestures(data);
     }
 
+    this.updateOverlayVisibility(data, gestureDetected);
+    this.updatePhantomHandsHint(data, gestureDetected);
+  }
+
+  updateOverlayVisibility(data, gestureDetected) {
     if (gestureDetected) {
       const { gestureDetectedTimestamp } = this.state;
       if (!gestureDetectedTimestamp) {
@@ -118,6 +125,20 @@ export default class SeasonsSunrayAngle extends React.Component {
       this.setState({overlayVisible: true});
     } else if (this.state.gestureEverDetected) {
       this.setState({overlayVisible: false});
+    }
+  }
+
+  updatePhantomHandsHint(data, gestureDetected) {
+    if (gestureDetected || data.numberOfHands === 0) {
+      this.setState({phantomHandsHint: null});
+    } else if (data.numberOfHands === 1 && data.handType === 'left') {
+      this.setState({phantomHandsHint: 'angleLeft'});
+    } else if (data.numberOfHands === 1 && data.handType === 'right') {
+      this.setState({phantomHandsHint: 'angleRight'});
+    } else if (data.numberOfHands === 2 && !data.handsVertical) {
+      this.setState({phantomHandsHint: 'handsVertical'});
+    } else if (data.numberOfHands === 2 && data.handsVertical) {
+      this.setState({phantomHandsHint: 'handsMove'});
     }
   }
 
@@ -181,7 +202,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions, activeViewPanel, overlayEnabled, overlayVisible } = this.state;
+    const { instructions, activeViewPanel, overlayEnabled, overlayVisible, phantomHandsHint } = this.state;
     // Each time user changes position of the rays view, we need to reposition and resize overlay.
     // Position is updated using CSS styles (set by class name, see seasons-sunray-angle.less).
     // Width and height need to be set using React properties, so overlay component can resize its 3D renderer.
@@ -199,6 +220,7 @@ export default class SeasonsSunrayAngle extends React.Component {
           <div className='instructions'>
             {instructions}
           </div>
+          <PhantomHands hint={overlayVisible && phantomHandsHint}/>
         </InstructionsOverlay>
         <p>
           Overlay: <input type='checkbox' name='overlayEnabled' checked={overlayEnabled} onChange={this.handleInputChange}/>

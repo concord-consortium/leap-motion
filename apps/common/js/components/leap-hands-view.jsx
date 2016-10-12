@@ -26,12 +26,14 @@ export default class LeapHandsView extends React.Component {
       materialOptions: {
         opacity: handsOpacity
       },
-      renderFn: () => {
-        // Provide custom rendererFn to apply transformations to hand meshes. Theoretically position offset
-        // should be supported (it's in the docs), but in practice it isn't (I've double checked that in code)...
-        this.handMeshes.forEach(handMesh => {
-          handMesh.position.add((new THREE.Vector3()).fromArray(positionOffset))
-        });
+      renderFn: (options) => {
+        if (!options || !options.skipTransform) {
+          // Provide custom rendererFn to apply transformations to hand meshes. Theoretically position offset
+          // should be supported (it's in the docs), but in practice it isn't (I've double checked that in code)...
+          this.handMeshes.forEach(handMesh => {
+            handMesh.position.add((new THREE.Vector3()).fromArray(positionOffset))
+          });
+        }
         this.renderer.render(this.scene, this.camera);
       }
     });

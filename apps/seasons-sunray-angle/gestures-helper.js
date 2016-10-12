@@ -76,6 +76,7 @@ export default class GesturesHelper {
     const data = {};
     data.numberOfHands = hands.length;
     if (data.numberOfHands === 1) {
+      data.handType = hands[0].type;
       data.handStill = velocity(hands[0]) < MAX_VELOCITY;
       data.handAngle = getHandAngle(hands[0]);
       if (this.config.twoHandsAngleDetection) {
