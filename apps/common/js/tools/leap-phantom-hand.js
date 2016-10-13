@@ -184,11 +184,11 @@ export function followRealHand(handMesh, options = {}) {
     const hand = hands[0] && hands[0].type === type ? hands[0] : (hands[1] && hands[1].type === type ? hands[1] : null);
     if (hand) {
       handMesh.positionRaw.fromArray(hand.palmPosition);
-      handMesh.positionRaw.x += opts.xOffset;
-      handMesh.positionRaw.y += opts.yOffset;
-      handMesh.positionRaw.z += opts.zOffset;
+      handMesh.positionRaw.x += opts.xOffset || 0;
+      handMesh.positionRaw.y += opts.yOffset || 0;
+      handMesh.positionRaw.z += opts.zOffset || 0;
       handMesh.position.copy(handMesh.positionRaw).multiplyScalar(leapController.plugins.riggedHand.positionScale);
-      leapController.plugins.riggedHand.renderFn({skipTransform: true});
+      leapController.plugins.riggedHand.renderFn();
     }
   };
   leapController.on('frame', handler);

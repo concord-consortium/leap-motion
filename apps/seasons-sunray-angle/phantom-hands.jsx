@@ -77,7 +77,7 @@ export default class PhantomHands extends PhantomHandsBase {
           frames: flatHandLeft,
           animatedFollow: {
             duration: 2000,
-            xOffset: [-100, 40],
+            xOffset: [-100, 50],
             yOffset: -150
           }
         },
@@ -85,7 +85,7 @@ export default class PhantomHands extends PhantomHandsBase {
           frames: flatHandRight,
           animatedFollow: {
             duration: 2000,
-            xOffset: [100, -40],
+            xOffset: [100, -50],
             yOffset: -150
           }
         }

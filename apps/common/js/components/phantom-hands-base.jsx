@@ -104,9 +104,9 @@ export default class PhantomHandsBase extends React.Component {
         if (hand.animatedFollow) {
           const animOpts = hand.animatedFollow;
           const offsets = {
-            xOffset: animOpts.xOffset && animOpts.xOffset.length > 1 ? interpolate(animOpts.xOffset, animOpts.duration, options.interval, frame) : 0,
-            yOffset: animOpts.yOffset && animOpts.yOffset.length > 1 ? interpolate(animOpts.yOffset, animOpts.duration, options.interval, frame) : 0,
-            zOffset: animOpts.zOffset && animOpts.zOffset.length > 1 ? interpolate(animOpts.zOffset, animOpts.duration, options.interval, frame) : 0
+            xOffset: animOpts.xOffset && animOpts.xOffset.length > 1 ? interpolate(animOpts.xOffset, animOpts.duration, options.interval, frame) : animOpts.xOffset,
+            yOffset: animOpts.yOffset && animOpts.yOffset.length > 1 ? interpolate(animOpts.yOffset, animOpts.duration, options.interval, frame) : animOpts.yOffset,
+            zOffset: animOpts.zOffset && animOpts.zOffset.length > 1 ? interpolate(animOpts.zOffset, animOpts.duration, options.interval, frame) : animOpts.zOffset
           };
           followRealHand(this.phantomHands[idx], offsets);
         }

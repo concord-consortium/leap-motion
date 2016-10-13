@@ -15,7 +15,6 @@ export default class LeapHandsView extends React.Component {
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
     this.refs.container.appendChild(this.renderer.domElement);
     this.initScene(cameraPosition);
-    this.handMeshes = new Set();
 
     leapController.use('riggedHand', {
       renderer: this.renderer,
@@ -25,26 +24,20 @@ export default class LeapHandsView extends React.Component {
       camera: this.camera,
       materialOptions: {
         opacity: handsOpacity
-      },
-      renderFn: (options) => {
-        if (!options || !options.skipTransform) {
-          // Provide custom rendererFn to apply transformations to hand meshes. Theoretically position offset
-          // should be supported (it's in the docs), but in practice it isn't (I've double checked that in code)...
-          this.handMeshes.forEach(handMesh => {
-            handMesh.position.add((new THREE.Vector3()).fromArray(positionOffset))
-          });
-        }
-        this.renderer.render(this.scene, this.camera);
       }
     });
     leapController.on('riggedHand.meshAdded', (handMesh) => {
       handMesh.material.color.setHex(SKIN_COLOR);
       handMesh.material.emissive.setHex(0x000000);
       handMesh.material.ambient.setHex(SKIN_COLOR);
-      this.handMeshes.add(handMesh);
-    });
-    leapController.on('riggedHand.meshRemoved', (handMesh) => {
-      this.handMeshes.delete(handMesh);
+      // Hacky. Provide custom helper to apply transformations to hand meshes. Theoretically position offset
+      // should be supported (it's in the docs), but in practice it isn't (I've double checked that in code)...
+      // .helper.update() is called right after the hand mesh position is updated, so we can apply additional transform.
+      handMesh.helper = {
+        update: () => {
+          handMesh.position.add((new THREE.Vector3()).fromArray(positionOffset))
+        }
+      }
     });
   }
 
