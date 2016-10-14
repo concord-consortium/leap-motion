@@ -7,13 +7,17 @@ const DEFAULT_CONFIG = {
   closedGrabStrength: 0.7,
   minAmplitude: 60,
   soundEnabled: false,
-  sideOffset: 100
+  sideOffset: 100,
+  sideMinTime: 500, // ms
+  initialSideMinTime: 2500 // ms
 };
 
 export default class FistsShaking {
   constructor(config) {
     this.config = extend({}, DEFAULT_CONFIG, config);
     this.currentlySelectedSide = null;
+    this.currentlySelectedSideTimestamp = Infinity;
+    this.selectedSide = null;
     this._setupDirectionChangeAlg();
   }
 
@@ -36,25 +40,9 @@ export default class FistsShaking {
         onDirChange: soundOnDirChange
       })
     };
-    this.freqCalc.left = new DirectionChange({
-      minAmplitude: this.config.minAmplitude,
-      onDirChange: (data) => {
-        if (this.config.soundEnabled && data.type === DirectionChange.LEFT_TO_RIGHT) {
-          sound.play();
-        }
-      }
-    });
-    this.freqCalc.right = new DirectionChange({
-      minAmplitude: this.config.minAmplitude,
-      onDirChange: (data) => {
-        if (this.config.soundEnabled && data.type === DirectionChange.LEFT_TO_RIGHT) {
-          sound.play();
-        }
-      }
-    });
   }
 
-  selectedSide(hand1, hand2) {
+  getCurrentlySelectedSide(hand1, hand2) {
     const leftSide = hand1.palmPosition[0] < this.config.sideOffset && hand2.palmPosition[0] < this.config.sideOffset;
     const rightSide = hand1.palmPosition[0] > -this.config.sideOffset && hand2.palmPosition[0] > -this.config.sideOffset;
     // Note that both leftSide and rightSide can be equal to true (as the left and right side overlap).
@@ -83,18 +71,25 @@ export default class FistsShaking {
     if (hand2 && hand2.grabStrength > this.config.closedGrabStrength) {
       closedHands += 1;
     }
-    const newSelectedSide = closedHands === 2 ? this.selectedSide(hand1, hand2) : null;
-    // Update selected side only if it's clearly defined.
-    if (newSelectedSide !== 'unclear') {
+    const newSelectedSide = closedHands === 2 ? this.getCurrentlySelectedSide(hand1, hand2) : null;
+    if (this.currentlySelectedSide !== newSelectedSide) {
+      this.currentlySelectedSideTimestamp = Date.now();
       this.currentlySelectedSide = newSelectedSide;
     }
+    // If side is selected for the first time, use a bit different required time (longer, so user can read tips).
+    const reqTime = this.selectedSide === null ? this.config.initialSideMinTime : this.config.sideMinTime;
+    if (newSelectedSide !== 'unclear' && Date.now() - this.currentlySelectedSideTimestamp > reqTime) {
+      // Update selected side only if it's clearly defined.
+      this.selectedSide = newSelectedSide;
+    }
+
     const gestureData = {
       numberOfHands: frame.hands.length,
       numberOfClosedHands: closedHands,
-      selectedSide: this.currentlySelectedSide
+      selectedSide: this.selectedSide
     };
-    if (closedHands === 2 && this.currentlySelectedSide) {
-      const freqCalc = this.freqCalc[this.currentlySelectedSide];
+    if (closedHands === 2 && this.selectedSide) {
+      const freqCalc = this.freqCalc[this.selectedSide];
       const xVelDiff = hand2.palmVelocity[0] - hand1.palmVelocity[0];
       freqCalc.addSample(xVelDiff);
       gestureData.frequency = freqCalc.frequency;
