@@ -52,6 +52,7 @@ This project is automatically deployed to S3 bucket by Travis-CI.
 1. Open Terminal app
 2. Make sure that *node* and *npm* tools are installed and up to date. Type: `node --version` and `npm --version`
 3. If they are not installed or outdated (*node* version is older than 5.x), download *node* installer from [this page](https://nodejs.org/en/download/current/). *npm* will be automatically installed together with *node*.
+4. [Windows only] If `npm install` fails, you might need to run terminal as Administrator and type: `npm install --global --production windows-build-tools`
 
 ### Running local server (production code)
 
