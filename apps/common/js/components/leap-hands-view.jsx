@@ -3,8 +3,7 @@ import THREE from 'three';
 import leapController from '../tools/leap-controller';
 import 'leapjs-plugins';
 import 'leapjs-plugins/main/version-check/leap.version-check';
-// leapjs-rigged-hand package is a total mess. Require JS file directly.
-import 'imports?THREE=three!leapjs-rigged-hand/build/leap.rigged-hand-0.1.7';
+import 'imports?THREE=three!../lib/leap-rigged-hand/leap.rigged-hand-0.1.7';
 
 const SKIN_COLOR = 0x93603F;
 
