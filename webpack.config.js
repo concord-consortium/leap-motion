@@ -19,7 +19,8 @@ module.exports = {
     'lab-pressure-equilibrium': './apps/lab-pressure-equilibrium/main.jsx',
     'seasons-sunray-angle': './apps/seasons-sunray-angle/main.jsx',
     'hands-view-realistic': './apps/hands-view-realistic/main.jsx',
-    'hands-view-simple': './apps/hands-view-simple/main.jsx'
+    'hands-view-simple': './apps/hands-view-simple/main.jsx',
+    'realsense-test': './apps/realsense-test/main.jsx',
   },
   output: {
     path: path.join(__dirname, 'dist'),
