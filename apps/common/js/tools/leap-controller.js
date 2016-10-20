@@ -1,6 +1,6 @@
 import Leap from 'leapjs';
 
-let controller = new Leap.Controller({
+const controller = new Leap.Controller({
   background: true,
   frameEventName: 'animationFrame'
 });
