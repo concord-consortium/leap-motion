@@ -3,7 +3,7 @@ import THREE from 'three';
 import leapController from '../tools/leap-controller';
 import 'leapjs-plugins';
 import 'leapjs-plugins/main/version-check/leap.version-check';
-import '../rigged-hand';
+import leapRiggedHand from '../rigged-hand/leap-plugin';
 
 const SKIN_COLOR = 0x93603F;
 
@@ -15,17 +15,16 @@ export default class LeapHandsView extends React.Component {
     this.refs.container.appendChild(this.renderer.domElement);
     this.initScene(cameraPosition);
 
-    leapController.use('riggedHand', {
+    this.riggedHand = leapRiggedHand(leapController, {
       renderer: this.renderer,
       parent: this.scene,
-      scene: this.scene,
-      positionScale: positionScale,
       camera: this.camera,
+      positionScale: positionScale,
       materialOptions: {
         opacity: handsOpacity
       }
     });
-    leapController.on('riggedHand.meshAdded', (handMesh) => {
+    this.riggedHand.on('riggedHand.meshAdded', (handMesh) => {
       handMesh.material.color.setHex(SKIN_COLOR);
       handMesh.material.emissive.setHex(0x000000);
       handMesh.material.ambient.setHex(SKIN_COLOR);
@@ -45,10 +44,7 @@ export default class LeapHandsView extends React.Component {
     if (width !== prevProps.width || height !== prevProps.height) {
       this.resize3DView();
     }
-    const scope = leapController.plugins.riggedHand;
-    if (scope) {
-      scope.positionScale = positionScale;
-    }
+    this.riggedHand.scope.positionScale = positionScale;
     this.camera.position.fromArray(cameraPosition);
   }
 

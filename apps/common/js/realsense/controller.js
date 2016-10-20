@@ -32,9 +32,7 @@ class RealSenseController {
 
     // Delegate EventEmitter method.
     ['on', 'removeListener', 'emit'].forEach(method => {
-      this[method] = function () {
-        this.dispatch[method].apply(this.dispatch, arguments);
-      };
+      this[method] = this.dispatch[method].bind(this.dispatch);
     });
   }
 
