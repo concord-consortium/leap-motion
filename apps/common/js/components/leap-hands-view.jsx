@@ -3,7 +3,7 @@ import THREE from 'three';
 import leapController from '../tools/leap-controller';
 import 'leapjs-plugins';
 import 'leapjs-plugins/main/version-check/leap.version-check';
-import 'imports?THREE=three!../lib/leap-rigged-hand/leap.rigged-hand-0.1.7';
+import '../rigged-hand';
 
 const SKIN_COLOR = 0x93603F;
 
