@@ -1,5 +1,5 @@
 import React from 'react';
-import LeapHandsView from './leap-hands-view.jsx';
+import LeapHandsView from './hands-view.jsx';
 import LeapStatus from './leap-status.jsx';
 import '../../css/leap-standard-info.css';
 

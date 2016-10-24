@@ -325,13 +325,15 @@ export default function riggedHand(scope = {}) {
 
           palm.positionLeap.fromArray(leapHand.palmPosition);
 
-          // wrist -> mcp -> pip -> dip -> tip
-          for (var i = 0; i < palm.children.length; i++) {
-            var mcp = palm.children[i];
-            mcp.    positionLeap.fromArray(leapHand.fingers[i].mcpPosition);
-            mcp.pip.positionLeap.fromArray(leapHand.fingers[i].pipPosition);
-            mcp.dip.positionLeap.fromArray(leapHand.fingers[i].dipPosition);
-            mcp.tip.positionLeap.fromArray(leapHand.fingers[i].tipPosition);
+          if (leapHand.fingers.length > 0) {
+            // wrist -> mcp -> pip -> dip -> tip
+            for (var i = 0; i < palm.children.length; i++) {
+              var mcp = palm.children[i];
+              mcp.positionLeap.fromArray(leapHand.fingers[i].mcpPosition);
+              mcp.pip.positionLeap.fromArray(leapHand.fingers[i].pipPosition);
+              mcp.dip.positionLeap.fromArray(leapHand.fingers[i].dipPosition);
+              mcp.tip.positionLeap.fromArray(leapHand.fingers[i].tipPosition);
+            }
           }
 
           // set heading on palm so that finger.parent can access

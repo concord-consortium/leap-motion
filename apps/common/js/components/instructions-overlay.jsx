@@ -1,5 +1,5 @@
 import React from 'react';
-import LeapHandsView from './leap-hands-view.jsx';
+import LeapHandsView from './hands-view.jsx';
 import '../../css/instructions-overlay.less';
 
 export default class InstructionsOverlay extends React.Component {

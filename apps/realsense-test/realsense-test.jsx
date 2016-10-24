@@ -2,80 +2,80 @@ import React from 'react';
 import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
 import realsenseController from '../common/js/realsense/controller';
-realsenseController.init();
-import leapController from '../common/js/tools/leap-controller';
-import realSense2Leap from '../common/js/realsense/realsense-2-leap';
+import { realSenseFrame2Leap } from '../common/js/realsense/realsense-2-leap';
+import HandsView from '../common/js/components/hands-view.jsx';
 
 import './realsense-test.less';
 
-function rsPosFormat(pos) {
-  return `${pos.x.toFixed(3)}, ${pos.y.toFixed(3)}, ${pos.z.toFixed(3)}`;
-}
-
-function lmPosFormat(pos) {
-  return `${pos[0].toFixed(1)}, ${pos[1].toFixed(1)}, ${pos[2].toFixed(1)}`;
+function lmPosFormat(obj, prop) {
+  if (!obj) return null;
+  const pos = obj[prop];
+  return (
+    <tr><td className="prop-name">{prop}</td><td>{pos[0].toFixed(1)}</td><td>{pos[1].toFixed(1)}</td><td>{pos[2].toFixed(1)}</td></tr>
+  );
 }
 
 export default class RealSenseTest extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      rsPosition: {x: 0, y: 0, z: 0},
-      rsLmPosition: [0, 0, 0],
-      lmPosition: [0, 0, 0]
+      connected: false
     };
   }
 
   componentDidMount() {
-    leapController.on('frame', frame => {
-      if (frame.hands.length > 0) {
-        const hand = frame.hands[0];
-        this.setState({
-          lmPosition: hand.palmPosition
-        });
-      }
-    });
-
+    realsenseController.init();
     realsenseController.on('frame', frame => {
-      if (frame.numberOfHands > 0) {
-        const hand = frame.hands[0];
-        this.setState({
-          rsPosition: hand.massCenterWorld
-        });
-
-        // Convert to Leap format.
-        const lmFrame = realSense2Leap(frame);
+      const lmFrame = realSenseFrame2Leap(frame);
+      if (lmFrame.hands.length > 0) {
         const lmHand = lmFrame.hands[0];
         this.setState({
-          rsLmPosition: lmHand.palmPosition
+          lmHand
         });
       }
     });
+    realsenseController.on('connect', connected => {
+      this.setState({connected});
+    })
+  }
+
+  renderFinger(lmHand, idx) {
+    return (
+      <tbody>
+        <tr><td className="header">Finger {idx}</td></tr>
+        {lmPosFormat(lmHand.fingers[idx], 'tipPosition')}
+        {lmPosFormat(lmHand.fingers[idx], 'dipPosition')}
+        {lmPosFormat(lmHand.fingers[idx], 'pipPosition')}
+        {lmPosFormat(lmHand.fingers[idx], 'mcpPosition')}
+      </tbody>
+    );
   }
 
   render() {
-    const s = this.state;
+    const { lmHand, connected } = this.state;
     return (
-      <div className='realsense-test'>
-        RealSense (raw)
-        <table>
-          <tbody>
-          <tr><td>Position [m]:</td><td>{rsPosFormat(s.rsPosition)}</td></tr>
-          </tbody>
-        </table>
-        RealSense (convert to Leap)
-        <table>
-          <tbody>
-          <tr><td>Position [mm]:</td><td>{lmPosFormat(s.rsLmPosition)}</td></tr>
-          </tbody>
-        </table>
-
-        LeapMotion
-        <table>
-          <tbody>
-          <tr><td>Position [mm]:</td><td>{lmPosFormat(s.lmPosition)}</td></tr>
-          </tbody>
-        </table>
+      <div className="realsense-test">
+        <div className="inline">
+          <div className="header">RealSense connected: {connected ? "true" : "false"}</div>
+          <div className="header">Data converted to Leap format</div>
+          {lmHand &&
+            <table>
+              <tbody>
+                {lmPosFormat(lmHand, 'palmPosition')}
+                {lmPosFormat(lmHand, 'palmNormal')}
+                {lmPosFormat(lmHand, 'direction')}
+              </tbody>
+              {this.renderFinger(lmHand, 0)}
+              {this.renderFinger(lmHand, 1)}
+              {this.renderFinger(lmHand, 2)}
+              {this.renderFinger(lmHand, 3)}
+              {this.renderFinger(lmHand, 4)}
+            </table>
+          }
+        </div>
+        <div className="inline">
+          <HandsView device='realsense' width='700px' height='700px' handsOpacity={1}/>
+        </div>
       </div>
     );
   }

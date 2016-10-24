@@ -540,11 +540,11 @@ Connection.prototype.open = function () {
 
       self._session.onjoin = function (details) {
          if (self.onopen) {
-            try {
+            // try {
                self.onopen(self._session, details);
-            } catch (e) {
-               log.debug("Exception raised from app code while firing Connection.onopen()", e);
-            }
+            // } catch (e) {
+            //    log.debug("Exception raised from app code while firing Connection.onopen()", e);
+            // }
          }
       };
 
@@ -592,12 +592,12 @@ Connection.prototype.open = function () {
                retry_count: next_retry.count,
                will_retry: next_retry.will_retry
             };
-            try {
+            // try {
                // Connection.onclose() allows to cancel any subsequent retry attempt
                var stop_retrying = self.onclose(reason, details);
-            } catch (e) {
-               log.debug("Exception raised from app code while firing Connection.onclose()", e);
-            }
+            // } catch (e) {
+            //    log.debug("Exception raised from app code while firing Connection.onclose()", e);
+            // }
          }
 
          // reset session info
@@ -3322,11 +3322,11 @@ var Session = function (socket, defer, onchallenge) {
                       );
 
          for (var i = 0; i < subs.length; ++i) {
-            try {
+            // try {
                subs[i].handler(args, kwargs, ed);
-            } catch (e) {
-               log.debug("Exception raised in event handler", e);
-            }
+            // } catch (e) {
+            //    log.debug("Exception raised in event handler", e);
+            // }
          }
 
       } else {
@@ -20478,7 +20478,6 @@ assert.strictEqual = function strictEqual(actual, expected, message) {
     fail(actual, expected, message, '===', assert.strictEqual);
   }
 };
-
 // 10. The strict non-equality assertion tests for strict inequality, as
 // determined by !==.  assert.notStrictEqual(actual, expected, message_opt);
 

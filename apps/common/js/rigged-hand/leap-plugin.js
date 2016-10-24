@@ -1,4 +1,6 @@
 import riggedHand from './rigged-hand';
+import 'leapjs-plugins';
+import 'leapjs-plugins/main/version-check/leap.version-check';
 
 export default function leapRiggedHand(controller, scope = {}) {
   controller.use('handHold');

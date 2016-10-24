@@ -1,21 +1,27 @@
 import React from 'react';
 import THREE from 'three';
 import leapController from '../tools/leap-controller';
-import 'leapjs-plugins';
-import 'leapjs-plugins/main/version-check/leap.version-check';
+import realSenseController from '../realsense/controller';
 import leapRiggedHand from '../rigged-hand/leap-plugin';
+import realSenseRiggedHand from '../rigged-hand/realsense-plugin';
 
 const SKIN_COLOR = 0x93603F;
 
+const LEAP_CAMERA_POS = [0, 500, 400];
+const REALSENSE_CAMERA_POS = [0, 0, 1000];
+
 export default class LeapHandsView extends React.Component {
   componentDidMount() {
-    const { handsOpacity, positionOffset, positionScale, cameraPosition } = this.props;
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
     this.refs.container.appendChild(this.renderer.domElement);
-    this.initScene(cameraPosition);
+    this.initScene();
+    this.initRiggedHandView();
+  }
 
-    this.riggedHand = leapRiggedHand(leapController, {
+  initRiggedHandView() {
+    const { device, handsOpacity, positionScale, positionOffset } = this.props;
+    const options = {
       renderer: this.renderer,
       parent: this.scene,
       camera: this.camera,
@@ -23,7 +29,13 @@ export default class LeapHandsView extends React.Component {
       materialOptions: {
         opacity: handsOpacity
       }
-    });
+    };
+    if (device === 'leap') {
+      this.riggedHand = leapRiggedHand(leapController, options);
+    } else if (device === 'realsense') {
+      realSenseController.init();
+      this.riggedHand = realSenseRiggedHand(realSenseController, options);
+    }
     this.riggedHand.on('riggedHand.meshAdded', (handMesh) => {
       handMesh.material.color.setHex(SKIN_COLOR);
       handMesh.material.emissive.setHex(0x000000);
@@ -40,12 +52,12 @@ export default class LeapHandsView extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { width, height, positionScale, cameraPosition } = this.props;
+    const { width, height, positionScale } = this.props;
     if (width !== prevProps.width || height !== prevProps.height) {
       this.resize3DView();
     }
     this.riggedHand.scope.positionScale = positionScale;
-    this.camera.position.fromArray(cameraPosition);
+    this.camera.position.fromArray(this.cameraPosition);
   }
 
   get width() {
@@ -56,6 +68,15 @@ export default class LeapHandsView extends React.Component {
     return this.refs.container.clientHeight;
   }
 
+  get cameraPosition() {
+    const { device, cameraPosition } = this.props;
+    if (cameraPosition) {
+      // Return custom position if it's provided.
+      return cameraPosition;
+    }
+    return device === 'leap' ? LEAP_CAMERA_POS : REALSENSE_CAMERA_POS;
+  }
+
   resize3DView() {
     const width = this.width;
     const height = this.height;
@@ -64,7 +85,7 @@ export default class LeapHandsView extends React.Component {
     this.renderer.setSize(width, height);
   }
 
-  initScene(cameraPosition) {
+  initScene() {
     const width = this.width;
     const height = this.height;
 
@@ -73,11 +94,11 @@ export default class LeapHandsView extends React.Component {
     this.renderer.setSize(width, height);
 
     this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 10000);
-    this.camera.position.fromArray(cameraPosition);
+    this.camera.position.fromArray(this.cameraPosition);
     this.camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     const pointLight = new THREE.PointLight(0xFFFFFF, 0.8);
-    pointLight.position.set(-20, 400, 0);
+    pointLight.position.fromArray(this.cameraPosition);
     pointLight.lookAt(new THREE.Vector3(0, 0, 0));
 
     this.scene.add(pointLight);
@@ -89,16 +110,17 @@ export default class LeapHandsView extends React.Component {
     const {width, height} = this.props;
     return (
       <div className='hands-view' ref='container' style={{width, height}}></div>
-    )
+    );
   }
 }
 
 LeapHandsView.defaultProps = {
+  device: 'leap', // or 'realsense'
   width: '100%',
   height: '100%',
   // Following props are not dynamic, you can change them only while initializing hands view.
   handsOpacity: 0.85,
   positionScale: 1,
   positionOffset: [0, 0, 0],
-  cameraPosition: [0, 500, 400]
+  cameraPosition: null // if it's null, LEAP_CAMERA_POS or REALSENSE_CAMERA_POS will be used
 };

@@ -8,7 +8,7 @@ function checkPlatform(onReady) {
       onReady();
     } else if (info.nextStep === 'unsupported') {
       throw new Error('Platform is not supported for Intel(R) RealSense(TM) SDK:' +
-        'either you are missing the required camera, or your OS and browser are not supported');
+                      'either you are missing the required camera, or your OS and browser are not supported');
     } else if (info.nextStep === 'driver') {
       throw new Error('Please update your camera driver from your computer manufacturer.');
     } else if (info.nextStep === 'runtime') {
@@ -17,11 +17,17 @@ function checkPlatform(onReady) {
   });
 }
 
+function handValid(hand) {
+  return hand.bodySide !== rsh.BodySideType.BODY_SIDE_UNKNOWN &&
+         hand.trackedJoints.length === rsh.NUMBER_OF_JOINTS; // 22
+}
+
 class RealSenseController {
   constructor() {
     this.sense = null;
     this.initStarted = false;
     this.dispatch = new EventEmitter();
+    this.trackedHands = new Map();
 
     this.onConnect = this.onConnect.bind(this);
     this.onStatus = this.onStatus.bind(this);
@@ -66,8 +72,8 @@ class RealSenseController {
       return handModule.createActiveConfiguration();
     }).then(result => {
       handConfig = result;
-      // Enable all alerts
-      handConfig.allAlerts = true;
+      // E.g. to enable all alerts:
+      // handConfig.allAlerts = true;
       // Apply Hand Configuration changes
       return handConfig.applyChanges();
     }).then(_ => {
@@ -83,24 +89,42 @@ class RealSenseController {
 
   onConnect(sender, connected) {
     console.log('[RealSense] connected: ' + connected);
+    this.dispatch.emit('connect', connected);
   }
 
   onStatus(sender, status) {
     console.log('[RealSense] status changed: ' + status);
+    this.dispatch.emit('status', status);
   }
 
   onHandData(sender, data) {
-    data.hands = data.queryHandData(rsh.AccessOrderType.ACCESS_ORDER_FIXED);
+    data.hands = [];
+    const validHandIds = new Set();
+    (data.queryHandData(rsh.AccessOrderType.ACCESS_ORDER_FIXED) || []).forEach(hand => {
+      if (hand && handValid(hand)) {
+        data.hands.push(hand);
+        if (!this.trackedHands.has(hand.uniqueId)) {
+          this.onHandFound(hand);
+        }
+        this.trackedHands.set(hand.uniqueId, hand);
+        validHandIds.add(hand.uniqueId);
+      }
+    });
+    this.trackedHands.forEach((hand, uniqueId) => {
+      if (!validHandIds.has(uniqueId)) {
+        this.onHandLost(hand);
+        this.trackedHands.delete(uniqueId);
+      }
+    });
     this.dispatch.emit('frame', data);
   }
 
-  // TODO: implement handFound and lost using RealSense alerts.
-  onHandFound() {
-    this.dispatch.emit('handFound');
+  onHandFound(hand) {
+    this.dispatch.emit('handFound', hand);
   }
 
-  onHandLost() {
-    this.dispatch.emit('handLost');
+  onHandLost(hand) {
+    this.dispatch.emit('handLost', hand);
   }
 
   onBeforeUnload() {

@@ -1,7 +1,7 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
-import LeapHandsView from '../common/js/components/leap-hands-view.jsx';
+import LeapHandsView from '../common/js/components/hands-view.jsx';
 import {snapshotHand, addPhantomHand, followRealHand, removePhantomHand} from '../common/js/tools/leap-phantom-hand';
 import './hands-view-realistic.less'
 
