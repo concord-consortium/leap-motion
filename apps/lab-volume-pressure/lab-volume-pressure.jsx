@@ -9,7 +9,7 @@ import avg from '../common/js/tools/avg';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import LeapStatus from '../common/js/components/leap-status.jsx';
 import interactive from './lab-interactive.json';
-import PhantomHands from './phantom-hands.jsx';
+import phantomHands from './phantom-hands';
 import model from './lab-model.json';
 import './lab-voule-pressure.less';
 
@@ -163,11 +163,11 @@ export default class LabVolumePressure extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}>
+          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
+                               handsViewProps={{phantomHands: phantomHands[overlayVisible && this.getHintName()]}}>
             <div className='instructions'>
               <p className='text'>{this.getHintText()}</p>
             </div>
-            <PhantomHands hint={overlayVisible && this.getHintName()}/>
           </InstructionsOverlay>
         </div>
         <LeapStatus ref='status'>

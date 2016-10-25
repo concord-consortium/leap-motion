@@ -1,8 +1,4 @@
-import React from 'react';
-import reactMixin from 'react-mixin';
-import pureRender from 'react-addons-pure-render-mixin';
-import {addPhantomHand, followRealHand, setupPhantomHand, removePhantomHand} from '../tools/leap-phantom-hand';
-import '../../css/phantom-hands-base.less';
+import {addPhantomHand, followRealHand, setupPhantomHand, removePhantomHand} from './phantom-hands-helpers';
 
 // Accepts range (array), animation duration, interval and the current frame number.
 // Returns value within provided range.
@@ -65,23 +61,42 @@ function interpolate(range, duration, interval, frame) {
 //   ],
 //   interval: 200
 // }
-export default class PhantomHandsBase extends React.Component {
-  componentDidUpdate(prevProps) {
-    const oldHint = prevProps.hint;
-    const newHint = this.props.hint;
-    if (oldHint !== newHint) {
-      this.cleanupPhantomHands();
-      this.startAnimation(newHint);
+export default class PhantomHands {
+  constructor(options) {
+    this.riggedHand = options.riggedHand;
+    this.deviceController = options.deviceController;
+  }
+
+  startAnimation(hint) {
+    this.cleanupPhantomHands();
+    if (hint) {
+      this.animateHands(hint);
     }
   }
 
-  startAnimation(hintName) {
-    // Overwrite and implement, e.g.:
-    // switch(hintName) {
-    //   case 'initial': return this.animIntro();
-    //   case 'oneHand': return this.animRotateHand();
-    //   (...)
-    // }
+  // Returns the current hand description (via callback). Always pick the first hand available.
+  // This description can be passed later to the addPhantomHand function.
+  snapshotHand(callback) {
+    this.deviceController.once('frame', function(frame) {
+      const hand = frame && frame.hands && frame.hands[0];
+      if (!hand) return;
+      // That's minimal data necessary to restore hand model later.
+      // Also, it ensures that there are no circular dependencies, so we can serialize it.
+      callback({
+        type: hand.type,
+        fingers: hand.fingers.map(f => {
+          return {
+            mcpPosition: f.mcpPosition,
+            pipPosition: f.pipPosition,
+            dipPosition: f.dipPosition,
+            tipPosition: f.tipPosition
+          };
+        }),
+        direction: hand.direction,
+        palmPosition: hand.palmPosition,
+        palmNormal: hand.palmNormal,
+      });
+    });
   }
 
   // The most important helper method.
@@ -90,28 +105,30 @@ export default class PhantomHandsBase extends React.Component {
     this.frameId = 0;
     const hands = options.hands;
     hands.forEach(hand => {
-      const mesh = addPhantomHand(hand.frames[0]);
+      const mesh = addPhantomHand(this.riggedHand, hand.frames[0]);
       this.phantomHands.push(mesh);
       // If 'follow' is defined, it means that hand should follow real hand. This hash has options such as
       // offset in X/Y/Z axis (so phantom hand doesn't overlap real hand).
       if (hand.follow) {
-        followRealHand(mesh, hand.follow);
+        followRealHand(this.deviceController, this.riggedHand, mesh, hand.follow);
       }
     });
-    this.setupAnimation((frame) => {
-      hands.forEach((hand, idx) => {
-        if (hand.frames.length > 1) setupPhantomHand(this.phantomHands[idx], hand.frames[frame % hand.frames.length]);
-        if (hand.animatedFollow) {
-          const animOpts = hand.animatedFollow;
-          const offsets = {
-            xOffset: animOpts.xOffset && animOpts.xOffset.length > 1 ? interpolate(animOpts.xOffset, animOpts.duration, options.interval, frame) : animOpts.xOffset,
-            yOffset: animOpts.yOffset && animOpts.yOffset.length > 1 ? interpolate(animOpts.yOffset, animOpts.duration, options.interval, frame) : animOpts.yOffset,
-            zOffset: animOpts.zOffset && animOpts.zOffset.length > 1 ? interpolate(animOpts.zOffset, animOpts.duration, options.interval, frame) : animOpts.zOffset
-          };
-          followRealHand(this.phantomHands[idx], offsets);
-        }
-      });
-    }, options.interval);
+    if (options.interval) {
+      this.setupAnimation((frame) => {
+        hands.forEach((hand, idx) => {
+          if (hand.frames.length > 1) setupPhantomHand(this.riggedHand, this.phantomHands[idx], hand.frames[frame % hand.frames.length]);
+          if (hand.animatedFollow) {
+            const animOpts = hand.animatedFollow;
+            const offsets = {
+              xOffset: animOpts.xOffset && animOpts.xOffset.length > 1 ? interpolate(animOpts.xOffset, animOpts.duration, options.interval, frame) : animOpts.xOffset,
+              yOffset: animOpts.yOffset && animOpts.yOffset.length > 1 ? interpolate(animOpts.yOffset, animOpts.duration, options.interval, frame) : animOpts.yOffset,
+              zOffset: animOpts.zOffset && animOpts.zOffset.length > 1 ? interpolate(animOpts.zOffset, animOpts.duration, options.interval, frame) : animOpts.zOffset
+            };
+            followRealHand(this.deviceController, this.riggedHand, this.phantomHands[idx], offsets);
+          }
+        });
+      }, options.interval);
+    }
   }
 
   // Other helpers, mostly used internally:
@@ -125,18 +142,11 @@ export default class PhantomHandsBase extends React.Component {
 
   cleanupPhantomHands() {
     while (this.phantomHands && this.phantomHands.length > 0) {
-      removePhantomHand(this.phantomHands.pop());
+      removePhantomHand(this.deviceController, this.riggedHand, this.phantomHands.pop());
     }
     if (this.animInterval) {
       clearInterval(this.animInterval);
       this.animInterval = null;
     }
   }
-
-  render() {
-    // Render Leap device image.
-    return <img src='leap.png' className='leap-img'/>;
-  }
 }
-
-reactMixin.onClass(PhantomHandsBase, pureRender);

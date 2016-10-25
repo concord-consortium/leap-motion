@@ -1,11 +1,11 @@
 import THREE from 'three';
 import rigs from 'exports?rigs!../lib/leap-rigged-hand/hand_models_v1';
 import extend from '../tools/extend';
-import leapController from './leap-controller';
 
+// TODO: probably it should be integrated with phantom-hands.js module.
 // This module lets you:
 // 1. Save hand description.
-// 2. Add a "phantom" hand to Leap Rigged Hand view.
+// 2. Add a "phantom" hand to Rigged Hand view.
 // Most of these functions are based on the leap.rigged-hand-0.1.7.js source (look for similar function names there).
 // Quite often it's a copy-paste version which is slightly simplified.
 // Plugin itself don't allow to do anything like this. Also, its development is pretty dead at the moment,
@@ -18,7 +18,7 @@ const spareMeshes = {
 };
 
 // Based on leap.rigged-hand-0.1.7#createMesh function.
-function createMesh(JSON) {
+function createMesh(riggedHand, JSON) {
   const data = (new THREE.JSONLoader).parse(JSON);
   data.materials[0].skinning = true;
   data.materials[0].transparent = true;
@@ -26,8 +26,8 @@ function createMesh(JSON) {
   data.materials[0].emissive.setHex(0x888888);
   data.materials[0].vertexColors = THREE.VertexColors;
   data.materials[0].depthTest = true;
-  extend(data.materials[0], leapController.plugins.riggedHand.materialOptions);
-  extend(data.geometry, leapController.plugins.riggedHand.geometryOptions);
+  extend(data.materials[0], riggedHand.scope.materialOptions);
+  extend(data.geometry, riggedHand.scope.geometryOptions);
   const handMesh = new THREE.SkinnedMesh(data.geometry, data.materials[0]);
   handMesh.positionRaw = new THREE.Vector3;
   handMesh.fingers = handMesh.children[0].children;
@@ -53,21 +53,21 @@ function createMesh(JSON) {
 }
 
 // Based on leap.rigged-hand-0.1.7#getMesh function.
-function getMesh(leapHand) {
+function getMesh(riggedHand, leapHand) {
   const meshes = spareMeshes[leapHand.type];
   if (meshes.length > 0) {
     return meshes.pop();
   } else {
     const JSON = rigs[leapHand.type];
-    return createMesh(JSON);
+    return createMesh(riggedHand, JSON);
   }
 }
 
 // Based on leap.rigged-hand-0.1.7#addMesh function.
-function addMesh(leapHand) {
-  const handMesh = getMesh(leapHand);
+function addMesh(riggedHand, leapHand) {
+  const handMesh = getMesh(riggedHand, leapHand);
   handMesh._leapData = leapHand;
-  leapController.plugins.riggedHand.parent.add(handMesh);
+  riggedHand.scope.parent.add(handMesh);
   const palm = handMesh.children[0];
   palm.worldUp = new THREE.Vector3;
   palm.positionLeap = new THREE.Vector3;
@@ -102,8 +102,8 @@ function setHandStyle(handMesh) {
   handMesh.material.transparent = true;
 }
 
-// Based on leap.rigged-hand-0.1.7 leapController.on('frame') handler that setups correct hand model positions.
-export function setupPhantomHand(handMesh, leapHand) {
+// Based on leap.rigged-hand-0.1.7 deviceController.on('frame') handler that setups correct hand model positions.
+export function setupPhantomHand(riggedHand, handMesh, leapHand) {
   leapHand.fingers = leapHand.fingers.sort(function (a, b) {
     return a.id - b.id;
   });
@@ -120,7 +120,7 @@ export function setupPhantomHand(handMesh, leapHand) {
   palm.up.fromArray(leapHand.palmNormal).multiplyScalar(-1);
   palm.worldUp.fromArray(leapHand.palmNormal).multiplyScalar(-1);
   handMesh.positionRaw.fromArray(leapHand.palmPosition);
-  handMesh.position.copy(handMesh.positionRaw).multiplyScalar(leapController.plugins.riggedHand.positionScale);
+  handMesh.position.copy(handMesh.positionRaw).multiplyScalar(riggedHand.scope.positionScale);
   handMesh.matrix.lookAt(palm.worldDirection, new THREE.Vector3(0, 0, 0), palm.up);
   palm.worldQuaternion.setFromRotationMatrix(handMesh.matrix);
   palm.children.forEach(function (mcp) {
@@ -134,36 +134,11 @@ export function setupPhantomHand(handMesh, leapHand) {
 }
 
 // Adds phantom hand to the rigged hands view.
-export function addPhantomHand(leapHandDesc) {
-  const mesh = addMesh(leapHandDesc);
-  setupPhantomHand(mesh, leapHandDesc);
+export function addPhantomHand(riggedHand, leapHandDesc) {
+  const mesh = addMesh(riggedHand, leapHandDesc);
+  setupPhantomHand(riggedHand, mesh, leapHandDesc);
   setHandStyle(mesh);
   return mesh;
-}
-
-// Returns the current hand description (via callback). Always pick the first hand available.
-// This description can be passed later to the addPhantomHand function.
-export function snapshotHand(callback) {
-  leapController.once('frame', function(frame) {
-    const hand = frame && frame.hands && frame.hands[0];
-    if (!hand) return;
-    // That's minimal data necessary to restore hand model later.
-    // Also, it ensures that there are no circular dependencies, so we can serialize it.
-    callback({
-      type: hand.type,
-      fingers: hand.fingers.map(f => {
-        return {
-          mcpPosition: f.mcpPosition,
-          pipPosition: f.pipPosition,
-          dipPosition: f.dipPosition,
-          tipPosition: f.tipPosition
-        };
-      }),
-      direction: hand.direction,
-      palmPosition: hand.palmPosition,
-      palmNormal: hand.palmNormal,
-    });
-  });
 }
 
 const DEF_FOLLOW_OPTIONS = {
@@ -173,11 +148,11 @@ const DEF_FOLLOW_OPTIONS = {
 };
 // Accepts phantom hand mesh and options. Makes sure that phantom hand follows the real hand position.
 // Options can be used to bind phantom hand to left or right hand and provide some x/y/z offset.
-export function followRealHand(handMesh, options = {}) {
+export function followRealHand(deviceController, riggedHand, handMesh, options = {}) {
   const opts = extend({}, DEF_FOLLOW_OPTIONS, options);
   const type = handMesh._leapData.type;
   if (handMesh._leapFollowHandler) {
-    leapController.removeListener('frame', handMesh._leapFollowHandler);
+    deviceController.removeListener('frame', handMesh._leapFollowHandler);
   }
   const handler = function(frame) {
     const hands = frame.hands;
@@ -187,21 +162,21 @@ export function followRealHand(handMesh, options = {}) {
       handMesh.positionRaw.x += opts.xOffset || 0;
       handMesh.positionRaw.y += opts.yOffset || 0;
       handMesh.positionRaw.z += opts.zOffset || 0;
-      handMesh.position.copy(handMesh.positionRaw).multiplyScalar(leapController.plugins.riggedHand.positionScale);
-      leapController.plugins.riggedHand.renderFn();
+      handMesh.position.copy(handMesh.positionRaw).multiplyScalar(riggedHand.scope.positionScale);
+      riggedHand.scope.renderFn();
     }
   };
-  leapController.on('frame', handler);
+  deviceController.on('frame', handler);
   // Save handler reference so we can clean it up later.
   handMesh._leapFollowHandler = handler;
 }
 
 // Based on leap.rigged-hand-0.1.7#removeMesh function.
-export function removePhantomHand(handMesh) {
-  leapController.plugins.riggedHand.parent.remove(handMesh);
+export function removePhantomHand(deviceController, riggedHand, handMesh) {
+  riggedHand.scope.parent.remove(handMesh);
   spareMeshes[handMesh._leapData.type].push(handMesh);
   if (handMesh._leapFollowHandler) {
-    leapController.removeListener('frame', handMesh._leapFollowHandler);
+    deviceController.removeListener('frame', handMesh._leapFollowHandler);
     handMesh._leapFollowHandler = null;
   }
 }

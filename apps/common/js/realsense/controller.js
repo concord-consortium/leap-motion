@@ -37,7 +37,7 @@ class RealSenseController {
     window.addEventListener('beforeunload', this.onBeforeUnload);
 
     // Delegate EventEmitter method.
-    ['on', 'removeListener', 'emit'].forEach(method => {
+    ['on', 'once', 'removeListener', 'emit'].forEach(method => {
       this[method] = this.dispatch[method].bind(this.dispatch);
     });
   }

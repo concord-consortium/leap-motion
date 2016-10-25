@@ -4,6 +4,9 @@ import leapController from '../tools/leap-controller';
 import realSenseController from '../realsense/controller';
 import leapRiggedHand from '../rigged-hand/leap-plugin';
 import realSenseRiggedHand from '../rigged-hand/realsense-plugin';
+import PhantomHandsBase from '../rigged-hand/phantom-hands';
+
+import '../../css/hands-view.less';
 
 const SKIN_COLOR = 0x93603F;
 
@@ -17,6 +20,7 @@ export default class LeapHandsView extends React.Component {
     this.refs.container.appendChild(this.renderer.domElement);
     this.initScene();
     this.initRiggedHandView();
+    this.initPhantomHands();
   }
 
   initRiggedHandView() {
@@ -51,10 +55,20 @@ export default class LeapHandsView extends React.Component {
     });
   }
 
+  initPhantomHands() {
+    this.phantomHands = new PhantomHandsBase({
+      riggedHand: this.riggedHand,
+      deviceController: this.deviceController
+    });
+  }
+
   componentDidUpdate(prevProps) {
-    const { width, height, positionScale } = this.props;
+    const { width, height, positionScale, phantomHands } = this.props;
     if (width !== prevProps.width || height !== prevProps.height) {
       this.resize3DView();
+    }
+    if (phantomHands !== prevProps.phantomHands) {
+      this.phantomHands.startAnimation(phantomHands);
     }
     this.riggedHand.scope.positionScale = positionScale;
     this.camera.position.fromArray(this.cameraPosition);
@@ -77,12 +91,21 @@ export default class LeapHandsView extends React.Component {
     return device === 'leap' ? LEAP_CAMERA_POS : REALSENSE_CAMERA_POS;
   }
 
+  get deviceController() {
+    const { device } = this.props;
+    return device === 'leap' ? leapController : realSenseController;
+  }
+
   resize3DView() {
     const width = this.width;
     const height = this.height;
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
+  }
+
+  snapshotHand(callback) {
+    this.phantomHands.snapshotHand(callback);
   }
 
   initScene() {
@@ -107,9 +130,11 @@ export default class LeapHandsView extends React.Component {
   }
 
   render() {
-    const {width, height} = this.props;
+    const {width, height, phantomHands} = this.props;
     return (
-      <div className='hands-view' ref='container' style={{width, height}}></div>
+      <div className='hands-view' ref='container' style={{width, height, position: 'relative'}}>
+        {phantomHands && <img src='leap.png' className='leap-img'/>}
+      </div>
     );
   }
 }
@@ -122,5 +147,6 @@ LeapHandsView.defaultProps = {
   handsOpacity: 0.85,
   positionScale: 1,
   positionOffset: [0, 0, 0],
-  cameraPosition: null // if it's null, LEAP_CAMERA_POS or REALSENSE_CAMERA_POS will be used
+  cameraPosition: null, // if it's null, LEAP_CAMERA_POS or REALSENSE_CAMERA_POS will be used
+  phantomHands: null
 };

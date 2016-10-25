@@ -2,7 +2,7 @@ import React from 'react';
 import reactMixin from 'react-mixin';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
-import PhantomHands from './phantom-hands.jsx';
+import phantomHands from './phantom-hands';
 import GesturesHelper from './gestures-helper';
 import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
@@ -216,11 +216,12 @@ export default class SeasonsSunrayAngle extends React.Component {
         </div>
         <InstructionsOverlay visible={overlayEnabled && overlayVisible} className={overlayClassName}
                              width={overlayWidth} height={overlayHeight}
-                             handsViewProps={{positionOffset: [0, -150, 0], cameraPosition: [0, 100, 500]}}>
+                             handsViewProps={{positionOffset: [0, -150, 0],
+                                              cameraPosition: [0, 100, 500],
+                                              phantomHands: phantomHands[overlayVisible && phantomHandsHint]}}>
           <div className='instructions'>
             {instructions}
           </div>
-          <PhantomHands hint={overlayVisible && phantomHandsHint}/>
         </InstructionsOverlay>
         <p>
           Overlay: <input type='checkbox' name='overlayEnabled' checked={overlayEnabled} onChange={this.handleInputChange}/>

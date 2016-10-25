@@ -1,8 +1,7 @@
 import React from 'react';
 import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
-import LeapHandsView from '../common/js/components/hands-view.jsx';
-import {snapshotHand, addPhantomHand, followRealHand, removePhantomHand} from '../common/js/tools/leap-phantom-hand';
+import HandsView from '../common/js/components/hands-view.jsx';
 import './hands-view-realistic.less'
 
 export default class HandsViewRealistic extends React.Component {
@@ -11,30 +10,34 @@ export default class HandsViewRealistic extends React.Component {
     this.state = {
       snapshots: []
     };
-    this.phantomHands = [];
     this.snapshot = this.snapshot.bind(this);
     this.rmPhantomHand = this.rmPhantomHand.bind(this);
   }
 
   snapshot() {
-    snapshotHand(data => {
+    this.refs.handsView.snapshotHand(data => {
       const { snapshots } = this.state;
       const newSnapshots = snapshots.concat(data);
       this.setState({snapshots: newSnapshots});
-      const mesh = addPhantomHand(data);
-      followRealHand(mesh, {type: data.type, xOffset: -100});
-      this.phantomHands.push(mesh);
     });
   }
 
   rmPhantomHand() {
-    const mesh = this.phantomHands.pop();
-    if (mesh) {
-      removePhantomHand(mesh);
-      const { snapshots } = this.state;
-      const newSnapshots = snapshots.slice(0, -1);
-      this.setState({snapshots: newSnapshots});
-    }
+    const { snapshots } = this.state;
+    const newSnapshots = snapshots.slice(0, -1);
+    this.setState({snapshots: newSnapshots});
+  }
+
+  getPhantomHands() {
+    const { snapshots } = this.state;
+    return {
+      hands: snapshots.map(snapshot => {
+        return {
+          frames: [snapshot],
+          follow: {xOffset: -100}
+        };
+      })
+    };
   }
 
   render() {
@@ -43,7 +46,7 @@ export default class HandsViewRealistic extends React.Component {
     return (
       <div className='hands-view-realistic'>
         <div className='view-container'>
-          <LeapHandsView width='100%' height='100%' handsOpacity={1}/>
+          <HandsView ref='handsView' width='100%' height='100%' handsOpacity={1} phantomHands={this.getPhantomHands()}/>
         </div>
         <div className='controls'>
           <button onClick={this.snapshot}>Take snapshot</button>
