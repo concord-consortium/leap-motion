@@ -1,9 +1,10 @@
 import React from 'react';
 import THREE from 'three';
+import 'leapjs-plugins';
+import 'leapjs-plugins/main/version-check/leap.version-check';
 import leapController from '../tools/leap-controller';
-import realSenseController from '../realsense/controller';
-import leapRiggedHand from '../rigged-hand/leap-plugin';
-import realSenseRiggedHand from '../rigged-hand/realsense-plugin';
+import realSenseLeapAdaptor from '../realsense/leap-adaptor';
+import riggedHand from '../rigged-hand/rigged-hand';
 import PhantomHandsBase from '../rigged-hand/phantom-hands';
 
 import '../../css/hands-view.less';
@@ -13,7 +14,7 @@ const SKIN_COLOR = 0x93603F;
 const LEAP_CAMERA_POS = [0, 500, 400];
 const REALSENSE_CAMERA_POS = [0, 0, 1000];
 
-export default class LeapHandsView extends React.Component {
+export default class HandsView extends React.Component {
   componentDidMount() {
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -34,12 +35,21 @@ export default class LeapHandsView extends React.Component {
         opacity: handsOpacity
       }
     };
+    let controller;
     if (device === 'leap') {
-      this.riggedHand = leapRiggedHand(leapController, options);
+      leapController.use('handHold');
+      leapController.use('handEntry');
+      leapController.use('versionCheck', {requiredProtocolVersion: 6});
+      controller = leapController;
     } else if (device === 'realsense') {
-      realSenseController.init();
-      this.riggedHand = realSenseRiggedHand(realSenseController, options);
+      realSenseLeapAdaptor.init();
+      controller = realSenseLeapAdaptor;
     }
+    this.riggedHand = riggedHand(options);
+    controller.on('handFound', this.riggedHand.callbacks.addMesh);
+    controller.on('handLost', this.riggedHand.callbacks.removeMesh);
+    controller.on('frame', this.riggedHand.callbacks.update);
+
     this.riggedHand.on('riggedHand.meshAdded', (handMesh) => {
       handMesh.material.color.setHex(SKIN_COLOR);
       handMesh.material.emissive.setHex(0x000000);
@@ -93,7 +103,7 @@ export default class LeapHandsView extends React.Component {
 
   get deviceController() {
     const { device } = this.props;
-    return device === 'leap' ? leapController : realSenseController;
+    return device === 'leap' ? leapController : realSenseLeapAdaptor;
   }
 
   resize3DView() {
@@ -130,16 +140,16 @@ export default class LeapHandsView extends React.Component {
   }
 
   render() {
-    const {width, height, phantomHands} = this.props;
+    const {width, height, phantomHands, device} = this.props;
     return (
       <div className='hands-view' ref='container' style={{width, height, position: 'relative'}}>
-        {phantomHands && <img src='leap.png' className='leap-img'/>}
+        {phantomHands && device === 'leap' && <img src='leap.png' className='leap-img'/>}
       </div>
     );
   }
 }
 
-LeapHandsView.defaultProps = {
+HandsView.defaultProps = {
   device: 'leap', // or 'realsense'
   width: '100%',
   height: '100%',

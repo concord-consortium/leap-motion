@@ -116,6 +116,10 @@ class RealSenseController {
         this.trackedHands.delete(uniqueId);
       }
     });
+    this.onFrame(data);
+  }
+
+  onFrame(data) {
     this.dispatch.emit('frame', data);
   }
 
@@ -136,6 +140,6 @@ class RealSenseController {
   }
 }
 
-// Allow only one instance (singleton)
+// Allow only one instance (singleton).
 const controller = new RealSenseController();
 export default controller;
