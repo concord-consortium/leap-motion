@@ -1,26 +1,34 @@
 import leapController from '../tools/leap-controller';
+import rsLeapAdaptor from '../realsense/leap-adaptor';
+import getURLParam from '../tools/get-url-param';
+
+const device = getURLParam('device') || 'leap';
+const controller = device === 'leap' ? leapController : rsLeapAdaptor;
 
 // Simplified version.
 // Target is expected to implement #handleLeapFrame(frame) method.
 export default {
   componentDidMount: function () {
-    this.leapConnect();
+    this.deviceConnect();
   },
 
   componentWillUnmount: function () {
-    this.leapDisconnect();
+    this.deviceDisconnect();
   },
 
-  leapConnect: function () {
+  deviceConnect: function () {
     this._onFrameCallback = (frame) => {
       this.handleLeapFrame(this.preprocessLeapFrame(frame));
     };
-    leapController.on('frame', this._onFrameCallback);
+    if (device === 'realsense') {
+      controller.init();
+    }
+    controller.on('frame', this._onFrameCallback);
   },
 
-  leapDisconnect: function () {
+  deviceDisconnect: function () {
     if (this._onFrameCallback) {
-      leapController.removeListener('frame', this._onFrameCallback);
+      controller.removeListener('frame', this._onFrameCallback);
       this._onFrameCallback = null;
     }
   },

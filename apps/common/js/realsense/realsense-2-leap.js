@@ -26,6 +26,9 @@ const handType = {
 };
 
 const handData = {};
+const position = {};
+const timeStamp = {};
+const velocity = {};
 
 // Convert RealSense object vector representation to LealMotion format and coords system.
 function rs2lm(vec) {
@@ -59,12 +62,35 @@ function rsHandPalmNormal(rsHand) {
   // return rs2lm(pinkyVec.cross(indexVec).normalize());
 }
 
+function rsPalmVelocity(rsHand) {
+  const pos = rs2lmPos(rsHand.trackedJoints[JT.JOINT_CENTER].positionWorld);
+  const prevPos = position[rsHand.uniqueId];
+  const prevTimeStamp = timeStamp[rsHand.uniqueId];
+
+  let result = [0, 0, 0];
+  if (prevPos && prevTimeStamp) {
+    const timeDiff = (rsHand.timeStamp - prevTimeStamp) / 1000000;
+    if (timeDiff > 0) {
+      result = [(pos[0] - prevPos[0]) / timeDiff, (pos[1] - prevPos[1]) / timeDiff, (pos[2] - prevPos[2]) / timeDiff];
+    } else {
+      result = velocity[rsHand.uniqueId];
+    }
+  }
+  // Save object reference so we can calculate things like velocity in the next frame.
+  position[rsHand.uniqueId] = pos;
+  timeStamp[rsHand.uniqueId] = rsHand.timeStamp;
+  velocity[rsHand.uniqueId] = result;
+  return result;
+}
+
 export function realSenseHand2Leap(rsHand) {
   const hand = {};
   const joints = rsHand.trackedJoints;
   hand.id = rsHand.uniqueId;
   hand.type = handType[rsHand.bodySide];
+  hand.grabStrength = (100 - rsHand.openness) / 100;
   hand.palmPosition = rs2lmPos(joints[JT.JOINT_CENTER].positionWorld);
+  hand.palmVelocity = rsPalmVelocity(rsHand);
   hand.palmNormal = rsHandPalmNormal(rsHand);
   hand.direction = rsHandDirection(rsHand);
   hand.fingers = [

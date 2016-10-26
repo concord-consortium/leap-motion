@@ -6,8 +6,11 @@ import leapController from '../tools/leap-controller';
 import realSenseLeapAdaptor from '../realsense/leap-adaptor';
 import riggedHand from '../rigged-hand/rigged-hand';
 import PhantomHandsBase from '../rigged-hand/phantom-hands';
+import getURLParam from '../tools/get-url-param';
 
 import '../../css/hands-view.less';
+
+const DEF_DEVICE = getURLParam('device') || 'leap';
 
 const SKIN_COLOR = 0x93603F;
 
@@ -150,7 +153,7 @@ export default class HandsView extends React.Component {
 }
 
 HandsView.defaultProps = {
-  device: 'leap', // or 'realsense'
+  device: DEF_DEVICE, // 'leap' or 'realsense', 'leap' by default but can be controller by URL param too
   width: '100%',
   height: '100%',
   // Following props are not dynamic, you can change them only while initializing hands view.

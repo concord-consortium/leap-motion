@@ -15,6 +15,14 @@ function lmPosFormat(obj, prop) {
   );
 }
 
+function propFormat(obj, prop) {
+  if (!obj) return null;
+  const val = obj[prop];
+  return (
+    <tr><td className="prop-name">{prop}</td><td>{val.toFixed(2)}</td></tr>
+  );
+}
+
 export default class RealSenseTest extends React.Component {
   constructor(props) {
     super(props);
@@ -62,8 +70,10 @@ export default class RealSenseTest extends React.Component {
             <table>
               <tbody>
                 {lmPosFormat(lmHand, 'palmPosition')}
+                {lmPosFormat(lmHand, 'palmVelocity')}
                 {lmPosFormat(lmHand, 'palmNormal')}
                 {lmPosFormat(lmHand, 'direction')}
+                {propFormat(lmHand, 'grabStrength')}
               </tbody>
               {this.renderFinger(lmHand, 0)}
               {this.renderFinger(lmHand, 1)}

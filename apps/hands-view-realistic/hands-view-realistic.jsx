@@ -2,11 +2,8 @@ import React from 'react';
 import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
 import HandsView from '../common/js/components/hands-view.jsx';
-import getURLParam from '../common/js/tools/get-url-param';
 
 import './hands-view-realistic.less'
-
-const DEVICE = getURLParam('device') || 'leap';
 
 export default class HandsViewRealistic extends React.Component {
   constructor(props) {
@@ -50,7 +47,7 @@ export default class HandsViewRealistic extends React.Component {
     return (
       <div className='hands-view-realistic'>
         <div className='view-container'>
-          <HandsView ref='handsView' device={DEVICE} width='100%' height='100%' handsOpacity={1} phantomHands={this.getPhantomHands()}/>
+          <HandsView ref='handsView' width='100%' height='100%' handsOpacity={1} phantomHands={this.getPhantomHands()}/>
         </div>
         <div className='controls'>
           <button onClick={this.snapshot}>Take snapshot</button>
