@@ -4,6 +4,7 @@ import pureRender from 'react-addons-pure-render-mixin';
 import Lab from 'react-lab';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import setLabProps from '../common/js/mixins/set-lab-props';
+import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import FistShake from './fist-shake';
 import LeapStatus from '../common/js/components/leap-status.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
@@ -23,8 +24,6 @@ export default class LabHeatTransfer extends React.Component {
     this.state = {
       leapState: 'initial',
       overlayEnabled: true,
-      overlayVisible: true,
-      gestureEverDetected: false,
       handleSensitivity: 1,
       springStrength: 1500,
       atomMass: 150,
@@ -45,8 +44,8 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   labModelLoaded() {
-    // Reset Lab properties when model is reloaded.
-    this.setState({overlayVisible: true, gestureEverDetected: false})
+    // Mixin method that updates overlayActive state.
+    this.resetOverlay();
   }
 
   handleInputChange(event) {
@@ -69,22 +68,18 @@ export default class LabHeatTransfer extends React.Component {
             this.setLeapState('twoHandsDetected');
           }
           this.setLabProps({handlePosDiff: {x: 0, y: 0}, keChange: false});
-        }
 
-        if (data.numberOfHands > 0) {
-          // Show overlay if user keeps his hands over the Leap.
-          this.setState({overlayVisible: true});
-        } else if (this.state.gestureEverDetected) {
-          // But hide it if user removes hands and gesture has been detected before.
-          // This might be useful when user simply wants to watch the simulation.
-          this.setState({overlayVisible: false});
+          // Mixin method that updates overlayActive state.
+          this.updateOverlayOnGestureNotDetected(data.numberOfHands);
         }
       },
       gestureDetected: (data) => {
         this.setLeapState('oneClosedFist');
         let keChange = data.cooling ? 'decreasing' : 'increasing';
         this.setLabProps({handlePosDiff: {x: data.xDiff, y: data.yDiff}, keChange});
-        this.setState({overlayVisible: false, gestureEverDetected: true});
+
+        // Mixin method that updates overlayActive state.
+        this.updateOverlayOnGestureDetected();
       }
     };
   }
@@ -103,7 +98,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { overlayEnabled, overlayVisible, labProps } = this.state;
+    const { overlayEnabled, overlayActive, labProps } = this.state;
     return (
       <div>
         <div className='container'>
@@ -113,7 +108,7 @@ export default class LabHeatTransfer extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayEnabled && overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT }>
+          <InstructionsOverlay visible={overlayEnabled && overlayActive} width={IFRAME_WIDTH} height={IFRAME_HEIGHT }>
             <div className='instructions'>
               {this.getStateMsg()}
             </div>
@@ -189,3 +184,4 @@ export default class LabHeatTransfer extends React.Component {
 reactMixin.onClass(LabHeatTransfer, pureRender);
 reactMixin.onClass(LabHeatTransfer, leapStateHandlingV2);
 reactMixin.onClass(LabHeatTransfer, setLabProps);
+reactMixin.onClass(LabHeatTransfer, overlayVisibility);

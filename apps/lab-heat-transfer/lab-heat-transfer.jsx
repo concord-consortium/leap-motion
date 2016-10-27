@@ -3,6 +3,7 @@ import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
 import Lab from 'react-lab';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
+import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import FistShake from './fist-shake';
 import avg from '../common/js/tools/avg';
@@ -23,7 +24,6 @@ const DEF_LAB_PROPS = {
   spoonEnabled: false
 };
 
-const MIN_GESTURE_TIME = 2500;
 const IFRAME_WIDTH = 610;
 const IFRAME_HEIGHT = 450;
 
@@ -45,9 +45,7 @@ export default class LabHeatTransfer extends React.Component {
     this.resetHandTimeoutChanged = this.resetHandTimeoutChanged.bind(this);
     this.state = {
       leapState: 'initial',
-      overlayEnabled: true,
-      overlayActive: true,
-      gestureEverDetected: false
+      overlayEnabled: true
     }
   }
 
@@ -66,7 +64,8 @@ export default class LabHeatTransfer extends React.Component {
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
-    this.setState({overlayActive: true, gestureEverDetected: false})
+    // Mixin method that updates overlayActive state.
+    this.resetOverlay();
   }
 
   resetHandTimeoutChanged(event) {
@@ -94,14 +93,8 @@ export default class LabHeatTransfer extends React.Component {
           this.setLeapState(data.numberOfHands === 1 ? 'oneHandDetected' : 'initial');
           this.plotter.showCanvas(null);
 
-          if (data.numberOfHands > 0) {
-            // Show overlay if user keeps his hands over the Leap.
-            this.setState({overlayActive: true});
-          } else if (this.state.gestureEverDetected) {
-            // But hide it if user removes hands and gesture has been detected before.
-            // This might be useful when user simply wants to watch the simulation.
-            this.setState({overlayActive: false});
-          }
+          // Mixin method that updates overlayActive state.
+          this.updateOverlayOnGestureNotDetected(data.numberOfHands);
         }
       },
       gestureDetected: (data) => {
@@ -119,16 +112,8 @@ export default class LabHeatTransfer extends React.Component {
         this.plotter.plot('frequency', avgFreq, {min: 0, max: 9, precision: 2});
         this.plotter.update();
 
-        const { overlayActive, gestureDetectedTimestamp } = this.state;
-        if (overlayActive) {
-          if (!gestureDetectedTimestamp) {
-            this.setState({gestureDetectedTimestamp: Date.now()});
-          }
-          if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
-            // Disable overlay after gesture has been detected for some time.
-            this.setState({overlayActive: false, gestureEverDetected: true});
-          }
-        }
+        // Mixin method that updates overlayActive state.
+        this.updateOverlayOnGestureDetected();
       }
     };
   }
@@ -208,3 +193,4 @@ export default class LabHeatTransfer extends React.Component {
 reactMixin.onClass(LabHeatTransfer, pureRender);
 reactMixin.onClass(LabHeatTransfer, leapStateHandlingV2);
 reactMixin.onClass(LabHeatTransfer, setLabProps);
+reactMixin.onClass(LabHeatTransfer, overlayVisibility);

@@ -4,6 +4,7 @@ import pureRender from 'react-addons-pure-render-mixin';
 import Lab from 'react-lab';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import setLabProps from '../common/js/mixins/set-lab-props';
+import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import FistBump from './fist-bump';
 import avg from '../common/js/tools/avg';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
@@ -27,7 +28,6 @@ const DEF_LAB_PROPS = {
   markerSensitivity: 1
 };
 
-const MIN_GESTURE_TIME = 2500;
 const IFRAME_WIDTH = 610;
 const IFRAME_HEIGHT = 350;
 
@@ -38,10 +38,7 @@ export default class LabVolumePressure extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.state = {
       leapState: {},
-      overlayEnabled: true,
-      overlayActive: true,
-      gestureEverDetected: false,
-      gestureDetectedTimestamp: null
+      overlayEnabled: true
     }
   }
 
@@ -52,7 +49,8 @@ export default class LabVolumePressure extends React.Component {
   labModelLoaded() {
     // Reset Lab properties when model is reloaded.
     this.setLabProps(DEF_LAB_PROPS);
-    this.setState({overlayActive: true, gestureEverDetected: false})
+    // Mixin method that updates overlayActive state.
+    this.resetOverlay();
   }
 
   handleInputChange(event) {
@@ -82,14 +80,8 @@ export default class LabVolumePressure extends React.Component {
         this.plotter.showCanvas(null);
 
         if (!this.finalGesture) {
-          if (leapState.numberOfHands > 0) {
-            // Show overlay if user keeps his hands over the Leap.
-            this.setState({overlayActive: true});
-          } else if (this.state.gestureEverDetected) {
-            // But hide it if user removes hands and gesture has been detected before.
-            // This might be useful when user simply wants to watch the simulation.
-            this.setState({overlayActive: false});
-          }
+          // Mixin method that updates overlayActive state.
+          this.updateOverlayOnGestureNotDetected(leapState.numberOfHands);
         }
       },
       orientationDetected: (orientation) => {
@@ -106,16 +98,8 @@ export default class LabVolumePressure extends React.Component {
 
         this.setLabProps({volume: volume});
 
-        const { overlayActive, gestureDetectedTimestamp } = this.state;
-        if (overlayActive) {
-          if (!gestureDetectedTimestamp) {
-            this.setState({gestureDetectedTimestamp: Date.now()});
-          }
-          if (gestureDetectedTimestamp && Date.now() - gestureDetectedTimestamp > MIN_GESTURE_TIME) {
-            // Disable overlay after gesture has been detected for some time.
-            this.setState({overlayActive: false, gestureEverDetected: true});
-          }
-        }
+        // Mixin method that updates overlayActive state.
+        this.updateOverlayOnGestureDetected();
       }
     };
   }
@@ -228,3 +212,4 @@ export default class LabVolumePressure extends React.Component {
 reactMixin.onClass(LabVolumePressure, pureRender);
 reactMixin.onClass(LabVolumePressure, leapStateHandlingV2);
 reactMixin.onClass(LabVolumePressure, setLabProps);
+reactMixin.onClass(LabVolumePressure, overlayVisibility);
