@@ -3,6 +3,8 @@ import reactMixin from 'react-mixin';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
+import logger from '../common/js/tools/logger';
+import LoggingConfig from '../common/js/components/logging-config.jsx';
 import phantomHands from './phantom-hands';
 import GesturesHelper from './gestures-helper';
 import ModelController from './model-controller';
@@ -55,10 +57,17 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.gesturesHelper = new GesturesHelper();
     this.handleConfigChange = this.handleConfigChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSimStateChange = this.handleSimStateChange.bind(this);
+    this.handleViewStateChange = this.handleViewStateChange.bind(this);
+    this.handleLoggingStart = this.handleLoggingStart.bind(this);
+    this.handleLoggingEnd = this.handleLoggingEnd.bind(this);
   }
 
   componentDidMount() {
-    this.modelController.setupModelCommunication(this.refs.seasonsModel);
+    this.modelController.setSeasonsComponent(this.refs.seasonsModel);
+    if (logger.enabled) {
+      this.handleLoggingStart();
+    }
   }
 
   handleConfigChange(event) {
@@ -190,6 +199,33 @@ export default class SeasonsSunrayAngle extends React.Component {
     return gestureDetected;
   }
 
+  handleSimStateChange(state) {
+    this.modelController.handleSimStateChange(state);
+  }
+
+  handleViewStateChange(state) {
+    this.modelController.handleViewStateChange(state);
+  }
+
+  getBasicLogParams() {
+    return {
+      sim: this.modelController.seasonsState,
+      view: this.modelController.seasonsView,
+      leapControlledView: this.modelController.activeRaysView
+    };
+  }
+
+  handleLoggingStart() {
+    logger.log('LoggingStarted', this.getBasicLogParams());
+    this._loggingStarted = Date.now();
+  }
+
+  handleLoggingEnd() {
+    const params = this.getBasicLogParams();
+    params.duration = (Date.now() - this._loggingStarted) / 1000;
+    logger.log('LoggingFinished', params);
+  }
+
   render() {
     const { instructions, activeViewPanel, overlayEnabled, overlayActive, phantomHandsHint } = this.state;
     // Each time user changes position of the rays view, we need to reposition and resize overlay.
@@ -199,10 +235,13 @@ export default class SeasonsSunrayAngle extends React.Component {
     const overlayHeight = OVERLAY_SIZE[activeViewPanel].height;
     const overlayClassName = `grasp-seasons ${activeViewPanel}`;
     const overlayVisible = overlayEnabled && overlayActive;
+
     return (
       <div>
         <div style={{background: '#f6f6f6', width: '1210px'}}>
-          <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}/>
+          <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}
+                   onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange} f
+                   logHandler={logger.log}/>
         </div>
         <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
                              width={overlayWidth} height={overlayHeight}
@@ -226,6 +265,7 @@ export default class SeasonsSunrayAngle extends React.Component {
                                                   defaultValue={this.gesturesHelper.config.maxDist}
                                                   onChange={this.handleConfigChange}/>
         </p>
+        <LoggingConfig onStart={this.handleLoggingStart} onEnd={this.handleLoggingEnd}/>
       </div>
     );
   }

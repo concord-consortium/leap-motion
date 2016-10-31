@@ -38,6 +38,10 @@ export default class ModelController {
     return this.seasons ? this.seasons.state.sim : {};
   }
 
+  get seasonsView() {
+    return this.seasons ? this.seasons.state.view : {};
+  }
+
   get activeRaysView() {
     if (!this.seasons) {
       // If seasons isn't loaded yet, return true since the ground view control is the default view.
@@ -47,7 +51,7 @@ export default class ModelController {
     let result = GROUND;
     ['small-bottom', 'small-top', 'main'].forEach(function (pos) {
       if (viewState[pos] === 'raysGround') result = GROUND;
-      if (viewState[pos] === 'raysSpace') result = SPACE;
+      else if (viewState[pos] === 'raysSpace') result = SPACE;
     });
     return result;
   }
@@ -72,15 +76,9 @@ export default class ModelController {
     this.withinTargetAngle = false;
   }
 
-  setupModelCommunication(seasonsComponent) {
+  setSeasonsComponent(seasonsComponent) {
     this.seasons = seasonsComponent;
-    this.seasons.on('simState.change', this.handleSimStateUpdate.bind(this));
-    this.seasons.on('viewState.change', () => {
-      this.handleSimStateUpdate();
-      this.callbacks.activeRayViewChanged(this.activeRaysView);
-      this.callbacks.activeViewPanelChanged(this.activeViewPanel);
-    });
-    this.handleSimStateUpdate();
+    this.handleSimStateChange();
   }
 
   setAnimButtonsDisabled(v) {
@@ -143,9 +141,15 @@ export default class ModelController {
     return this.setAngle(angle);
   }
 
-  handleSimStateUpdate() {
+  handleSimStateChange() {
     this.targetAngle = this.sunrayAngle(this.seasonsState.day);
     this.resetInteractionState();
+  }
+
+  handleViewStateChange() {
+    this.handleSimStateChange();
+    this.callbacks.activeRayViewChanged(this.activeRaysView);
+    this.callbacks.activeViewPanelChanged(this.activeViewPanel);
   }
 
   updateTargetAngle(newAngle) {
