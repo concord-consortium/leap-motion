@@ -7,6 +7,7 @@ import logger from '../common/js/tools/logger';
 import LoggingConfig from '../common/js/components/logging-config.jsx';
 import phantomHands from './phantom-hands';
 import GesturesHelper from './gestures-helper';
+import GesturesLogger from './gestures-logger';
 import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
 import './seasons-sunray-angle.less';
@@ -55,12 +56,14 @@ export default class SeasonsSunrayAngle extends React.Component {
       activeViewPanelChanged: this.activeViewPanelChanged.bind(this)
     });
     this.gesturesHelper = new GesturesHelper();
+    this.gesturesLogger = new GesturesLogger();
     this.handleConfigChange = this.handleConfigChange.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSimStateChange = this.handleSimStateChange.bind(this);
     this.handleViewStateChange = this.handleViewStateChange.bind(this);
     this.handleLoggingStart = this.handleLoggingStart.bind(this);
     this.handleLoggingEnd = this.handleLoggingEnd.bind(this);
+    this.log = this.log.bind(this);
   }
 
   componentDidMount() {
@@ -114,6 +117,7 @@ export default class SeasonsSunrayAngle extends React.Component {
 
     this.updateOverlayVisibility(data, gestureDetected);
     this.updatePhantomHandsHint(data, gestureDetected);
+    this.gesturesLogger.logGesture(data, gestureDetected, this.modelController.seasonsState.day);
   }
 
   updateOverlayVisibility(data, gestureDetected) {
@@ -226,6 +230,13 @@ export default class SeasonsSunrayAngle extends React.Component {
     logger.log('LoggingFinished', params);
   }
 
+  log(action, data) {
+    if (action === 'ViewsRearranged') {
+      data.leapControlledView = this.modelController.activeRaysView;
+    }
+    logger.log(action, data);
+  }
+
   render() {
     const { instructions, activeViewPanel, overlayEnabled, overlayActive, phantomHandsHint } = this.state;
     // Each time user changes position of the rays view, we need to reposition and resize overlay.
@@ -241,7 +252,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         <div style={{background: '#f6f6f6', width: '1210px'}}>
           <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}
                    onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange} f
-                   logHandler={logger.log}/>
+                   logHandler={this.log}/>
         </div>
         <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
                              width={overlayWidth} height={overlayHeight}
