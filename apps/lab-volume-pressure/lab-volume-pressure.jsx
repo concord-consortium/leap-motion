@@ -131,8 +131,8 @@ export default class LabVolumePressure extends React.Component {
       case 'noHands': return 'Place hands six inches over the Leap controller.';
       case 'handMissing': return 'Place two hands over the Leap controller.';
       case 'rotate': return 'Rotate one hand to become the plunger.';
-      case 'fist': return 'Make fist with the other hand to become the molecules.';
-      default: return 'Tap fist to palm to change how molecules hit the plunger. Try fast and slow.';
+      case 'fist': return 'Make a fist with the other hand to become the molecules.';
+      default: return 'Tap fist to palm to show how often the molecules hit.';
     }
   }
 

@@ -87,13 +87,13 @@ export default class LabHeatTransfer extends React.Component {
   getStateMsg() {
     switch(this.state.leapState) {
       case 'initial':
-        return 'Please keep you hand steady above the Leap device';
+        return 'Place one hand over the Leap controller.';
       case 'oneHandDetected':
-        return 'Close your fist';
+        return 'Close your fist to become molecule.';
       case 'twoHandsDetected':
-        return 'Use only one hand';
+        return 'Use only one hand.';
       case 'oneClosedFist':
-        return 'Shake your fist';
+        return 'Bump your fists to show the molecule moving.';
     }
   }
 

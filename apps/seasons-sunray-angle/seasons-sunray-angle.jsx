@@ -28,11 +28,11 @@ const INITIAL_SEASONS_STATE = {
 
 const INSTRUCTIONS = {
   INITIAL_GROUND: 'Use one hand to set sunray angle or two hands to set distance between rays.',
-  INITIAL_SPACE: 'Use one hand to set ground angle or distance between rays.',
+  INITIAL_SPACE: 'Use one hand to set ground angle or two hands to set distance between rays.',
   TWO_HANDS: 'Please keep you hands vertical.',
-  ROTATE_GROUND: 'Rotate your hand to set the sunray angle.',
-  ROTATE_SPACE: 'Rotate your hand to set the ground angle.',
-  DISTANCE: 'Your hands represent distance between rays.'
+  ROTATE_GROUND: 'Rotate your hand to show the sunray angle.',
+  ROTATE_SPACE: 'Rotate your hand to show the ground angle.',
+  DISTANCE: 'Change the distance between your hands to show the distance between rays.'
 };
 
 const OVERLAY_SIZE = {
