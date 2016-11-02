@@ -363,54 +363,71 @@
   },
   "obstacles": {
     "x": [
+      1.5000008791686752,
       1.5000008791686752
     ],
     "y": [
-      0
+      0,
+      1
     ],
     "vx": [
+      0,
       0
     ],
     "vy": [
+      0,
       0
     ],
     "externalAx": [
+      0,
       0
     ],
     "externalAy": [
+      0,
       0
     ],
     "displayExternalAcceleration": [
+      true,
       true
     ],
     "friction": [
+      0,
       0
     ],
     "height": [
-      2.5
+      2.5,
+      0.5
     ],
     "width": [
-      0.3
+      0.3,
+      0
     ],
     "mass": [
+      "Infinity",
       "Infinity"
     ],
     "westProbe": [
-      true
+      true,
+      false
     ],
     "northProbe": [
+      false,
       false
     ],
     "eastProbe": [
-      true
+      true,
+      false
     ],
     "southProbe": [
+      false,
       false
     ],
     "color": [
-      "rgb(140,187,184)"
+      "#888",
+      "#555"
     ],
     "visible": [
+      true,
       true
     ]
   }

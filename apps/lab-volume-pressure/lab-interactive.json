@@ -120,9 +120,8 @@
         "    var atom = getAtomProperties(i);",
         "    setAtomProperties(i, {x: width - atom.x, vx: -atom.vx});",
         "  }",
-        "  var obs = getObstacleProperties(0);",
-        "  setObstacleProperties(0, {x: width - obs.x - obs.width});",
         "});",
+        "set('volume', get('volume'));",
         "set('prevOrientation', value);"
       ]
     },
@@ -139,6 +138,9 @@
         "var obsX = o === 'left' ? newX - getObstacleProperties(0).width : newX;",
         "if (getObstacleProperties(0).x === obsX) return;",
         "setObstacleProperties(0, {x: obsX});",
+        "var pistonX = o === 'left' ? 0.01 : newX + getObstacleProperties(0).width - 0.01;",
+        "var pistonWidth = o === 'left' ? obsX : width - newX - getObstacleProperties(0).width;",
+        "setObstacleProperties(1, {x: pistonX, width: pistonWidth});",
         "var minX = Infinity;",
         "var maxX = 0;",
         "for(var i = 0; i < getNumberOfAtoms(); i++) {",
@@ -168,6 +170,13 @@
         "setObstacleProperties(0, {color: value ? '#E8DC36' : '#888'});",
         "setComponentDisabled('plunger-right', value);",
         "setComponentDisabled('plunger-left', value);"
+      ]
+    },
+    {
+      "name": "plungerRodVisible",
+      "initialValue": false,
+      "onChange": [
+        "setObstacleProperties(1, {visible: value});"
       ]
     },
     {

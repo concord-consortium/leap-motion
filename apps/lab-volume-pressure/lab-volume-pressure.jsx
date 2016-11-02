@@ -25,7 +25,8 @@ const DEF_LAB_PROPS = {
   atomsHighlighted: false,
   markersCount: 25,
   markerFadeSpeed: 0.075,
-  markerSensitivity: 1
+  markerSensitivity: 1,
+  plungerRodVisible: false
 };
 
 const IFRAME_WIDTH = 610;
@@ -163,6 +164,12 @@ export default class LabVolumePressure extends React.Component {
                 <input type='checkbox' name='overlayEnabled'
                        checked={overlayEnabled}
                        onChange={this.handleInputChange}/>
+              </td>
+            </tr>
+            <tr>
+              <td>Plunger rod visible:</td>
+              <td>
+                <input type='checkbox' name='plungerRodVisible' value={labProps.plungerRodVisible} onChange={this.handleLabPropChange}/>
               </td>
             </tr>
             <tr>
