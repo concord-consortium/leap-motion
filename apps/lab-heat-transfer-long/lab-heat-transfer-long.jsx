@@ -195,11 +195,11 @@ export default class LabHeatTransfer extends React.Component {
               <td>Epsilon (attractive force):</td>
               <td>
                 <input type='text' name='epsilon' size='7'
-                       value={labProps.epsilon}
+                       value={labProps.epsilon || 0}
                        onChange={this.handleLabPropChange}/>
                 <input type='range' name='epsilon'
                        min='0.2' max='5' step='0.1'
-                       value={labProps.epsilon}
+                       value={labProps.epsilon || 0}
                        onChange={this.handleLabPropChange}/>
               </td>
             </tr>
