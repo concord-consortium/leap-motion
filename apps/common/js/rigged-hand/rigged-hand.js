@@ -180,6 +180,7 @@ export default function riggedHand(scope = {}) {
     } else {
       let JSON = rigs[leapHand.type];
       var handMesh = createMesh(JSON);
+      handMesh.type = leapHand.type;
     }
 
     return handMesh;
@@ -300,7 +301,7 @@ export default function riggedHand(scope = {}) {
           handMesh.helper = null;
         }
 
-        spareMeshes[leapHand.type].push(handMesh);
+        spareMeshes[handMesh.type].push(handMesh);
 
         if (scope.boneLabels) {
           // start with palm
