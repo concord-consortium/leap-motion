@@ -26,7 +26,7 @@ const DEF_LAB_PROPS = {
   markersCount: 25,
   markerFadeSpeed: 0.075,
   markerSensitivity: 1,
-  plungerRodVisible: false
+  plungerRodVisible: true
 };
 
 const IFRAME_WIDTH = 610;
@@ -169,7 +169,7 @@ export default class LabVolumePressure extends React.Component {
             <tr>
               <td>Plunger rod visible:</td>
               <td>
-                <input type='checkbox' name='plungerRodVisible' value={labProps.plungerRodVisible} onChange={this.handleLabPropChange}/>
+                <input type='checkbox' name='plungerRodVisible' checked={labProps.plungerRodVisible || false} onChange={this.handleLabPropChange}/>
               </td>
             </tr>
             <tr>
