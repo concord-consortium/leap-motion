@@ -1,8 +1,26 @@
 import React from 'react';
 import getURLParam from '../common/js/tools/get-url-param';
+
 import HandsViewRealistic from '../hands-view-realistic/hands-view-realistic.jsx';
+import HandsViewSimple from '../common/js/components/leap-hands-view-simple.jsx';
+import LabAddRmAtomTest from '../lab-add-rm-atom-test/lab-add-rm-atom-test.jsx';
+import LabAddRmAtomTestSwipe from '../lab-add-rm-atom-test-swipe/lab-add-rm-atom-test-swipe.jsx';
+
 import LabHeatTransfer from '../lab-heat-transfer/lab-heat-transfer.jsx';
+import LabHeatTransferLong from '../lab-heat-transfer-long/lab-heat-transfer-long.jsx';
+import LabHeatTransferMicro from '../lab-heat-transfer-micro/lab-heat-transfer-micro.jsx';
+import LabHeatTransferMicroDirect from '../lab-heat-transfer-micro-direct/lab-heat-transfer-micro-direct.jsx';
+import LabHeatTransferMicroTwoAtoms from '../lab-heat-transfer-micro-two-atoms/lab-heat-transfer-micro-two-atoms.jsx';
+import LabHeatTransferTwoHands from '../lab-heat-transfer-two-hands/lab-heat-transfer-two-hands.jsx';
+
+import LabPressureEquilibrium from '../lab-pressure-equilibrium/lab-pressure-equilibrium.jsx';
+import LabTemperatureAbsolute from '../lab-temperature-absolute/lab-temperature-absolute.jsx';
+import LabTemperatureDelta from '../lab-temperature-delta/lab-temperature-delta.jsx';
+import LabTemperatureTest from '../lab-temperature-test/lab-temperature-test.jsx';
+
 import LabVolumePressure from '../lab-volume-pressure/lab-volume-pressure.jsx';
+import RealSenseTest from '../realsense-test/realsense-test.jsx';
+import SeasonsSunrayAngle from '../seasons-sunray-angle/seasons-sunray-angle.jsx';
 import ProjectList from './project-list.jsx';
 
 import './base-app.less';
@@ -34,7 +52,28 @@ export default class BaseApp extends React.Component {
 BaseApp.defaultProps = {
   sim: SIMULATION,
   simList: {
-    'index': <ProjectList/>,
-    'labheattransfer': <LabHeatTransfer/>
+    'index': <ProjectList />,
+
+    'handsviewrealistic': <HandsViewRealistic />,
+    'handsviewsimple': <HandsViewSimple />,
+    'labaddrmatomtest': <LabAddRmAtomTest />,
+    'labaddrmatomtestswipe': <LabAddRmAtomTestSwipe />,
+
+    'labheattransfer': <LabHeatTransfer />,
+    'labheattransferlong': <LabHeatTransferLong />,
+    'labheattransfermicro': <LabHeatTransferMicro />,
+    'labheattransfermicrodirect': <LabHeatTransferMicroDirect />,
+    'labheattransfermicrotwoatoms': <LabHeatTransferMicroTwoAtoms />,
+    'labheattransfertwohands': <LabHeatTransferTwoHands />,
+
+    'labpressureequilibrium': <LabPressureEquilibrium />,
+    'labtemperatureabsolute': <LabTemperatureAbsolute />,
+    'labtemperaturedelta': <LabTemperatureDelta />,
+    'labtemperaturetest': <LabTemperatureTest />,
+
+    'labvolumepressure': <LabVolumePressure />,
+    'realsensetest': <RealSenseTest />,
+    'seasons': <SeasonsSunrayAngle />
+
   }
 }

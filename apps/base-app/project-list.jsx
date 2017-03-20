@@ -7,15 +7,15 @@ export default class ProjectList extends React.Component {
       <div className='projects'>
         <h2>The most recent apps with gesture input:</h2>
         <ul>
-          <li>Gas Model: <a href="lab-volume-pressure.html" target="_blank">lab-volume-pressure</a></li>
-          <li>Heat Transfer: <a href="lab-heat-transfer.html" target="_blank">lab-heat-transfer</a></li>
-          <li>Heat Transfer (two hands): <a href="lab-heat-transfer-two-hands.html" target="_blank">lab-heat-transfer-two-hands</a></li>
-          <li>Heat Transfer (two hands, RealSense): <a href="lab-heat-transfer-two-hands.html?device=realsense" target="_blank">lab-heat-transfer-two-hands</a></li>
-          <li>Heat Transfer (micro): <a href="lab-heat-transfer-micro.html" target="_blank">lab-heat-transfer-micro</a></li>
-          <li>Heat Transfer (micro, direct control): <a href="lab-heat-transfer-micro-direct.html" target="_blank">lab-heat-transfer-micro-direct</a></li>
-          <li>Heat Transfer (micro, direct control, two atoms): <a href="lab-heat-transfer-micro-two-atoms.html" target="_blank">lab-heat-transfer-micro-two-atoms</a></li>
-          <li>Heat Transfer (micro, long): <a href="lab-heat-transfer-long.html" target="_blank">lab-heat-transfer-long</a></li>
-          <li>Seasons: <a href="seasons-sunray-angle.html" target="_blank">seasons-sunray-angle</a></li>
+          <li>Gas Model: <a href="?simulation=labvolumepressure" target="_blank">lab-volume-pressure</a></li>
+          <li>Heat Transfer: <a href="?simulation=labheattransfer" target="_blank">lab-heat-transfer</a></li>
+          <li>Heat Transfer (two hands): <a href="?simulation=labheattransfertwohands" target="_blank">lab-heat-transfer-two-hands</a></li>
+          <li>Heat Transfer (two hands, RealSense): <a href="?simulation=labheattransfertwohands&device=realsense" target="_blank">lab-heat-transfer-two-hands</a></li>
+          <li>Heat Transfer (micro): <a href="?simulation=labheattransfermicro" target="_blank">lab-heat-transfer-micro</a></li>
+          <li>Heat Transfer (micro, direct control): <a href="?simulation=labheattransfermicrodirect" target="_blank">lab-heat-transfer-micro-direct</a></li>
+          <li>Heat Transfer (micro, direct control, two atoms): <a href="?simulation=labheattransfermicrotwoatoms" target="_blank">lab-heat-transfer-micro-two-atoms</a></li>
+          <li>Heat Transfer (micro, long): <a href="?simulation=labheattransferlong" target="_blank">lab-heat-transfer-long</a></li>
+          <li>Seasons: <a href="?simulation=seasons" target="_blank">seasons-sunray-angle</a></li>
         </ul>
         <h2>Lab models (without gesture input):</h2>
         <ul>
@@ -26,18 +26,18 @@ export default class ProjectList extends React.Component {
         </ul>
         <h2>Old apps:</h2>
         <ul>
-          <li>Pressure Equilibrium Model: <a href="lab-pressure-equilibrium.html" target="_blank">lab-pressure-equilibrium</a></li>
+          <li>Pressure Equilibrium Model: <a href="?simulation=labpressureequilibrium" target="_blank">lab-pressure-equilibrium</a></li>
         </ul>
         <h2>Tests:</h2>
         <ul>
-          <li><a href="hands-view-realistic.html?device=leap" target="_blank">hands-view-realistic (Leap)</a></li>
-          <li><a href="hands-view-realistic.html?device=realsense" target="_blank">hands-view-realistic (RealSense)</a></li>
-          <li><a href="hands-view-simple.html" target="_blank">hands-view-simple</a></li>
-          <li><a href="realsense-test.html" target="_blank">realsense-test</a></li>
-          <li><a href="lab-add-rm-atom-test.html" target="_blank">lab-add-rm-atom-test</a></li>
-          <li><a href="lab-add-rm-atom-test-swipe.html" target="_blank">lab-add-rm-atom-swipe</a></li>
-          <li><a href="lab-temperature-absolute.html" target="_blank">lab-temperature-absolute</a></li>
-          <li><a href="lab-temperature-delta.html" target="_blank">lab-temperature-delta</a></li>
+          <li><a href="?simulation=handsviewrealistic&device=leap" target="_blank">hands-view-realistic (Leap)</a></li>
+          <li><a href="?simulation=handsviewrealistic&device=realsense" target="_blank">hands-view-realistic (RealSense)</a></li>
+          <li><a href="?simulation=handsviewsimple" target="_blank">hands-view-simple</a></li>
+          <li><a href="?simulation=realsensetest" target="_blank">realsense-test</a></li>
+          <li><a href="?simulation=labaddrmatomtest" target="_blank">lab-add-rm-atom-test</a></li>
+          <li><a href="?simulation=labaddrmatomtestswipe" target="_blank">lab-add-rm-atom-swipe</a></li>
+          <li><a href="?simulation=labtemperatureabsolute" target="_blank">lab-temperature-absolute</a></li>
+          <li><a href="?simulation=labtemperaturedelta" target="_blank">lab-temperature-delta</a></li>
         </ul>
         <h2>Old versions:</h2>
         <ul>
