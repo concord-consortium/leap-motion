@@ -244,7 +244,30 @@
   "layout": {
     "right": [
       "bar-graph"
+    ],
+    "bottom": [
+      "plunger-left", "plunger-right"
     ]
   },
-  "template": "narrow-right"
+  "padding": 10,
+  "template": [
+    {
+      "id": "right",
+      "left": "model.right",
+      "padding-left": "0.5em",
+      "height": "model.height"
+    },
+    {
+      "id": "left",
+      "right": "model.left",
+      "width": "0.5 * (interactive.width - model.width - right.width - 10)"
+    },
+    {
+      "id": "bottom",
+      "top": "model.bottom",
+      "padding-top": "0.5em",
+      "width": "interactive.width",
+      "align": "center"
+    }
+  ]
 }

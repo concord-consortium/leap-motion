@@ -29,7 +29,7 @@ const DEF_LAB_PROPS = {
   plungerRodVisible: true
 };
 
-const IFRAME_WIDTH = 610;
+const IFRAME_WIDTH = 510;
 const IFRAME_HEIGHT = 350;
 
 export default class LabVolumePressure extends React.Component {
