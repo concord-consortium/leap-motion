@@ -21,7 +21,7 @@ const DEF_LAB_PROPS = {
   markedBlock: 'none',
   leftAtomsTargetTemp: 500,
   rightAtomsTargetTemp: 50,
-  spoonEnabled: false
+  spoonEnabled: true
 };
 
 const IFRAME_WIDTH = 610;
@@ -162,7 +162,7 @@ export default class LabHeatTransfer extends React.Component {
               <td>Spoon:</td>
               <td>
                 <input type='checkbox' name='spoonEnabled'
-                       checked={labProps.spoonEnabled || false}
+                       checked={labProps.spoonEnabled}
                        onChange={this.handleLabPropChange}/>
               </td>
             </tr>
