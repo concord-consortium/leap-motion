@@ -72,6 +72,7 @@ Follow previous instructions, but replace `production.zip` segment in the URL wi
 
 ## Releases
 
+- [0.5.0 (Mar 20, 2017)](http://models-resources.concord.org/leap-motion/version/0.5.0/index.html)
 - [0.4.0 (Jun 9, 2016)](http://models-resources.concord.org/leap-motion/version/0.4.0/index.html)
 - [0.3.0 (Feb 18, 2016)](http://models-resources.concord.org/leap-motion/version/0.3.0/index.html)
 - [0.2.2 (Feb 17, 2016)](http://models-resources.concord.org/leap-motion/version/0.2.2/index.html)
