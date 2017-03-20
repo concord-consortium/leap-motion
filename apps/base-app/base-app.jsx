@@ -24,23 +24,29 @@ import SeasonsSunrayAngle from '../seasons-sunray-angle/seasons-sunray-angle.jsx
 import ProjectList from './project-list.jsx';
 
 import './base-app.less';
+import '../common/css/basic-layout.css';
+
 
 const SIMULATION = getURLParam('simulation') || 'index';
+const width = document.body.clientWidth;
+const height = document.body.clientHeight;
 
 export default class BaseApp extends React.Component {
 
   render() {
     const { sim, simList } = this.props;
     let renderSim = simList[sim];
+    let componentStyleList = ['simulation', sim];
+    let componentStyles = componentStyleList.join(' ');
 
     return (
-      <div className='app' ref='container'>
+      <div className='main' ref='container'>
         <div className='header'>
           <img className='projectlogo' src="logos/grasp.png" alt="GRASP project logo" />
           <img className="illogo" alt="Illinois Logo" src="http://publish.illinois.edu/graspprogram/files/2015/11/logo.gif" />
           <img className='cclogo' src="logos/cclogo.png" alt="Concord Consortium logo" />
         </div>
-        <div className='simulation'>
+        <div className={componentStyles}>
           <h1>GRASP Simulations</h1>
           {renderSim}
         </div>
@@ -74,6 +80,7 @@ BaseApp.defaultProps = {
     'labvolumepressure': <LabVolumePressure />,
     'realsensetest': <RealSenseTest />,
     'seasons': <SeasonsSunrayAngle />
-
-  }
+  },
+  width: width,
+  height: height
 }
