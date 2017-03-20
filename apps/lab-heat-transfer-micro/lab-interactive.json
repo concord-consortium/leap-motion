@@ -150,5 +150,19 @@
         "setAtomProperties(0, {vx: 0, vy: 0});"
       ]
     }
+  ],
+  "template": [
+    {
+      "id": "left",
+      "right": "model.left",
+      "width": "0.5 * (interactive.width - model.width - 10)"
+    },
+    {
+      "id": "bottom",
+      "top": "model.bottom",
+      "padding-top": "0.5em",
+      "width": "interactive.width",
+      "align": "center"
+    }
   ]
 }
