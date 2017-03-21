@@ -21,6 +21,7 @@ module.exports = {
     'hands-view-realistic': './apps/hands-view-realistic/main.jsx',
     'hands-view-simple': './apps/hands-view-simple/main.jsx',
     'realsense-test': './apps/realsense-test/main.jsx',
+    'alignment-rotation': './apps/alignment-rotation/main.jsx',
   },
   output: {
     path: path.join(__dirname, 'dist'),
