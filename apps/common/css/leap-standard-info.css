@@ -2,8 +2,11 @@
   background-color: #EAEAEA;
   border-radius: 5px;
   display: inline-block;
+  height:100% !important;
+  margin: 0;
+  opacity: .9;
   vertical-align: top;
-  margin-left: 5px;
+  width: 100% !important;
 }
 .state-msg {
   width: 300px;
