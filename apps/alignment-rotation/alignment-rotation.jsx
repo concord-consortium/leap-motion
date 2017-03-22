@@ -11,7 +11,9 @@ export default class AlignmentRotation extends React.Component {
     this.state = {
       snapshots: [],
       leapState: 'initial',
-      previousFrame: null
+      previousFrame: null,
+      pointerDirection: [0,0,0],
+      handTranslation: [0,0,0]
     };
     this.rmPhantomHand = this.rmPhantomHand.bind(this);
   }
@@ -36,26 +38,32 @@ export default class AlignmentRotation extends React.Component {
   }
 
   handleLeapFrame(frame) {
-    const {previousFrame} = this.state;
+    const {previousFrame, pointerDirection} = this.state;
     let pointable, direction, translation = null;
-    pointable = frame.pointables[0];
+    let activePointers = frame.pointables.filter(function (pointer){
+      // first finger, only if extended and valid
+      return pointer.type==1 && pointer.extended && pointer.valid;
+    });
+    // in case user is using two hands
+    pointable = activePointers[0];
+
     if (pointable){
       direction = pointable.direction;
       //console.log(direction);
+      this.setState({pointerDirection: direction});
     }
     if (frame.hands.length > 0){
-      //console.log(frame.hands[0].pointables);
 
       if (previousFrame){
         translation = frame.hands[0].translation(previousFrame);
-        console.log(translation);
+        this.setState({handTranslation: translation});
       }
       this.setState({previousFrame: frame});
     }
   }
 
   render() {
-    const { snapshots } = this.state;
+    const { snapshots, pointerDirection, handTranslation } = this.state;
     const json = JSON.stringify(snapshots, null, 2);
     return (
       <div className='alignment-rotation'>
@@ -67,7 +75,10 @@ export default class AlignmentRotation extends React.Component {
           <button onClick={this.rmPhantomHand}>Remove last snapshot</button>
           <div>
             <textarea value={json} readOnly/>
-            <LeapStatus ref='status'/>
+            <LeapStatus ref='status'>
+              <div>Direction: {pointerDirection}</div>
+              <div>Translation: {handTranslation}</div>
+            </LeapStatus>
           </div>
         </div>
       </div>
