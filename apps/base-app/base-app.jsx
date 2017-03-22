@@ -1,4 +1,5 @@
 import React from 'react';
+import Typekit from 'react-typekit';
 import getURLParam from '../common/js/tools/get-url-param';
 
 import HandsViewRealistic from '../hands-view-realistic/hands-view-realistic.jsx';
@@ -41,6 +42,7 @@ export default class BaseApp extends React.Component {
 
     return (
       <div className='main' ref='container'>
+        <Typekit kitId="hdw8ayt" />
         <div className='header'>
           <img className='projectlogo' src="logos/grasp.png" alt="GRASP project logo" />
           <img className="illogo" alt="Illinois Logo" src="http://publish.illinois.edu/graspprogram/files/2015/11/logo.gif" />
