@@ -4,12 +4,12 @@ import pureRender from 'react-addons-pure-render-mixin';
 import HandsView from '../common/js/components/hands-view.jsx';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import LeapStatus from '../common/js/components/leap-status.jsx';
+import HandMove from './hand-move';
 
 const DEFAULT_CONFIG = {
   closedGrabStrength: 0.7,
-  minAmplitude: 20,
-  soundEnabled: false,
   resetHandTimeout: 500,
+  minTranslationMovement: 1.0,
   upYTolerance: 0.1
 };
 
@@ -24,6 +24,7 @@ export default class AlignmentRotation extends React.Component {
       handTranslation: [0,0,0],
       isPointing: false
     };
+    this.handMove = new HandMove({}, this.gestureCallbacks);
     this.rmPhantomHand = this.rmPhantomHand.bind(this);
   }
 
@@ -51,11 +52,7 @@ export default class AlignmentRotation extends React.Component {
     if (frame.hands.length > 0){
       // calculate relative translation since previous frame
       if (previousFrame){
-        let t = frame.hands[0].translation(previousFrame);
-        let abs = Math.max.apply(null, t.map(Math.abs));
-        if (abs > 1.0){
-          this.setState({handTranslation: t});
-        }
+        this.handMove.handleLeapFrame(frame, previousFrame);
       }
       // calculate pointer angle, if a pointer is present
       let activePointers = frame.pointables.filter(function (pointer){
@@ -72,6 +69,30 @@ export default class AlignmentRotation extends React.Component {
       this.setState({previousFrame: frame});
     }
   }
+
+  setLeapState(v) {
+    if (v !== this.state.leapState) this.setState({leapState: v});
+  }
+
+  get gestureCallbacks() {
+    return {
+      leapState: (data) => {
+        if (data.closedHandType) {
+          this.setLeapState('closedHand');
+        } else {
+          this.setLeapState(data.numberOfHands === 1 ? 'oneHandDetected' : 'initial');
+        }
+      },
+      gestureDetected: (data) => {
+        // largest movement translation in any one direction
+        let translationDelta = Math.max.apply(null, data.translation.map(Math.abs));
+        if (translationDelta > DEFAULT_CONFIG.minTranslationMovement){
+          this.setState({handTranslation: data.translation});
+        }
+      }
+    };
+  }
+
   radiansToDegrees(rad){
     return rad * 180/Math.PI;
   }
@@ -92,9 +113,6 @@ export default class AlignmentRotation extends React.Component {
     return pointerDirection[1] > DEFAULT_CONFIG.upYTolerance && isPointing;
   }
 
-  isClosedHand(){
-
-  }
 
   render() {
     const { snapshots, pointerDirection, handTranslation } = this.state;
