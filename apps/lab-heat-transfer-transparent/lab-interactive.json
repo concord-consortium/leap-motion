@@ -1,0 +1,312 @@
+{
+  "title": "Conduction Between Two Solids",
+  "publicationStatus": "draft",
+  "subtitle": "GRASP",
+  "about": "",
+  "aspectRatio": 1.3,
+  "fontScale": 0.75,
+  "models": [
+    {
+      "type": "md2d",
+      "id": "vacuum",
+      "viewOptions": {
+        "controlButtons": "play_reset",
+        "atomRadiusScale": 1.13
+      },
+      "onLoad": [
+        "onClick('atom', function(x, y, atom) {",
+        "  markAtoms([atom.idx]);",
+        "});",
+        "",
+        "var leftAtoms = [];",
+        "var rightAtoms = [];",
+        "for (var i = 0; i < getNumberOfAtoms(); i++) {",
+        "  if (getAtomProperties(i).element == 0) {",
+        "    leftAtoms.push(i);",
+        "  } else if(getAtomProperties(i).element == 2) {",
+        "    rightAtoms.push(i);",
+        "  }",
+        "}",
+        "set('leftAtomsIndices', leftAtoms);",
+        "set('rightAtomsIndices', rightAtoms);"
+      ]
+    }
+  ],
+  "parameters": [
+    {
+      "name": "opacity",
+      "initialValue": 0.7,
+      "onChange": [
+        "batch(function () {",
+        "  var N = getNumberOfAtoms();",
+        "  for (var i = 0; i < N; i++) {",
+        "    setAtomProperties(i, {visible: value});",
+        "  }",
+        "});"
+      ]
+    },
+    {
+      "name": "spoonEnabled",
+      "initialValue": true,
+      "onChange": "setImageProperties(0, {opacity: value ? 1 : 0});"
+    },
+    {
+      "name": "leftAtomsIndices",
+      "initialValue": []
+    },
+    {
+      "name": "rightAtomsIndices",
+      "initialValue": []
+    },
+    {
+      "name": "barAtomsIndices",
+      "initialValue": []
+    },
+    {
+      "name": "markedBlock",
+      "initialValue": "none",
+      "onChange": [
+        "setElementProperties(0, {color: value === 'left' ? -13134236 : -8355712});",
+        "setElementProperties(2, {color: value === 'right' ? -13134236 : -8355712});"
+      ]
+    },
+    {
+      "name": "leftAtomsTargetTemp",
+      "initialValue": 500,
+      "onChange": "setTemperatureOfAtoms(get('leftAtomsIndices'), value);"
+    },
+    {
+      "name": "rightAtomsTargetTemp",
+      "initialValue": 50,
+      "onChange": "setTemperatureOfAtoms(get('rightAtomsIndices'), value);"
+    },
+    {
+      "name": "bar",
+      "initialValue": "none",
+      "onChange": [
+        "// First, remove old bar.",
+        "var barAtomsIndices = get('barAtomsIndices');",
+        "for (var i = getNumberOfAtoms() - 1; i >= 0; i--) {",
+        "  if (getAtomProperties(i).element === 3) { removeAtom(i); }",
+        "}",
+        "if (value === 'thin' || value === 'thick') {",
+        "  var xDiff = 0.155;",
+        "  var atomIndices = value === 'thick' ? atomsWithinRect(0.76, 0.4, 0.3, 1.2) : atomsWithinRect(0.8, 0.8, 0.3, 0.53);",
+        "  var barIndices = [];",
+        "  var opacity = get('opacity');",
+        "  for (var i = 0; i < atomIndices.length; i++) {",
+        "    var a = getAtomProperties(atomIndices[i]);",
+        "    var x = a.x + xDiff;",
+        "    var y = a.y;",
+        "    while (x < 3) {",
+        "      if (addAtom({x: x, y: y, element: 3, visible: opacity})) {",
+        "        barIndices.push(getNumberOfAtoms() - 1);",
+        "      }",
+        "      x += xDiff;",
+        "    }",
+        "  }",
+        "  // Try to minize impact on block temperatures.",
+        "  minimizeEnergy();",
+        "  setTemperatureOfAtoms(barIndices, 150); tick(); setTemperatureOfAtoms(barIndices, 150); tick();",
+        "  setTemperatureOfAtoms(barIndices, 150); tick(); setTemperatureOfAtoms(barIndices, 150);",
+        "}"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "rightAtomsTemp",
+      "label": "Temperature of Molecules on Right",
+      "unitAbbreviation": "°C",
+      "value": [
+        "return getTemperatureOfAtoms(get('rightAtomsIndices'));"
+      ]
+    },
+    {
+      "name": "leftAtomsTemp",
+      "label": "Temperature of Molecules on Left",
+      "unitAbbreviation": "°C",
+      "value": [
+        "return getTemperatureOfAtoms(get('leftAtomsIndices'));"
+      ]
+    },
+    {
+      "name": "rightAtomsTempAvg",
+      "unitAbbreviation": "°C",
+      "value": [
+        "var timestep = get('timeStep');",
+        "if (timestep > 0.99) return get('rightAtomsTempAvg1');",
+        "if (timestep > 0.19) return get('rightAtomsTempAvg2');",
+        "return get('rightAtomsTempAvg3');"
+      ]
+    },
+    {
+      "name": "leftAtomsTempAvg",
+      "unitAbbreviation": "°C",
+      "value": [
+        "var timestep = get('timeStep');",
+        "if (timestep > 0.99) return get('leftAtomsTempAvg1');",
+        "if (timestep > 0.19) return get('leftAtomsTempAvg2');",
+        "return get('leftAtomsTempAvg3');"
+      ]
+    }
+  ],
+  "filteredOutputs": [
+    {
+      "name": "rightAtomsTempAvg1",
+      "property": "rightAtomsTemp",
+      "unitAbbreviation": "°C",
+      "period": 2500
+    },
+    {
+      "name": "leftAtomsTempAvg1",
+      "property": "leftAtomsTemp",
+      "unitAbbreviation": "°C",
+      "period": 2500
+    },
+    {
+      "name": "rightAtomsTempAvg2",
+      "property": "rightAtomsTemp",
+      "unitAbbreviation": "°C",
+      "period": 1000
+    },
+    {
+      "name": "leftAtomsTempAvg2",
+      "property": "leftAtomsTemp",
+      "unitAbbreviation": "°C",
+      "period": 1000
+    },
+    {
+      "name": "rightAtomsTempAvg3",
+      "property": "rightAtomsTemp",
+      "unitAbbreviation": "°C",
+      "period": 350
+    },
+    {
+      "name": "leftAtomsTempAvg3",
+      "property": "leftAtomsTemp",
+      "unitAbbreviation": "°C",
+      "period": 350
+    }
+  ],
+  "retainProperty": true,
+  "disabled": false,
+  "tooltip": "",
+  "components": [
+    {
+      "id": "select-speed",
+      "type": "radio",
+      "orientation": "horizontal",
+      "property": "timeStep",
+      "label": "Speed:",
+      "labelOn": "left",
+      "options": [
+        {
+          "text": "Fast",
+          "value": 1.0
+        },
+        {
+          "text": "Medium",
+          "value": 0.2
+        },
+        {
+          "text": "Slow",
+          "value": 0.05
+        }
+      ]
+    },
+    {
+      "type": "barGraph",
+      "id": "bar-graph",
+      "min": 0,
+      "max": 600,
+      "title": "Temperature of Molecules on Right",
+      "property": "rightAtomsTempAvg",
+      "units": true,
+      "gridLines": 8
+    },
+    {
+      "type": "barGraph",
+      "id": "bar-graph2",
+      "min": 0,
+      "max": 600,
+      "title": "Temperature of Molecules on Left",
+      "property": "leftAtomsTempAvg",
+      "units": true,
+      "gridLines": 8
+    },
+    {
+      "type": "checkbox",
+      "id": "show-ke",
+      "text": "K. E. Shading",
+      "property": "keShading"
+    },
+    {
+      "type": "text",
+      "id": "instructions",
+      "text": "Choose a material to fill the space between the two solids."
+    },
+    {
+      "type": "radio",
+      "id": "select-model-buttons",
+      "orientation": "horizontal",
+      "retainProperty": false,
+      "property": "bar",
+      "options": [
+        {
+          "text": "Vacuum",
+          "value": "none"
+        },
+        {
+          "text": "Thick long bar",
+          "value": "thick"
+        },
+        {
+          "text": "Thin long bar",
+          "value": "thin"
+        }
+      ]
+    }
+  ],
+  "layout": {
+    "bottom": [
+      ["instructions"],
+      ["select-model-buttons"],
+      ["show-ke", "select-speed"]
+    ],
+    "right": [
+      "bar-graph"
+    ],
+    "left": [
+      "bar-graph2"
+    ]
+  },
+  "template": [
+    {
+      "id": "bottom",
+      "top": "model.bottom",
+      "left": "model.left",
+      "width": "model.width",
+      "align": "center",
+      "padding-top": "0.5em"
+    },
+    {
+      "id": "left",
+      "top": "model.top",
+      "right": "model.left",
+      "height": "interactive.height",
+      "padding-right": "0.5em",
+      "align": "right",
+      "min-width": "6em"
+    },
+    {
+      "id": "right",
+      "top": "model.top",
+      "left": "model.right",
+      "height": "interactive.height",
+      "padding-left": "0.5em",
+      "padding-right": "0.5em",
+      "min-width": "6em"
+    }
+  ]
+}
