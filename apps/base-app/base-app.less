@@ -1,11 +1,17 @@
 body{
+  font: 100% lato, verdana, arial, helvetica, sans-serif !important;
   margin: 0;
   border: 0;
   background-color: #c9e9e6;
 }
 h1 {
-  font-size: 1.5em;
-  margin: .25em 0;
+  display: inline-block;
+  font: 300 1.5em 'museo-sans', verdana, arial, helvetica, sans-serif;
+  margin: .25em 0 .5em;
+  width: 50%;
+}
+h2 {
+  font: 300 1.25em 'museo-slab', verdana, arial, helvetica, sans-serif;
 }
 .container {
   height: auto;
@@ -23,6 +29,22 @@ h1 {
 }
 .simulation{
   margin: 80px 10px 10px 10px;
+  position: relative;
+}
+.detail-toggle-switches {
+  float: right;
+  text-align: right;
+  width: 30%;
+  li {
+    cursor: pointer;
+    display: inline;
+    list-style: none;
+    margin-left: 1em;
+    opacity: .5;
+  }
+  li:hover {
+    opacity: 1;
+  }
 }
 .header{
   left: 0;

@@ -8,6 +8,7 @@ import setLabProps from '../common/js/mixins/set-lab-props';
 import FistsShaking from './fists-shaking';
 import avg from '../common/js/tools/avg';
 import LeapStatus from '../common/js/components/leap-status.jsx';
+import AboutSim from '../common/js/components/about.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
@@ -206,6 +207,7 @@ export default class LabHeatTransfer extends React.Component {
             </tbody>
           </table>
         </LeapStatus>
+        <AboutSim />
       </div>
     );
   }

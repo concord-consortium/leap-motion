@@ -2,6 +2,8 @@ import React from 'react';
 import Typekit from 'react-typekit';
 import getURLParam from '../common/js/tools/get-url-param';
 
+import ModalLinks from '../common/js/components/modal.jsx';
+
 import HandsViewRealistic from '../hands-view-realistic/hands-view-realistic.jsx';
 import HandsViewSimple from '../common/js/components/leap-hands-view-simple.jsx';
 import LabAddRmAtomTest from '../lab-add-rm-atom-test/lab-add-rm-atom-test.jsx';
@@ -39,6 +41,10 @@ export default class BaseApp extends React.Component {
     let renderSim = simList[sim];
     let componentStyleList = ['simulation', sim];
     let componentStyles = componentStyleList.join(' ');
+    let renderModalLinks = null;
+    if (sim != 'index') {
+      renderModalLinks = <ModalLinks />
+    }
 
     return (
       <div className='main' ref='container'>
@@ -52,6 +58,7 @@ export default class BaseApp extends React.Component {
         </div>
         <div className={componentStyles}>
           <h1>GRASP Simulations</h1>
+          {renderModalLinks}
           {renderSim}
         </div>
       </div>

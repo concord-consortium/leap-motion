@@ -1,4 +1,4 @@
-.status-box {
+.about-box {
   background-color: #fff;
   border-radius: .5em;
   display: none;
@@ -8,12 +8,4 @@
   position: absolute;
   top: 35%;
   width: 46.875em;
-}
-.status-box label {
-  font-size: 0.8em;
-  vertical-align: middle;
-  margin-bottom: 5px;
-}
-.status-box > div {
-  margin-top: 5px;
 }
