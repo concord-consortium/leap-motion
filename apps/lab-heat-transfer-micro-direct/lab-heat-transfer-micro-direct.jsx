@@ -7,7 +7,7 @@ import setLabProps from '../common/js/mixins/set-lab-props';
 import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import FistShake from './fist-shake';
 import LeapStatus from '../common/js/components/leap-status.jsx';
-import Dialog from '../common/js/components/dialog.jsx';
+import AboutDialog from '../common/js/components/about-dialog.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
@@ -178,7 +178,7 @@ export default class LabHeatTransfer extends React.Component {
             </tbody>
           </table>
         </LeapStatus>
-        <Dialog visible={aboutVisible} />
+        <AboutDialog visible={aboutVisible} />
       </div>
     );
   }

@@ -9,7 +9,7 @@ import FistBump from './fist-bump';
 import avg from '../common/js/tools/avg';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import LeapStatus from '../common/js/components/leap-status.jsx';
-import Dialog from '../common/js/components/dialog.jsx';
+import AboutDialog from '../common/js/components/about-dialog.jsx';
 import interactive from './lab-interactive.json';
 import phantomHands from './phantom-hands';
 import model from './lab-model.json';
@@ -214,9 +214,9 @@ export default class LabVolumePressure extends React.Component {
             </tbody>
           </table>
         </LeapStatus>
-        <Dialog visible={aboutVisible}>
+        <AboutDialog visible={aboutVisible}>
           <About />
-        </Dialog>
+        </AboutDialog>
       </div>
     );
   }

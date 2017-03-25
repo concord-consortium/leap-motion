@@ -12,7 +12,7 @@ export default class LeapStatus extends React.Component {
   render() {
     const { children, visible } = this.props;
     return (
-      <Dialog visible={visible}>
+      <Dialog visible={visible} title='Settings'>
         <div className='status-box'>
           {visible ? <LeapFrameRate/> : ''}
           <Plotter ref='plotter' hidden={!visible}/>

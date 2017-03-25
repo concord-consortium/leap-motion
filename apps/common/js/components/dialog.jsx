@@ -11,7 +11,7 @@ export default class Dialog extends React.PureComponent {
         <div className={`dialog ${visible ? 'visible' : ''}`}>
           <div className='handle'>{title}</div>
           <div className='content'>
-            {children || <p>Some text can go here!!</p>}
+            {children || <p>Some text can go here.</p>}
           </div>
         </div>
       </Draggable>
