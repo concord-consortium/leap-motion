@@ -1,0 +1,27 @@
+.dialog {
+  background-color: #fff;
+  border-radius: .5em;
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  margin-left: -23.4375em;
+  width: 46.875em;
+  display: none;
+
+  &.visible {
+    display: block;
+    z-index: 1000;
+  }
+
+  .handle {
+    height: 1.5em;
+    border-radius: .5em .5em 0 0;
+    padding: 0 0.5em;
+    background: #89d086;
+    cursor: move;
+  }
+
+  .content {
+    padding: 0.5em;
+  }
+}

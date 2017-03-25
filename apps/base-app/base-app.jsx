@@ -2,8 +2,6 @@ import React from 'react';
 import Typekit from 'react-typekit';
 import getURLParam from '../common/js/tools/get-url-param';
 
-import ModalLinks from '../common/js/components/modal.jsx';
-
 import HandsViewRealistic from '../hands-view-realistic/hands-view-realistic.jsx';
 import HandsViewSimple from '../common/js/components/leap-hands-view-simple.jsx';
 import LabAddRmAtomTest from '../lab-add-rm-atom-test/lab-add-rm-atom-test.jsx';
@@ -29,22 +27,64 @@ import ProjectList from './project-list.jsx';
 import './base-app.less';
 import '../common/css/basic-layout.css';
 
+const SIM_LIST = {
+  'index': ProjectList,
 
-const SIMULATION = getURLParam('simulation') || 'index';
-const width = document.body.clientWidth;
-const height = document.body.clientHeight;
+  'handsviewrealistic': HandsViewRealistic,
+  'handsviewsimple': HandsViewSimple,
+  'labaddrmatomtest': LabAddRmAtomTest,
+  'labaddrmatomtestswipe': LabAddRmAtomTestSwipe,
+
+  'labheattransfer': LabHeatTransfer,
+  'labheattransferlong': LabHeatTransferLong,
+  'labheattransfermicro': LabHeatTransferMicro,
+  'labheattransfermicrodirect': LabHeatTransferMicroDirect,
+  'labheattransfermicrotwoatoms': LabHeatTransferMicroTwoAtoms,
+  'labheattransfertwohands': LabHeatTransferTwoHands,
+
+  'labpressureequilibrium': LabPressureEquilibrium,
+  'labtemperatureabsolute': LabTemperatureAbsolute,
+  'labtemperaturedelta': LabTemperatureDelta,
+  'labtemperaturetest': LabTemperatureTest,
+
+  'labvolumepressure': LabVolumePressure,
+  'realsensetest': RealSenseTest,
+  'seasons': SeasonsSunrayAngle
+};
+
+const DEF_SIMULATION = getURLParam('simulation') || 'index';
 
 export default class BaseApp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      aboutVisible: false,
+      settingsVisible: false
+    };
+    this.toggleAbout = this.toggleAbout.bind(this);
+    this.toggleSettings = this.toggleSettings.bind(this);
+  }
+
+  toggleAbout() {
+    const { aboutVisible } = this.state;
+    this.setState({
+      aboutVisible: !aboutVisible
+    });
+  }
+
+  toggleSettings() {
+    const { settingsVisible } = this.state;
+    this.setState({
+      settingsVisible: !settingsVisible
+    });
+  }
 
   render() {
-    const { sim, simList } = this.props;
-    let renderSim = simList[sim];
+    const { sim } = this.props;
+    const { aboutVisible, settingsVisible } = this.state;
+    const simulation = React.createElement(SIM_LIST[sim], { aboutVisible, settingsVisible });
     let componentStyleList = ['simulation', sim];
     let componentStyles = componentStyleList.join(' ');
-    let renderModalLinks = null;
-    if (sim != 'index') {
-      renderModalLinks = <ModalLinks />
-    }
 
     return (
       <div className='main' ref='container'>
@@ -58,8 +98,13 @@ export default class BaseApp extends React.Component {
         </div>
         <div className={componentStyles}>
           <h1>GRASP Simulations</h1>
-          {renderModalLinks}
-          {renderSim}
+          {sim !== 'index' &&
+            <ul className="detail-toggle-switches">
+              <li className="settings-toggle" onClick={this.toggleSettings}>Settings</li>
+              <li className="about-toggle" onClick={this.toggleAbout}>About</li>
+            </ul>
+          }
+          {simulation}
         </div>
       </div>
     );
@@ -67,31 +112,5 @@ export default class BaseApp extends React.Component {
 }
 
 BaseApp.defaultProps = {
-  sim: SIMULATION,
-  simList: {
-    'index': <ProjectList />,
-
-    'handsviewrealistic': <HandsViewRealistic />,
-    'handsviewsimple': <HandsViewSimple />,
-    'labaddrmatomtest': <LabAddRmAtomTest />,
-    'labaddrmatomtestswipe': <LabAddRmAtomTestSwipe />,
-
-    'labheattransfer': <LabHeatTransfer />,
-    'labheattransferlong': <LabHeatTransferLong />,
-    'labheattransfermicro': <LabHeatTransferMicro />,
-    'labheattransfermicrodirect': <LabHeatTransferMicroDirect />,
-    'labheattransfermicrotwoatoms': <LabHeatTransferMicroTwoAtoms />,
-    'labheattransfertwohands': <LabHeatTransferTwoHands />,
-
-    'labpressureequilibrium': <LabPressureEquilibrium />,
-    'labtemperatureabsolute': <LabTemperatureAbsolute />,
-    'labtemperaturedelta': <LabTemperatureDelta />,
-    'labtemperaturetest': <LabTemperatureTest />,
-
-    'labvolumepressure': <LabVolumePressure />,
-    'realsensetest': <RealSenseTest />,
-    'seasons': <SeasonsSunrayAngle />
-  },
-  width: width,
-  height: height
-}
+  sim: DEF_SIMULATION
+};

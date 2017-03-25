@@ -8,7 +8,7 @@ import setLabProps from '../common/js/mixins/set-lab-props';
 import FistsShaking from './fists-shaking';
 import avg from '../common/js/tools/avg';
 import LeapStatus from '../common/js/components/leap-status.jsx';
-import AboutSim from '../common/js/components/about.jsx';
+import Dialog from '../common/js/components/dialog.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
@@ -131,6 +131,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
+    const { aboutVisible, settingsVisible } = this.props;
     const { overlayEnabled, overlayActive, labProps } = this.state;
     return (
       <div>
@@ -147,7 +148,7 @@ export default class LabHeatTransfer extends React.Component {
               </div>
           </InstructionsOverlay>
         </div>
-        <LeapStatus ref='status'>
+        <LeapStatus visible={settingsVisible} ref='status'>
           <table>
             <tbody>
             <tr>
@@ -207,7 +208,7 @@ export default class LabHeatTransfer extends React.Component {
             </tbody>
           </table>
         </LeapStatus>
-        <AboutSim />
+        <Dialog visible={aboutVisible} />
       </div>
     );
   }
