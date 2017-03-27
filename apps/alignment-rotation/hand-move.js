@@ -41,6 +41,13 @@ export default class HandMove {
     let closedHand = hand && hand.grabStrength > this.config.closedGrabStrength ? hand : null;
     if (frame.hands.length === 1) {
       let t = hand.translation(previousFrame);
+      // calculate pointer angle, if a pointer is present
+      let activePointers = frame.pointables.filter(function (pointer){
+        // first finger, only if extended and valid
+        return pointer.type==1 && pointer.extended && pointer.valid;
+      });
+      // in case user is using more than one finger
+      let pointable = activePointers[0];
 
       if (closedHand){
         this.updateSavedHandType(closedHand.type);
@@ -51,6 +58,7 @@ export default class HandMove {
       });
       this.callbacks.gestureDetected({
         translation: t,
+        pointable: pointable,
         closedHandType: this.savedHandType
       });
     } else {

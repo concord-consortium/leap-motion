@@ -22,7 +22,8 @@ export default class AlignmentRotation extends React.Component {
       previousFrame: null,
       pointerDirection: [0,0,0],
       handTranslation: [0,0,0],
-      isPointing: false
+      isPointing: false,
+      hasClosedHand: false
     };
     this.handMove = new HandMove({}, this.gestureCallbacks);
     this.rmPhantomHand = this.rmPhantomHand.bind(this);
@@ -54,18 +55,7 @@ export default class AlignmentRotation extends React.Component {
       if (previousFrame){
         this.handMove.handleLeapFrame(frame, previousFrame);
       }
-      // calculate pointer angle, if a pointer is present
-      let activePointers = frame.pointables.filter(function (pointer){
-        // first finger, only if extended and valid
-        return pointer.type==1 && pointer.extended && pointer.valid;
-      });
-      // in case user is using two hands
-      let pointable = activePointers[0];
-      if (pointable){
-        this.setState({pointerDirection: pointable.direction, isPointing: true});
-      } else {
-        this.setState({isPointing: false});
-      }
+
       this.setState({previousFrame: frame});
     }
   }
@@ -75,6 +65,7 @@ export default class AlignmentRotation extends React.Component {
   }
 
   get gestureCallbacks() {
+    const {hasClosedHand, hasPointedFinger} = this.state;
     return {
       leapState: (data) => {
         if (data.closedHandType) {
@@ -88,6 +79,16 @@ export default class AlignmentRotation extends React.Component {
         let translationDelta = Math.max.apply(null, data.translation.map(Math.abs));
         if (translationDelta > DEFAULT_CONFIG.minTranslationMovement){
           this.setState({handTranslation: data.translation});
+        }
+        // for tutorial progression hint to close hand
+        if (data.closedHandType && !hasClosedHand){
+          this.setState({hasClosedHand: true});
+        }
+
+        if (data.pointable){
+          this.setState({pointerDirection: data.pointable.direction, isPointing: true});
+        } else {
+          this.setState({isPointing: false});
         }
       }
     };
@@ -115,7 +116,7 @@ export default class AlignmentRotation extends React.Component {
 
 
   render() {
-    const { snapshots, pointerDirection, handTranslation } = this.state;
+    const { snapshots, pointerDirection, handTranslation, hasClosedHand, hasPointedFinger } = this.state;
     const json = JSON.stringify(snapshots, null, 2);
     let dir = this.vectorToDegreeString(pointerDirection);
     let t = this.vectorToDegreeString(handTranslation);
@@ -130,10 +131,9 @@ export default class AlignmentRotation extends React.Component {
           <div>
             <textarea value={json} readOnly/>
             <LeapStatus ref='status'>
+              {!hasClosedHand && <div>Make a fist</div>}
               <div>Direction: {dir}</div>
-              {this.isFingerPointingUp() && <div>Up!</div>
-
-              }
+              {this.isFingerPointingUp() && <div>Up!</div>}
               <div>Translation: {t}</div>
             </LeapStatus>
           </div>
