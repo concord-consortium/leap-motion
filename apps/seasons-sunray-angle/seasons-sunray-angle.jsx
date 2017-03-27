@@ -248,7 +248,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     const overlayVisible = overlayEnabled && overlayActive;
 
     return (
-      <div>
+      <div className='seasons-container'>
         <div style={{background: '#f6f6f6', width: '1210px'}}>
           <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}
                    onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange} f

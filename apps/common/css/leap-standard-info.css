@@ -2,11 +2,11 @@
   background-color: #EAEAEA;
   border-radius: 5px;
   display: inline-block;
-  height:100% !important;
+  height:100%;
   margin: 0;
-  opacity: .9;
+  opacity: .5;
   vertical-align: top;
-  width: 100% !important;
+  width: 100%;
 }
 .state-msg {
   width: 300px;
