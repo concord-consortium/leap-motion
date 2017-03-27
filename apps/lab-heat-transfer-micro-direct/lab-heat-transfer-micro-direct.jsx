@@ -110,7 +110,7 @@ export default class LabHeatTransfer extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayEnabled && overlayActive} width='100%' height='100%'>
+          <InstructionsOverlay visible={overlayEnabled && overlayActive}>
             <div className='instructions'>
               {this.getStateMsg()}
             </div>
