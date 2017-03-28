@@ -2,7 +2,7 @@
     position: absolute;
 
     &.main {
-      top: 10px;
+      top: 0px;
       left: 0px;
       font-size: 18px;
       width: 795px;
@@ -10,7 +10,7 @@
     }
 
     &.small-top {
-      top: 10px;
+      top: 0px;
       left: 805px;
       width: 395px;
       height: 296px;
@@ -18,15 +18,35 @@
     }
 
     &.small-bottom {
-      top: 315px;
+      top: 305px;
       left: 805px;
       width: 395px;
       height: 296px;
       font-size: 14px;
     }
-
+    .view-manager{
+      margin: 0 auto 0;
+    }
 }
 .seasons-container{
-  position: fixed;
-  left:10px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1200px;
+    height: 860px;
+    overflow: auto;
+}
+.simulation.seasons{
+    position: absolute;
+    top: 80px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    h1{
+      margin-left:20px;
+    }
+    .detail-toggle-switches{
+      margin-right:30px;
+    }
 }
