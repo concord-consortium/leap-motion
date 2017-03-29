@@ -82,7 +82,12 @@ export default class BaseApp extends React.Component {
   render() {
     const { sim } = this.props;
     const { aboutVisible, settingsVisible } = this.state;
-    const simulation = React.createElement(SIM_LIST[sim], { aboutVisible, settingsVisible });
+    const simulation = React.createElement(SIM_LIST[sim], {
+      aboutVisible,
+      settingsVisible,
+      toggleAbout: this.toggleAbout,
+      toggleSettings: this.toggleSettings
+    });
     let componentStyleList = ['simulation', sim];
     let componentStyles = componentStyleList.join(' ');
 
@@ -98,12 +103,6 @@ export default class BaseApp extends React.Component {
         </div>
         <div className={componentStyles}>
           <h1>GRASP Simulations</h1>
-          {sim !== 'index' &&
-            <ul className="detail-toggle-switches">
-              <li className="settings-toggle" onClick={this.toggleSettings}>Settings</li>
-              <li className="about-toggle" onClick={this.toggleAbout}>About</li>
-            </ul>
-          }
           {simulation}
         </div>
       </div>

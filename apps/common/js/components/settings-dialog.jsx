@@ -1,7 +1,8 @@
 import React from 'react';
 import Dialog from './dialog.jsx';
+import LeapStatus from './leap-status.jsx';
 
-export default class AboutDialog extends React.PureComponent {
+export default class SettingsDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,16 +16,20 @@ export default class AboutDialog extends React.PureComponent {
     this.setState({dialogVisible: !dialogVisible});
   }
 
+  get plotter() {
+    return this.refs.status.plotter;
+  }
+
   render() {
     const { dialogVisible } = this.state;
     const { children } = this.props;
-    if (!children) return null;
-    console.log(children)
     return (
       <span>
-        <span className='dialog-link' onClick={this.handleDialogToggle}>About</span>
-        <Dialog visible={dialogVisible} onToggle={this.handleDialogToggle} title='About'>
-          {children}
+        <span className='dialog-link' onClick={this.handleDialogToggle}>Settings</span>
+        <Dialog visible={dialogVisible} onToggle={this.handleDialogToggle} title='Settings'>
+          <LeapStatus ref='status' visible={dialogVisible}>
+            {children}
+          </LeapStatus>
         </Dialog>
       </span>
     );

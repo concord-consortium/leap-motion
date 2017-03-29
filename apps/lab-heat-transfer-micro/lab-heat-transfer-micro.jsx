@@ -7,7 +7,7 @@ import setLabProps from '../common/js/mixins/set-lab-props';
 import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import FistsShaking from './fists-shaking';
 import avg from '../common/js/tools/avg';
-import LeapStatus from '../common/js/components/leap-status.jsx';
+import SettingsDialog from '../common/js/components/settings-dialog.jsx';
 import AboutDialog from '../common/js/components/about-dialog.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
@@ -126,7 +126,6 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { aboutVisible, settingsVisible } = this.props;
     const { overlayEnabled, overlayActive, labProps } = this.state;
     return (
       <div>
@@ -143,55 +142,57 @@ export default class LabHeatTransfer extends React.Component {
             </div>
           </InstructionsOverlay>
         </div>
-        <LeapStatus visible={settingsVisible} ref='status'>
-          <table>
-            <tbody>
-            <tr>
-              <td>Overlay:</td>
-              <td>
-                <input type='checkbox' name='overlayEnabled'
-                       checked={overlayEnabled}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Sound:
-              </td>
-              <td>
-                <input type='checkbox' name='soundEnabled'
-                       defaultChecked={this.fistsShaking.config.soundEnabled}
-                       onChange={this.soundEnabledChanged}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Cooling frequency:</td>
-              <td>
-                <input type='text' name='freqCooling' size='7'
-                       value={this.state.freqCooling}
-                       onChange={this.handleInputChange}/>
-                <input type='range' name='freqCooling'
-                       min='0' max='8' step='0.1'
-                       value={this.state.freqCooling}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Heating frequency:</td>
-              <td>
-                <input type='text' name='freqHeating' size='7'
-                       value={this.state.freqHeating}
-                       onChange={this.handleInputChange}/>
-                <input type='range' name='freqHeating'
-                       min='0' max='8' step='0.1'
-                       value={this.state.freqHeating}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </LeapStatus>
-        <AboutDialog visible={aboutVisible} />
+        <div className='top-links'>
+          <SettingsDialog ref='status'>
+            <table>
+              <tbody>
+              <tr>
+                <td>Overlay:</td>
+                <td>
+                  <input type='checkbox' name='overlayEnabled'
+                         checked={overlayEnabled}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Sound:
+                </td>
+                <td>
+                  <input type='checkbox' name='soundEnabled'
+                         defaultChecked={this.fistsShaking.config.soundEnabled}
+                         onChange={this.soundEnabledChanged}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Cooling frequency:</td>
+                <td>
+                  <input type='text' name='freqCooling' size='7'
+                         value={this.state.freqCooling}
+                         onChange={this.handleInputChange}/>
+                  <input type='range' name='freqCooling'
+                         min='0' max='8' step='0.1'
+                         value={this.state.freqCooling}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Heating frequency:</td>
+                <td>
+                  <input type='text' name='freqHeating' size='7'
+                         value={this.state.freqHeating}
+                         onChange={this.handleInputChange}/>
+                  <input type='range' name='freqHeating'
+                         min='0' max='8' step='0.1'
+                         value={this.state.freqHeating}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </SettingsDialog>
+          <AboutDialog />
+        </div>
       </div>
     );
   }

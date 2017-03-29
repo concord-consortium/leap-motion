@@ -7,7 +7,7 @@ import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import FistsShaking from './fists-shaking';
 import avg from '../common/js/tools/avg';
-import LeapStatus from '../common/js/components/leap-status.jsx';
+import SettingsDialog from '../common/js/components/settings-dialog.jsx';
 import AboutDialog from '../common/js/components/about-dialog.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import phantomHands from './phantom-hands.js';
@@ -140,7 +140,6 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { aboutVisible, settingsVisible } = this.props;
     const { overlayEnabled, overlayActive, labProps, leapState } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (
@@ -159,37 +158,39 @@ export default class LabHeatTransfer extends React.Component {
             </div>
           </InstructionsOverlay>
         </div>
-        <LeapStatus visible={settingsVisible} ref='status'>
-          <table>
-            <tbody>
-            <tr>
-              <td>Overlay:</td>
-              <td>
-                <input type='checkbox' name='overlayEnabled'
-                       checked={overlayEnabled}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Spoon:</td>
-              <td>
-                <input type='checkbox' name='spoonEnabled'
-                       checked={labProps.spoonEnabled || true}
-                       onChange={this.handleLabPropChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Sound:</td>
-              <td>
-                <input type='checkbox' name='soundEnabled'
-                       defaultChecked={this.fistsShaking.config.soundEnabled}
-                       onChange={this.soundEnabledChanged}/>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </LeapStatus>
-        <AboutDialog visible={aboutVisible} />
+        <div className='top-links'>
+          <SettingsDialog ref='status'>
+            <table>
+              <tbody>
+              <tr>
+                <td>Overlay:</td>
+                <td>
+                  <input type='checkbox' name='overlayEnabled'
+                         checked={overlayEnabled}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Spoon:</td>
+                <td>
+                  <input type='checkbox' name='spoonEnabled'
+                         checked={labProps.spoonEnabled || true}
+                         onChange={this.handleLabPropChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Sound:</td>
+                <td>
+                  <input type='checkbox' name='soundEnabled'
+                         defaultChecked={this.fistsShaking.config.soundEnabled}
+                         onChange={this.soundEnabledChanged}/>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </SettingsDialog>
+          <AboutDialog />
+        </div>
       </div>
     );
   }

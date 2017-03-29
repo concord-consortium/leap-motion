@@ -13,7 +13,7 @@ export default class LeapStandardInfo extends React.Component {
       <div className='leap-standard-info'>
         <div className='state-and-plotter'>
           <div className='state-msg'>{this.props.stateMsg}</div>
-          <LeapStatus visible={settingsVisible} ref='status'/>
+          <LeapStatus ref='status'/>
         </div>
         <LeapHandsView width='299px' height='347px' handsOpacity={1}/>
       </div>

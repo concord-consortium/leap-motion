@@ -23,7 +23,7 @@ export default class Dialog extends React.PureComponent {
 
   render() {
     const { isDragging } = this.state;
-    const { visible, title, children } = this.props;
+    const { visible, title, onToggle, children } = this.props;
     // When user is dragging the dialog, render additional overlay to cover all the iframes and ensure
     // that dragging won't break when pointer is over them.
     return (
@@ -31,9 +31,12 @@ export default class Dialog extends React.PureComponent {
         {isDragging && <div className='dialog-dragging-overlay' />}
         <Draggable zIndex={100} handle='.handle' onStart={this.handleStart} onStop={this.handleStop}>
           <div className={`dialog ${visible ? 'visible' : ''}`}>
-            <div className='handle'>{title}</div>
+            <div className='handle'>
+              {title}
+              <span className='close-icon' onClick={onToggle}>X</span>
+            </div>
             <div className='content'>
-              {children || <p>Some text can go here.</p>}
+              {children}
             </div>
           </div>
         </Draggable>

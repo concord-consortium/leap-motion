@@ -1,6 +1,5 @@
 import React from 'react';
 import LeapFrameRate from './leap-frame-rate.jsx';
-import Dialog from './dialog.jsx';
 import Plotter from './plotter.jsx';
 import '../../css/leap-status.css';
 
@@ -10,15 +9,17 @@ export default class LeapStatus extends React.Component {
   }
 
   render() {
-    const { children, visible } = this.props;
+    const { visible, children } = this.props;
     return (
-      <Dialog visible={visible} title='Settings'>
-        <div className='status-box'>
-          {visible ? <LeapFrameRate/> : ''}
-          <Plotter ref='plotter' hidden={!visible}/>
-          {visible && children}
-        </div>
-      </Dialog>
+      <div className='status-box'>
+        {visible ? <LeapFrameRate/> : ''}
+        <Plotter ref='plotter' hidden={!visible}/>
+        {visible && children}
+      </div>
     )
   }
 }
+
+LeapStatus.defaultProps = {
+  visible: true
+};
