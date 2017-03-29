@@ -19,7 +19,6 @@ export default class AboutDialog extends React.PureComponent {
     const { dialogVisible } = this.state;
     const { children } = this.props;
     if (!children) return null;
-    console.log(children)
     return (
       <span>
         <span className='dialog-link' onClick={this.handleDialogToggle}>About</span>
