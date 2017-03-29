@@ -8,6 +8,7 @@ import LabAddRmAtomTest from '../lab-add-rm-atom-test/lab-add-rm-atom-test.jsx';
 import LabAddRmAtomTestSwipe from '../lab-add-rm-atom-test-swipe/lab-add-rm-atom-test-swipe.jsx';
 
 import LabHeatTransfer from '../lab-heat-transfer/lab-heat-transfer.jsx';
+import LabHeatTransferTransparent from '../lab-heat-transfer-transparent/lab-heat-transfer-transparent.jsx';
 import LabHeatTransferLong from '../lab-heat-transfer-long/lab-heat-transfer-long.jsx';
 import LabHeatTransferMicro from '../lab-heat-transfer-micro/lab-heat-transfer-micro.jsx';
 import LabHeatTransferMicroDirect from '../lab-heat-transfer-micro-direct/lab-heat-transfer-micro-direct.jsx';
@@ -36,6 +37,7 @@ const SIM_LIST = {
   'labaddrmatomtestswipe': LabAddRmAtomTestSwipe,
 
   'labheattransfer': LabHeatTransfer,
+  'labheattransfertransparent': LabHeatTransferTransparent,
   'labheattransferlong': LabHeatTransferLong,
   'labheattransfermicro': LabHeatTransferMicro,
   'labheattransfermicrodirect': LabHeatTransferMicroDirect,

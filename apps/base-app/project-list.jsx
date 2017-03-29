@@ -9,6 +9,7 @@ export default class ProjectList extends React.Component {
         <ul>
           <li>Gas Model: <a href="?simulation=labvolumepressure" target="_blank">lab-volume-pressure</a></li>
           <li>Heat Transfer: <a href="?simulation=labheattransfer" target="_blank">lab-heat-transfer</a></li>
+          <li>Heat Transfer (transparent): <a href="?simulation=labheattransfertransparent" target="_blank">lab-heat-transfer-transparent</a></li>
           <li>Heat Transfer (two hands): <a href="?simulation=labheattransfertwohands" target="_blank">lab-heat-transfer-two-hands</a></li>
           <li>Heat Transfer (two hands, RealSense): <a href="?simulation=labheattransfertwohands&device=realsense" target="_blank">lab-heat-transfer-two-hands</a></li>
           <li>Heat Transfer (micro): <a href="?simulation=labheattransfermicro" target="_blank">lab-heat-transfer-micro</a></li>
