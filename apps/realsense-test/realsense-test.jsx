@@ -64,8 +64,8 @@ export default class RealSenseTest extends React.Component {
     return (
       <div className="realsense-test">
         <div className="inline">
-          <div className="header">RealSense connected: {connected ? "true" : "false"}</div>
-          <div className="header">Data converted to Leap format</div>
+          <div className="heading">RealSense connected: {connected ? "true" : "false"}</div>
+          <div className="heading">Data converted to Leap format</div>
           {lmHand &&
             <table>
               <tbody>

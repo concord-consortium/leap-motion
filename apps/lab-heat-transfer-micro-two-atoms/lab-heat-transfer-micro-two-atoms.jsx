@@ -6,7 +6,9 @@ import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import FistShake from './fist-shake';
-import LeapStatus from '../common/js/components/leap-status.jsx';
+import SettingsDialog from '../common/js/components/settings-dialog.jsx';
+import AboutDialog from '../common/js/components/about-dialog.jsx';
+import About from './about.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
@@ -54,7 +56,7 @@ export default class LabHeatTransfer extends React.Component {
     this.setState(props);
     this.setLabProps(props);
   }
-  
+
   get gestureCallbacks() {
     return {
       leapState: (data) => {
@@ -116,74 +118,79 @@ export default class LabHeatTransfer extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayEnabled && overlayActive} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}>
+          <InstructionsOverlay visible={overlayEnabled && overlayActive}>
             <div className='instructions'>
               {this.getStateMsg()}
             </div>
           </InstructionsOverlay>
         </div>
-        <LeapStatus ref='status'>
-          <table>
-            <tbody>
-            <tr>
-              <td>Overlay:</td>
-              <td>
-                <input type='checkbox' name='overlayEnabled'
-                       checked={overlayEnabled}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Sensitivity:</td>
-              <td>
-                <input type='text' name='handleSensitivity' size='7'
-                       value={this.state.handleSensitivity}
-                       onChange={this.handleInputChange}/>
-                <input type='range' name='handleSensitivity'
-                       min='0' max='3' step='0.1'
-                       value={this.state.handleSensitivity}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Spring strength:</td>
-              <td>
-                <input type='text' name='springStrength' size='7'
-                       value={this.state.springStrength}
-                       onChange={this.handleInputChange}/>
-                <input type='range' name='springStrength'
-                       min='0' max='5000' step='1'
-                       value={this.state.springStrength}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Mass of the draggable atom:</td>
-              <td>
-                <input type='text' name='draggableAtomMass' size='7'
-                       value={this.state.draggableAtomMass}
-                       onChange={this.handleInputChange}/>
-                <input type='range' name='draggableAtomMass'
-                       min='1' max='500' step='1'
-                       value={this.state.draggableAtomMass}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Mass of the regular atoms:</td>
-              <td>
-                <input type='text' name='atomMass' size='7'
-                       value={this.state.atomMass}
-                       onChange={this.handleInputChange}/>
-                <input type='range' name='atomMass'
-                       min='1' max='500' step='1'
-                       value={this.state.atomMass}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </LeapStatus>
+        <div className='top-links'>
+          <SettingsDialog ref='status'>
+            <table>
+              <tbody>
+              <tr>
+                <td>Overlay:</td>
+                <td>
+                  <input type='checkbox' name='overlayEnabled'
+                         checked={overlayEnabled}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Sensitivity:</td>
+                <td>
+                  <input type='text' name='handleSensitivity' size='7'
+                         value={this.state.handleSensitivity}
+                         onChange={this.handleInputChange}/>
+                  <input type='range' name='handleSensitivity'
+                         min='0' max='3' step='0.1'
+                         value={this.state.handleSensitivity}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Spring strength:</td>
+                <td>
+                  <input type='text' name='springStrength' size='7'
+                         value={this.state.springStrength}
+                         onChange={this.handleInputChange}/>
+                  <input type='range' name='springStrength'
+                         min='0' max='5000' step='1'
+                         value={this.state.springStrength}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Mass of the draggable atom:</td>
+                <td>
+                  <input type='text' name='draggableAtomMass' size='7'
+                         value={this.state.draggableAtomMass}
+                         onChange={this.handleInputChange}/>
+                  <input type='range' name='draggableAtomMass'
+                         min='1' max='500' step='1'
+                         value={this.state.draggableAtomMass}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Mass of the regular atoms:</td>
+                <td>
+                  <input type='text' name='atomMass' size='7'
+                         value={this.state.atomMass}
+                         onChange={this.handleInputChange}/>
+                  <input type='range' name='atomMass'
+                         min='1' max='500' step='1'
+                         value={this.state.atomMass}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </SettingsDialog>
+          <AboutDialog>
+            <About />
+          </AboutDialog>
+        </div>
       </div>
     );
   }

@@ -1,23 +1,59 @@
-.overlay {
-  &.grasp-seasons {
+.grasp-seasons {
     position: absolute;
 
     &.main {
-      top: 10px;
-      left: 13px;
+      top: 0px;
+      left: 0px;
       font-size: 18px;
+      width: 795px;
+      height: 600px;
     }
 
     &.small-top {
-      top: 10px;
-      left: 818px;
+      top: 0px;
+      left: 805px;
+      width: 395px;
+      height: 296px;
       font-size: 14px;
     }
 
     &.small-bottom {
-      top: 315px;
-      left: 818px;
+      top: 305px;
+      left: 805px;
+      width: 395px;
+      height: 296px;
       font-size: 14px;
     }
-  }
+    .view-manager{
+      margin: 0 auto 0;
+    }
+    .form-control{
+      padding-top: 3px;
+      padding-bottom: 3px;
+      padding-left: 6px;
+    }
+}
+.seasons-container{
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1200px;
+    height: 860px;
+    overflow: auto;
+}
+.simulation.seasons{
+    position: absolute;
+    top: 80px;
+    left: 0px;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 0%);
+    height: 100%;
+    margin: 0;
+    h1{
+      margin-left:20px;
+    }
+    .detail-toggle-switches{
+      margin-right:30px;
+    }
 }

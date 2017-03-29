@@ -1,0 +1,92 @@
+body{
+  font: 100% lato, verdana, arial, helvetica, sans-serif !important;
+  margin: 0;
+  border: 0;
+  background-color: #c9e9e6;
+}
+h1 {
+  display: inline-block;
+  font: 300 1.5em 'museo-sans', verdana, arial, helvetica, sans-serif;
+  margin: .25em 0 .5em;
+  width: 50%;
+}
+h2 {
+  font: 300 1.25em 'museo-slab', verdana, arial, helvetica, sans-serif;
+}
+.container {
+  height: auto;
+  min-height: 400px;
+  position: relative;
+  padding-bottom: 25%;
+  width: 100%;
+  iframe {
+    height: 100% !important;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100% !important;
+  }
+}
+.simulation{
+  margin: 80px 10px 10px 10px;
+  position: relative;
+}
+.top-links {
+  // .simulation is the parent
+  position: absolute;
+  top: 1em;
+  right: 0;
+
+  span {
+    display: inline-block;
+  }
+
+  .dialog-link {
+    cursor: pointer;
+    margin-left: 1em;
+    opacity: .5;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.header{
+  left: 0;
+  position: fixed;
+  top:0px;
+  height:70px;
+  margin-right: -200%;
+  margin-left: -200%;
+  padding-right: 200%;
+  padding-left: 200%;
+  width: 100%;
+  z-index: 999;
+  background-color: white;
+  .header-inner{
+    margin:0 auto;
+    position: relative;
+    width:60em;
+  }
+  .projectlogo{
+    height:auto;
+    left:0;
+    position: absolute;
+    top:10px;
+    width:150px;
+  }
+  .cclogo{
+    height:auto;
+    position: absolute;
+    top:0px;
+    right:0;
+    width:150px;
+  }
+  .illogo{
+    height: 40px;
+    position: absolute;
+    top: 13px;
+    right: 155px;
+    width: auto;
+  }
+}

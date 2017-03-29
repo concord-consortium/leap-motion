@@ -3,6 +3,7 @@
   "publicationStatus": "draft",
   "subtitle": "GRASP",
   "about": "",
+  "showTopBar": false,
   "aspectRatio": 1.6,
   "fontScale": 0.75,
   "models": [

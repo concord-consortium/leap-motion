@@ -1,7 +1,7 @@
 import React from 'react';
 import LeapHandsView from './hands-view.jsx';
 import LeapStatus from './leap-status.jsx';
-import '../../css/leap-standard-info.css';
+import '../../css/leap-standard-info.less';
 
 export default class LeapStandardInfo extends React.Component {
   get plotter() {

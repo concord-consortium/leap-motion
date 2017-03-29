@@ -3,6 +3,7 @@
   "publicationStatus": "public",
   "subtitle": "Explore how the volume of a gas affects pressure.",
   "aspectRatio": 1.35,
+  "showTopBar": false,
   "about": [
     "Gases can be compressed into smaller volumes. How does compressing a gas affect its pressure?",
     "",
