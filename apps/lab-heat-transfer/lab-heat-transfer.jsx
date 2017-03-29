@@ -9,6 +9,7 @@ import FistShake from './fist-shake';
 import avg from '../common/js/tools/avg';
 import SettingsDialog from '../common/js/components/settings-dialog.jsx';
 import AboutDialog from '../common/js/components/about-dialog.jsx';
+import About from './about.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
@@ -188,6 +189,7 @@ export default class LabHeatTransfer extends React.Component {
             </table>
           </SettingsDialog>
           <AboutDialog>
+            <About />
           </AboutDialog>
         </div>
       </div>

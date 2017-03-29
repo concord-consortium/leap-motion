@@ -10,10 +10,10 @@ import avg from '../common/js/tools/avg';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import SettingsDialog from '../common/js/components/settings-dialog.jsx';
 import AboutDialog from '../common/js/components/about-dialog.jsx';
+import About from './about.jsx';
 import interactive from './lab-interactive.json';
 import phantomHands from './phantom-hands';
 import model from './lab-model.json';
-import About from './about.jsx';
 import './lab-voule-pressure.less';
 
 const MAX_VOL = 0.82;
