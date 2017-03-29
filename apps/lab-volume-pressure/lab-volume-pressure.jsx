@@ -8,7 +8,9 @@ import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import FistBump from './fist-bump';
 import avg from '../common/js/tools/avg';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
-import LeapStatus from '../common/js/components/leap-status.jsx';
+import SettingsDialog from '../common/js/components/settings-dialog.jsx';
+import AboutDialog from '../common/js/components/about-dialog.jsx';
+import About from './about.jsx';
 import interactive from './lab-interactive.json';
 import phantomHands from './phantom-hands';
 import model from './lab-model.json';
@@ -148,69 +150,74 @@ export default class LabVolumePressure extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
+          <InstructionsOverlay visible={overlayVisible}
                                handsViewProps={{phantomHands: phantomHands[overlayVisible && this.getHintName()]}}>
             <div className='instructions'>
               <p className='text'>{this.getHintText()}</p>
             </div>
           </InstructionsOverlay>
         </div>
-        <LeapStatus ref='status'>
-          <table>
-            <tbody>
-            <tr>
-              <td>Overlay:</td>
-              <td>
-                <input type='checkbox' name='overlayEnabled'
-                       checked={overlayEnabled}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Plunger rod visible:</td>
-              <td>
-                <input type='checkbox' name='plungerRodVisible' checked={labProps.plungerRodVisible || false} onChange={this.handleLabPropChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Number of bump spots:</td>
-              <td>
-                <input type='text' name='markersCount' size='7'
-                       value={labProps.markersCount || 0}
-                       onChange={this.handleLabPropChange}/>
-                <input type='range' name='markersCount'
-                       min='0' max='25'
-                       value={labProps.markersCount || 0}
-                       onChange={this.handleLabPropChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Bump spot fade speed:</td>
-              <td>
-                <input type='text' name='markerFadeSpeed' size='7'
-                       value={labProps.markerFadeSpeed || 0}
-                       onChange={this.handleLabPropChange}/>
-                <input type='range' name='markerFadeSpeed'
-                       min='0.005' max='0.075' step='0.005'
-                       value={labProps.markerFadeSpeed || 0}
-                       onChange={this.handleLabPropChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Bump spot sensitivity:</td>
-              <td>
-                <input type='text' name='markerSensitivity' size='7'
-                       value={labProps.markerSensitivity || 0}
-                       onChange={this.handleLabPropChange}/>
-                <input type='range' name='markerSensitivity'
-                       min='0.1' max='5' step='0.1'
-                       value={labProps.markerSensitivity || 0}
-                       onChange={this.handleLabPropChange}/>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </LeapStatus>
+        <div className='top-links'>
+          <SettingsDialog ref='status'>
+            <table>
+              <tbody>
+              <tr>
+                <td>Overlay:</td>
+                <td>
+                  <input type='checkbox' name='overlayEnabled'
+                         checked={overlayEnabled}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Plunger rod visible:</td>
+                <td>
+                  <input type='checkbox' name='plungerRodVisible' checked={labProps.plungerRodVisible || false} onChange={this.handleLabPropChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Number of bump spots:</td>
+                <td>
+                  <input type='text' name='markersCount' size='7'
+                         value={labProps.markersCount || 0}
+                         onChange={this.handleLabPropChange}/>
+                  <input type='range' name='markersCount'
+                         min='0' max='25'
+                         value={labProps.markersCount || 0}
+                         onChange={this.handleLabPropChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Bump spot fade speed:</td>
+                <td>
+                  <input type='text' name='markerFadeSpeed' size='7'
+                         value={labProps.markerFadeSpeed || 0}
+                         onChange={this.handleLabPropChange}/>
+                  <input type='range' name='markerFadeSpeed'
+                         min='0.005' max='0.075' step='0.005'
+                         value={labProps.markerFadeSpeed || 0}
+                         onChange={this.handleLabPropChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Bump spot sensitivity:</td>
+                <td>
+                  <input type='text' name='markerSensitivity' size='7'
+                         value={labProps.markerSensitivity || 0}
+                         onChange={this.handleLabPropChange}/>
+                  <input type='range' name='markerSensitivity'
+                         min='0.1' max='5' step='0.1'
+                         value={labProps.markerSensitivity || 0}
+                         onChange={this.handleLabPropChange}/>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </SettingsDialog>
+          <AboutDialog>
+            <About />
+          </AboutDialog>
+        </div>
       </div>
     );
   }

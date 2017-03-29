@@ -7,7 +7,9 @@ import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import FistShake from './fist-shake';
 import avg from '../common/js/tools/avg';
-import LeapStatus from '../common/js/components/leap-status.jsx';
+import SettingsDialog from '../common/js/components/settings-dialog.jsx';
+import AboutDialog from '../common/js/components/about-dialog.jsx';
+import About from './about.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
@@ -81,7 +83,7 @@ export default class LabHeatTransfer extends React.Component {
   soundEnabledChanged(event) {
     this.fistShake.config.soundEnabled = event.target.checked;
   }
-  
+
   get gestureCallbacks() {
     return {
       leapState: (data) => {
@@ -142,50 +144,55 @@ export default class LabHeatTransfer extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayVisible} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}>
+          <InstructionsOverlay visible={overlayVisible}>
             <div className='instructions'>
               {this.getStateMsg()}
             </div>
           </InstructionsOverlay>
         </div>
-        <LeapStatus ref='status'>
-          <table>
-            <tbody>
-            <tr>
-              <td>Overlay:</td>
-              <td>
-                <input type='checkbox' name='overlayEnabled'
-                       checked={overlayEnabled}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Spoon:</td>
-              <td>
-                <input type='checkbox' name='spoonEnabled'
-                       checked={labProps.spoonEnabled}
-                       onChange={this.handleLabPropChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Sound:</td>
-              <td>
-                <input type='checkbox' name='soundEnabled'
-                       defaultChecked={this.fistShake.config.soundEnabled}
-                       onChange={this.soundEnabledChanged}/>
-              </td>
-            </tr>
-            <tr>
-              <td>"No hand" required duration [ms]:</td>
-              <td>
-                <input type='text' name='clearHandTimeout'
-                       defaultValue={this.fistShake.config.resetHandTimeout}
-                       onChange={this.resetHandTimeoutChanged}/>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </LeapStatus>
+        <div className='top-links'>
+          <SettingsDialog ref='status'>
+            <table>
+              <tbody>
+              <tr>
+                <td>Overlay:</td>
+                <td>
+                  <input type='checkbox' name='overlayEnabled'
+                         checked={overlayEnabled}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Spoon:</td>
+                <td>
+                  <input type='checkbox' name='spoonEnabled'
+                         checked={labProps.spoonEnabled}
+                         onChange={this.handleLabPropChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Sound:</td>
+                <td>
+                  <input type='checkbox' name='soundEnabled'
+                         defaultChecked={this.fistShake.config.soundEnabled}
+                         onChange={this.soundEnabledChanged}/>
+                </td>
+              </tr>
+              <tr>
+                <td>"No hand" required duration [ms]:</td>
+                <td>
+                  <input type='text' name='clearHandTimeout'
+                         defaultValue={this.fistShake.config.resetHandTimeout}
+                         onChange={this.resetHandTimeoutChanged}/>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </SettingsDialog>
+          <AboutDialog>
+            <About />
+          </AboutDialog>
+        </div>
       </div>
     );
   }

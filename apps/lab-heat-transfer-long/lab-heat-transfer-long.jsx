@@ -7,7 +7,9 @@ import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import FistsShaking from './fists-shaking';
 import avg from '../common/js/tools/avg';
-import LeapStatus from '../common/js/components/leap-status.jsx';
+import SettingsDialog from '../common/js/components/settings-dialog.jsx';
+import AboutDialog from '../common/js/components/about-dialog.jsx';
+import About from './about.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
@@ -140,72 +142,77 @@ export default class LabHeatTransfer extends React.Component {
                props={labProps}
                onModelLoad={this.labModelLoaded}
                playing={true}/>
-          <InstructionsOverlay visible={overlayEnabled && overlayActive} width={IFRAME_WIDTH} height={IFRAME_HEIGHT}>
+          <InstructionsOverlay visible={overlayEnabled && overlayActive}>
             <div className='instructions'>
               {this.getStateMsg()}
               </div>
           </InstructionsOverlay>
         </div>
-        <LeapStatus ref='status'>
-          <table>
-            <tbody>
-            <tr>
-              <td>Overlay:</td>
-              <td>
-                <input type='checkbox' name='overlayEnabled'
-                       checked={overlayEnabled}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Sound:
-              </td>
-              <td>
-                <input type='checkbox' name='soundEnabled'
-                       defaultChecked={this.fistsShaking.config.soundEnabled}
-                       onChange={this.soundEnabledChanged}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Cooling frequency:</td>
-              <td>
-                <input type='text' name='freqCooling' size='7'
-                       value={this.state.freqCooling}
-                       onChange={this.handleInputChange}/>
-                <input type='range' name='freqCooling'
-                       min='0' max='8' step='0.1'
-                       value={this.state.freqCooling}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Heating frequency:</td>
-              <td>
-                <input type='text' name='freqHeating' size='7'
-                       value={this.state.freqHeating}
-                       onChange={this.handleInputChange}/>
-                <input type='range' name='freqHeating'
-                       min='0' max='8' step='0.1'
-                       value={this.state.freqHeating}
-                       onChange={this.handleInputChange}/>
-              </td>
-            </tr>
-            <tr>
-              <td>Epsilon (attractive force):</td>
-              <td>
-                <input type='text' name='epsilon' size='7'
-                       value={labProps.epsilon || 0}
-                       onChange={this.handleLabPropChange}/>
-                <input type='range' name='epsilon'
-                       min='0.2' max='5' step='0.1'
-                       value={labProps.epsilon || 0}
-                       onChange={this.handleLabPropChange}/>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </LeapStatus>
+        <div className='top-links'>
+          <SettingsDialog ref='status'>
+            <table>
+              <tbody>
+              <tr>
+                <td>Overlay:</td>
+                <td>
+                  <input type='checkbox' name='overlayEnabled'
+                         checked={overlayEnabled}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  Sound:
+                </td>
+                <td>
+                  <input type='checkbox' name='soundEnabled'
+                         defaultChecked={this.fistsShaking.config.soundEnabled}
+                         onChange={this.soundEnabledChanged}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Cooling frequency:</td>
+                <td>
+                  <input type='text' name='freqCooling' size='7'
+                         value={this.state.freqCooling}
+                         onChange={this.handleInputChange}/>
+                  <input type='range' name='freqCooling'
+                         min='0' max='8' step='0.1'
+                         value={this.state.freqCooling}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Heating frequency:</td>
+                <td>
+                  <input type='text' name='freqHeating' size='7'
+                         value={this.state.freqHeating}
+                         onChange={this.handleInputChange}/>
+                  <input type='range' name='freqHeating'
+                         min='0' max='8' step='0.1'
+                         value={this.state.freqHeating}
+                         onChange={this.handleInputChange}/>
+                </td>
+              </tr>
+              <tr>
+                <td>Epsilon (attractive force):</td>
+                <td>
+                  <input type='text' name='epsilon' size='7'
+                         value={labProps.epsilon || 0}
+                         onChange={this.handleLabPropChange}/>
+                  <input type='range' name='epsilon'
+                         min='0.2' max='5' step='0.1'
+                         value={labProps.epsilon || 0}
+                         onChange={this.handleLabPropChange}/>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </SettingsDialog>
+          <AboutDialog>
+            <About />
+          </AboutDialog>
+        </div>
       </div>
     );
   }

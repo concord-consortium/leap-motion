@@ -5,11 +5,15 @@ import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import logger from '../common/js/tools/logger';
 import LoggingConfig from '../common/js/components/logging-config.jsx';
+import SettingsDialog from '../common/js/components/settings-dialog.jsx';
+import AboutDialog from '../common/js/components/about-dialog.jsx';
+import About from './about.jsx';
 import phantomHands from './phantom-hands';
 import GesturesHelper from './gestures-helper';
 import GesturesLogger from './gestures-logger';
 import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
+
 import './seasons-sunray-angle.less';
 
 const SUNRAY_INACTIVE_COLOR = '#888';
@@ -144,7 +148,6 @@ export default class SeasonsSunrayAngle extends React.Component {
     }
   }
 
-
   handleSpaceViewGestures(data) {
     let gestureDetected = false;
     if (data.numberOfHands === 0) {
@@ -249,34 +252,43 @@ export default class SeasonsSunrayAngle extends React.Component {
 
     return (
       <div>
-        <div style={{background: '#f6f6f6', width: '1210px'}}>
-          <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}
-                   onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange} f
-                   logHandler={this.log}/>
-        </div>
-        <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
-                             width={overlayWidth} height={overlayHeight}
-                             handsViewProps={{positionOffset: [0, -150, 0],
-                                              cameraPosition: [0, 100, 500],
-                                              phantomHands: phantomHands[overlayVisible && phantomHandsHint]}}>
-          <div className='instructions'>
-            {instructions}
+        <div className='seasons-container'>
+          <div style={{background: '#f6f6f6', width: '1210px'}}>
+            <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}
+                     onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange} f
+                     logHandler={this.log}/>
           </div>
-        </InstructionsOverlay>
-        <p>
-          Overlay: <input type='checkbox' name='overlayEnabled' checked={overlayEnabled} onChange={this.handleInputChange}/>
-        </p>
-        <p>
-          Min distance between hands [mm]: <input type='text' name='minDist'
-                                                  defaultValue={this.gesturesHelper.config.minDist}
-                                                  onChange={this.handleConfigChange}/>
-        </p>
-        <p>
-          Max distance between hands [mm]: <input type='text' name='maxDist'
-                                                  defaultValue={this.gesturesHelper.config.maxDist}
-                                                  onChange={this.handleConfigChange}/>
-        </p>
-        <LoggingConfig onStart={this.handleLoggingStart} onEnd={this.handleLoggingEnd}/>
+          <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
+                               width={overlayWidth} height={overlayHeight}
+                               handsViewProps={{positionOffset: [0, -150, 0],
+                                                cameraPosition: [0, 100, 500],
+                                                phantomHands: phantomHands[overlayVisible && phantomHandsHint]}}>
+            <div className='instructions'>
+              {instructions}
+            </div>
+          </InstructionsOverlay>
+        </div>
+        <div className='top-links'>
+          <SettingsDialog>
+            <p>
+              Overlay: <input type='checkbox' name='overlayEnabled' checked={overlayEnabled} onChange={this.handleInputChange}/>
+            </p>
+            <p>
+              Min distance between hands [mm]: <input type='text' name='minDist'
+                                                      defaultValue={this.gesturesHelper.config.minDist}
+                                                      onChange={this.handleConfigChange}/>
+            </p>
+            <p>
+              Max distance between hands [mm]: <input type='text' name='maxDist'
+                                                      defaultValue={this.gesturesHelper.config.maxDist}
+                                                      onChange={this.handleConfigChange}/>
+            </p>
+            <LoggingConfig onStart={this.handleLoggingStart} onEnd={this.handleLoggingEnd}/>
+          </SettingsDialog>
+          <AboutDialog>
+            <About />
+          </AboutDialog>
+        </div>
       </div>
     );
   }
