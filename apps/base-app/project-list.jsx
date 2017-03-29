@@ -33,12 +33,12 @@ export default class ProjectList extends React.Component {
         <ul>
           <li><a href="?simulation=handsviewrealistic&device=leap" target="_blank">hands-view-realistic (Leap)</a></li>
           <li><a href="?simulation=handsviewrealistic&device=realsense" target="_blank">hands-view-realistic (RealSense)</a></li>
-          <li><a href="?simulation=handsviewsimple" target="_blank">hands-view-simple</a></li>
           <li><a href="?simulation=realsensetest" target="_blank">realsense-test</a></li>
           <li><a href="?simulation=labaddrmatomtest" target="_blank">lab-add-rm-atom-test</a></li>
           <li><a href="?simulation=labaddrmatomtestswipe" target="_blank">lab-add-rm-atom-swipe</a></li>
           <li><a href="?simulation=labtemperatureabsolute" target="_blank">lab-temperature-absolute</a></li>
           <li><a href="?simulation=labtemperaturedelta" target="_blank">lab-temperature-delta</a></li>
+          <li><a href="?simulation=rotation" target="_blank">alignment-rotation</a></li>
         </ul>
         <h2>Old versions:</h2>
         <ul>

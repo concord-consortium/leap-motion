@@ -3,7 +3,6 @@ import Typekit from 'react-typekit';
 import getURLParam from '../common/js/tools/get-url-param';
 
 import HandsViewRealistic from '../hands-view-realistic/hands-view-realistic.jsx';
-import HandsViewSimple from '../common/js/components/leap-hands-view-simple.jsx';
 import LabAddRmAtomTest from '../lab-add-rm-atom-test/lab-add-rm-atom-test.jsx';
 import LabAddRmAtomTestSwipe from '../lab-add-rm-atom-test-swipe/lab-add-rm-atom-test-swipe.jsx';
 
@@ -22,6 +21,7 @@ import LabTemperatureTest from '../lab-temperature-test/lab-temperature-test.jsx
 
 import LabVolumePressure from '../lab-volume-pressure/lab-volume-pressure.jsx';
 import RealSenseTest from '../realsense-test/realsense-test.jsx';
+import AlignmentRotation from '../alignment-rotation/alignment-rotation.jsx';
 import SeasonsSunrayAngle from '../seasons-sunray-angle/seasons-sunray-angle.jsx';
 import ProjectList from './project-list.jsx';
 
@@ -32,7 +32,6 @@ const SIM_LIST = {
   'index': ProjectList,
 
   'handsviewrealistic': HandsViewRealistic,
-  'handsviewsimple': HandsViewSimple,
   'labaddrmatomtest': LabAddRmAtomTest,
   'labaddrmatomtestswipe': LabAddRmAtomTestSwipe,
 
@@ -48,6 +47,7 @@ const SIM_LIST = {
   'labtemperatureabsolute': LabTemperatureAbsolute,
   'labtemperaturedelta': LabTemperatureDelta,
   'labtemperaturetest': LabTemperatureTest,
+  'rotation': AlignmentRotation,
 
   'labvolumepressure': LabVolumePressure,
   'realsensetest': RealSenseTest,
