@@ -132,6 +132,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
+    const { interactive, model } = this.props;
     const { overlayEnabled, overlayActive, labProps } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (
@@ -196,6 +197,11 @@ export default class LabHeatTransfer extends React.Component {
     );
   }
 }
+
+LabHeatTransfer.defaultProps = {
+  interactive,
+  model
+};
 
 reactMixin.onClass(LabHeatTransfer, pureRender);
 reactMixin.onClass(LabHeatTransfer, leapStateHandlingV2);
