@@ -23,7 +23,6 @@ import LabVolumePressure from '../lab-volume-pressure/lab-volume-pressure.jsx';
 import RealSenseTest from '../realsense-test/realsense-test.jsx';
 import AlignmentRotation from '../alignment-rotation/alignment-rotation.jsx';
 import SeasonsSunrayAngle from '../seasons-sunray-angle/seasons-sunray-angle.jsx';
-import SeasonsNarrow from '../seasons-narrow/seasons-narrow.jsx';
 import ProjectList from './project-list.jsx';
 
 import './base-app.less';
@@ -53,7 +52,7 @@ const SIM_LIST = {
   'labvolumepressure': LabVolumePressure,
   'realsensetest': RealSenseTest,
   'seasons': SeasonsSunrayAngle,
-  'seasonsnarrow': SeasonsNarrow
+  'seasonsnarrow': SeasonsSunrayAngle
 };
 
 const DEF_SIMULATION = getURLParam('simulation') || 'index';

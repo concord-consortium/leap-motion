@@ -13,6 +13,7 @@ import GesturesHelper from './gestures-helper';
 import GesturesLogger from './gestures-logger';
 import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
+import getURLParam from '../common/js/tools/get-url-param';
 
 import './seasons-sunray-angle.less';
 
@@ -44,6 +45,12 @@ const OVERLAY_SIZE = {
   'small-top': {width: '395px', height: '296px'},
   'small-bottom': {width: '395px', height: '296px'}
 };
+const OVERLAY_SIZE_NARROW = {
+  'main': {width: '600px', height: '495px'},
+  'small-top': {width: '335px', height: '245px'},
+  'small-bottom': {width: '335px', height: '245px'}
+};
+
 
 export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
@@ -53,7 +60,8 @@ export default class SeasonsSunrayAngle extends React.Component {
       activeViewPanel: 'small-top',
       instructions: INSTRUCTIONS.INITIAL_GROUND,
       overlayEnabled: true,
-      phantomHandsHint: null
+      phantomHandsHint: null,
+      renderSize: getURLParam('simulation') || 'seasons'
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -241,18 +249,20 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions, activeViewPanel, overlayEnabled, overlayActive, phantomHandsHint } = this.state;
+    const { instructions, activeViewPanel, overlayEnabled, overlayActive, phantomHandsHint, renderSize } = this.state;
+    let overlaySizeSettings = renderSize == 'seasons' ? OVERLAY_SIZE : OVERLAY_SIZE_NARROW;
+    let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container-narrow';
     // Each time user changes position of the rays view, we need to reposition and resize overlay.
     // Position is updated using CSS styles (set by class name, see seasons-sunray-angle.less).
     // Width and height need to be set using React properties, so overlay component can resize its 3D renderer.
-    const overlayWidth = OVERLAY_SIZE[activeViewPanel].width;
-    const overlayHeight = OVERLAY_SIZE[activeViewPanel].height;
+    const overlayWidth = overlaySizeSettings[activeViewPanel].width;
+    const overlayHeight = overlaySizeSettings[activeViewPanel].height;
     const overlayClassName = `grasp-seasons ${activeViewPanel}`;
     const overlayVisible = overlayEnabled && overlayActive;
 
     return (
       <div>
-        <div className='seasons-container'>
+        <div className={containerStyle}>
           <div style={{background: '#f6f6f6', width: '1210px'}}>
             <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}
                      onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange} f

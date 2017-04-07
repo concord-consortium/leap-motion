@@ -1,38 +1,3 @@
-.grasp-seasons {
-    position: absolute;
-
-    &.main {
-      top: 0px;
-      left: 0px;
-      font-size: 18px;
-      width: 795px;
-      height: 600px;
-    }
-
-    &.small-top {
-      top: 0px;
-      left: 805px;
-      width: 395px;
-      height: 296px;
-      font-size: 14px;
-    }
-
-    &.small-bottom {
-      top: 305px;
-      left: 805px;
-      width: 395px;
-      height: 296px;
-      font-size: 14px;
-    }
-    .view-manager{
-      margin: 0 auto 0;
-    }
-    .form-control{
-      padding-top: 3px;
-      padding-bottom: 3px;
-      padding-left: 6px;
-    }
-}
 .seasons-container{
     position: relative;
     margin-left: auto;
@@ -40,8 +5,157 @@
     width: 1200px;
     height: 860px;
     overflow: auto;
+
+    .grasp-seasons {
+      position: absolute;
+
+      &.main {
+        top: 0px;
+        left: 0px;
+        font-size: 18px;
+        width: 795px;
+        height: 600px;
+      }
+
+      &.small-top {
+        top: 0px;
+        left: 805px;
+        width: 395px;
+        height: 296px;
+        font-size: 14px;
+      }
+
+      &.small-bottom {
+        top: 305px;
+        left: 805px;
+        width: 395px;
+        height: 296px;
+        font-size: 14px;
+      }
+      .view-manager{
+        margin: 0 auto 0;
+      }
+      .form-control{
+        padding-top: 3px;
+        padding-bottom: 3px;
+        padding-left: 6px;
+      }
+    }
 }
-.simulation.seasons{
+
+.seasons-container-narrow{
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 940px;
+    height: 725px;
+    overflow: auto;
+
+    .grasp-seasons {
+        position: absolute;
+        width:940px;
+
+        &.main {
+          top: 0px;
+          left: 0px;
+          font-size: 18px;
+          width: 600px;
+          height: 495px;
+        }
+
+        &.small-top {
+          top: 0px;
+          left: 603px;
+          width: 335px;
+          height: 245px;
+          font-size: 14px;
+        }
+
+        &.small-bottom {
+          top: 250px;
+          left: 603px;
+          width: 335px;
+          height: 245px;
+          font-size: 14px;
+        }
+        .view-manager{
+          margin: 0 auto 0;
+
+        }
+        .form-control{
+          padding-top: 3px;
+          padding-bottom: 3px;
+          padding-left: 6px;
+        }
+
+      .view{
+        &.main{
+          width: 600px;
+          height: 495px;
+        }
+        &.small-top{
+          width: 335px;
+          height: 245px;
+          left: 603px;
+        }
+        &.small-bottom{
+          width: 335px;
+          height: 245px;
+          left: 603px;
+          top: 250px;
+        }
+      }
+      .view-select{
+        &.small-top{
+          left: 608px;
+        }
+        &.small-bottom{
+          left: 608px;
+          top: 255px;
+        }
+      }
+    }
+    .view-manager{
+      width: 940px;
+      height:500px;
+    }
+    .controls{
+      width: 940px;
+      .left-col{
+        width: 475px;
+      }
+      .right-col{
+        margin-right:10px;
+      }
+      .day{
+        margin-left: 80px;
+        font-size: 1.4em;
+      }
+      .day-slider{
+        width: 475px;
+      }
+    }
+    .top-links{
+      margin-right:10px;
+    }
+}
+.simulation.seasons, .simulation.seasonsnarrow{
+    position: absolute;
+    top: 80px;
+    left: 0px;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 0%);
+    height: 100%;
+    margin: 0;
+    h1{
+      margin-left:20px;
+    }
+    .detail-toggle-switches{
+      margin-right:30px;
+    }
+}
+.simulation .seasonsnarrow{
     position: absolute;
     top: 80px;
     left: 0px;
