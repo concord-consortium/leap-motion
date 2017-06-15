@@ -218,6 +218,7 @@
       "title": "Temperature of Molecules on Right",
       "property": "rightAtomsTempAvg",
       "units": true,
+      "labelFormat": "3r",
       "gridLines": 8
     },
     {
@@ -228,6 +229,7 @@
       "title": "Temperature of Molecules on Left",
       "property": "leftAtomsTempAvg",
       "units": true,
+      "labelFormat": "3r",
       "gridLines": 8
     },
     {
