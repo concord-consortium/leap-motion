@@ -39,15 +39,15 @@
     "atomRadiusScale": 1.13,
     "images": [
       {
-        "imageUri": "spoon-no-bg.png",
+        "imageUri": "spoon-outline.png",
         "imageX": 0,
-        "imageY": 1.35,
+        "imageY": 1.4,
         "imageLayer": 0,
         "imageLayerPosition": 1,
         "visible": true,
         "rotation": 180,
-        "opacity": 1,
-        "scale": 0.11
+        "opacity": 0,
+        "scale": 0.455
       }
     ],
     "keShading": false,

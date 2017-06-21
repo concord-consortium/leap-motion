@@ -5,6 +5,6 @@ import model from './lab-model.json';
 
 export default class LabHeatTransferTransparent extends React.Component {
   render() {
-    return <LabHeatTransfer interactive={interactive} model={model}/>;
+    return <LabHeatTransfer interactive={interactive} model={model} spoonEnabled={true} />;
   }
 }

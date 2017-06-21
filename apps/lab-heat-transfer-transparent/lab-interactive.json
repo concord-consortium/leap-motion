@@ -29,7 +29,16 @@
         "  }",
         "}",
         "set('leftAtomsIndices', leftAtoms);",
-        "set('rightAtomsIndices', rightAtoms);"
+        "set('rightAtomsIndices', rightAtoms);",
+        "function updateSpoonVis() {",
+        "  var bar = get('bar') !== 'none';",
+        "  var spoonEnabled = get('spoonEnabled');",
+        "  setImageProperties(0, {opacity: bar ? 1 : 0});",
+        "  setImageProperties(0, {visible: spoonEnabled ? 1 : 0});",
+        "}",
+        "onPropertyChange('bar', updateSpoonVis);",
+        "onPropertyChange('spoonEnabled', updateSpoonVis);",
+        "updateSpoonVis();"
       ]
     }
   ],
@@ -48,8 +57,7 @@
     },
     {
       "name": "spoonEnabled",
-      "initialValue": true,
-      "onChange": "setImageProperties(0, {opacity: value ? 1 : 0});"
+      "initialValue": true
     },
     {
       "name": "leftAtomsIndices",
@@ -221,9 +229,9 @@
       "id": "bar-graph",
       "min": 0,
       "max": 600,
-      "title": "Temperature of Molecules on Right",
+      "title": "Temperature of Molecules on Right (&deg;C)",
       "property": "rightAtomsTempAvg",
-      "units": true,
+      "units": false,
       "labelFormat": "3r",
       "gridLines": 8
     },
@@ -232,9 +240,9 @@
       "id": "bar-graph2",
       "min": 0,
       "max": 600,
-      "title": "Temperature of Molecules on Left",
+      "title": "Temperature of Molecules on Left (&deg;C)",
       "property": "leftAtomsTempAvg",
-      "units": true,
+      "units": false,
       "labelFormat": "3r",
       "gridLines": 8
     },

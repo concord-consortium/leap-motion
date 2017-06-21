@@ -45,9 +45,11 @@ export default class LabHeatTransfer extends React.Component {
     this.labModelLoaded = this.labModelLoaded.bind(this);
     this.soundEnabledChanged = this.soundEnabledChanged.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSpoonVisibility = this.handleSpoonVisibility.bind(this);
     this.state = {
       leapState: null,
-      overlayEnabled: true
+      overlayEnabled: true,
+      spoonEnabled: this.props.spoonEnabled ? this.props.spoonEnabled : DEF_LAB_PROPS.spoonEnabled
     };
   }
 
@@ -109,8 +111,11 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   labModelLoaded() {
+    const { spoonEnabled } = this.state;
     // Reset Lab properties when model is reloaded.
-    this.setLabProps(DEF_LAB_PROPS);
+    let labProps = DEF_LAB_PROPS;
+    labProps.spoonEnabled = spoonEnabled;
+    this.setLabProps(labProps);
     // Mixin method that updates overlayActive state.
     this.resetOverlay();
   }
@@ -119,6 +124,12 @@ export default class LabHeatTransfer extends React.Component {
     let props = {};
     props[event.target.name] = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
     this.setState(props);
+  }
+
+  handleSpoonVisibility(event){
+    const {spoonEnabled } = this.state;
+    this.setState({spoonEnabled: !spoonEnabled})
+    this.handleLabPropChange(event);
   }
 
   soundEnabledChanged(event) {
@@ -141,7 +152,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { overlayEnabled, overlayActive, labProps, leapState } = this.state;
+    const { overlayEnabled, overlayActive, labProps, leapState, spoonEnabled } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
@@ -175,8 +186,8 @@ export default class LabHeatTransfer extends React.Component {
                 <td>Spoon:</td>
                 <td>
                   <input type='checkbox' name='spoonEnabled'
-                         checked={labProps.spoonEnabled || true}
-                         onChange={this.handleLabPropChange}/>
+                         checked={spoonEnabled}
+                         onChange={this.handleSpoonVisibility}/>
                 </td>
               </tr>
               <tr>
