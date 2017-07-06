@@ -93,11 +93,12 @@ export default class BaseApp extends React.Component {
     });
     let componentStyleList = ['simulation', sim];
     let componentStyles = componentStyleList.join(' ');
+    let headerClass = sim === 'seasons'? 'header seasons' : 'header';
 
     return (
       <div className='main' ref='container'>
         <Typekit kitId="hdw8ayt" />
-        <div className='header'>
+        <div className={headerClass}>
           <div className='header-inner'>
             <img className='projectlogo' src="logos/grasp.png" alt="GRASP Project" />
             <a href="http://illinois.edu/" title="University of Illinois at Urbana-Champaign"><img className="illogo" alt="University of Illinois at Urbana-Champaign" src="http://publish.illinois.edu/graspprogram/files/2015/11/logo.gif" /></a>
