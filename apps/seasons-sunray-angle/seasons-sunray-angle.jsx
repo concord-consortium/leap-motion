@@ -262,6 +262,7 @@ export default class SeasonsSunrayAngle extends React.Component {
 
     return (
       <div>
+        <h1>Seasons</h1>
         <div className={containerStyle}>
           <div style={{background: '#f6f6f6', width: '1210px'}}>
             <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}

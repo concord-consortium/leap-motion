@@ -105,7 +105,6 @@ export default class BaseApp extends React.Component {
           </div>
         </div>
         <div className={componentStyles}>
-          <h1>GRASP Simulations</h1>
           {simulation}
         </div>
       </div>

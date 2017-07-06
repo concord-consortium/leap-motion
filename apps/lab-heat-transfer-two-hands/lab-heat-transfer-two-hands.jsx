@@ -156,6 +156,7 @@ export default class LabHeatTransfer extends React.Component {
     const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
+        <h1>Heat Transfer</h1>
         <div className='container'>
           <Lab ref='labModel' interactive={interactive} model={model}
                width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
