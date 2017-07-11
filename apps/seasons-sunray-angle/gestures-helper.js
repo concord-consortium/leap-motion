@@ -11,7 +11,8 @@ const DEFAULT_CONFIG = {
   minDist: 80,
   maxDist: 250,
   // Enables calculation of new properties, keep disabled if not necessary.
-  twoHandsAngleDetection: false
+  twoHandsAngleDetection: false,
+  closedGrabStrength: 0.7
 };
 
 function len(x, y, z) {
@@ -76,11 +77,14 @@ export default class GesturesHelper {
     const data = {};
     data.numberOfHands = hands.length;
     if (data.numberOfHands === 1) {
-      data.handType = hands[0].type;
-      data.handStill = velocity(hands[0]) < MAX_VELOCITY;
-      data.handAngle = getHandAngle(hands[0]);
+      let hand = hands[0];
+      data.handType = hand.type;
+      data.handStill = velocity(hand) < MAX_VELOCITY;
+      data.handAngle = getHandAngle(hand);
+      let handClosed = hand.grabStrength > this.config.closedGrabStrength;
+      data.handClosed = handClosed;
       if (this.config.twoHandsAngleDetection) {
-        data.rightHandPointingLeft = hands[0].type === 'right' && isPointingLeft(hands[0]);
+        data.rightHandPointingLeft = hand.type === 'right' && isPointingLeft(hand);
       }
     } else if (data.numberOfHands === 2) {
       const leftHand = hands[0].type === 'left' ? hands[0] : hands[1];

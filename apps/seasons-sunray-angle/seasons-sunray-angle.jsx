@@ -37,7 +37,10 @@ const INSTRUCTIONS = {
   TWO_HANDS: 'Please keep you hands vertical.',
   ROTATE_GROUND: 'Rotate your hand to show the sunray angle.',
   ROTATE_SPACE: 'Rotate your hand to show the ground angle.',
-  DISTANCE: 'Change the distance between your hands to show the distance between rays.'
+  DISTANCE: 'Change the distance between your hands to show the distance between rays.',
+  INITIAL_ORBIT: 'Extend one hand over the controller',
+  ORBIT_FIST: 'Make a fist to represent the earth.',
+  ORBIT: 'Rotate your hand around the controller to make the earth orbit the sun'
 };
 
 const OVERLAY_SIZE = {
@@ -109,7 +112,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     }
   }
 
-  setSeasonsState(groundActive, raysActive, distMarker, buttonsActive) {
+  setSeasonsState(groundActive, raysActive, distMarker, buttonsActive, orbitViewActive) {
     this.modelController.setSeasonsState({
       groundColor: groundActive ? GROUND_NORMAL_COLOR : GROUND_INACTIVE_COLOR,
       sunrayColor: raysActive ? SUNRAY_NORMAL_COLOR : SUNRAY_INACTIVE_COLOR,
@@ -123,8 +126,10 @@ export default class SeasonsSunrayAngle extends React.Component {
     let gestureDetected = false;
     if (this.state.activeRaysView === 'space') {
       gestureDetected = this.handleSpaceViewGestures(data);
-    } else { // ground view
+    } else if (this.state.activeRaysView === 'ground') { // ground view
       gestureDetected = this.handleGroundViewGestures(data);
+    } else if (this.state.activeRaysView === 'orbit') {
+      gestureDetected = this.handleOrbitViewGestures(data);
     }
 
     this.updateOverlayVisibility(data, gestureDetected);
@@ -160,26 +165,26 @@ export default class SeasonsSunrayAngle extends React.Component {
     let gestureDetected = false;
     if (data.numberOfHands === 0) {
       // Ground inactive.
-      this.setSeasonsState(false, true, false, true);
+      this.setSeasonsState(false, true, false, true, false);
       this.setInstructions(INSTRUCTIONS.INITIAL_SPACE);
     } else if (data.numberOfHands === 1 && data.handStill) {
       // Try to set angle, feedback depends on whether angle was updated or not (user needs to stay within given
       // range around the current angle).
       const angleChanged = this.modelController.setHandAngle(data.handAngle);
-      this.setSeasonsState(angleChanged, true, false, false);
+      this.setSeasonsState(angleChanged, true, false, false, false);
       this.setInstructions(INSTRUCTIONS.ROTATE_GROUND);
       gestureDetected = angleChanged;
     } else if (data.numberOfHands === 1) {
       // Hand moving too fast.
-      this.setSeasonsState(false, true, false, true);
+      this.setSeasonsState(false, true, false, true, false);
     } else if (data.numberOfHands === 2 && data.handsVertical) {
       const distanceChanged = this.modelController.setHandDistance(data.handsDistance);
-      this.setSeasonsState(distanceChanged, true, true, false);
+      this.setSeasonsState(distanceChanged, true, true, false, false);
       this.setInstructions(INSTRUCTIONS.DISTANCE);
       gestureDetected = distanceChanged;
     } else if (data.numberOfHands === 2) {
       // Ground inactive.
-      this.setSeasonsState(false, true, false, true);
+      this.setSeasonsState(false, true, false, true, false);
       this.setInstructions(INSTRUCTIONS.TWO_HANDS);
     }
     return gestureDetected;
@@ -189,27 +194,45 @@ export default class SeasonsSunrayAngle extends React.Component {
     let gestureDetected = false;
     if (data.numberOfHands === 0) {
       // Sunrays inactive.
-      this.setSeasonsState(true, false, false, true);
+      this.setSeasonsState(true, false, false, true, false);
       this.setInstructions(INSTRUCTIONS.INITIAL_GROUND);
     } else if (data.numberOfHands === 1 && data.handStill) {
       // Try to set angle, feedback depends on whether angle was updated or not (user needs to stay within given
       // range around the current angle).
       const angleChanged = this.modelController.setHandAngle(data.handAngle);
-      this.setSeasonsState(true, angleChanged, false, false);
+      this.setSeasonsState(true, angleChanged, false, false, false);
       this.setInstructions(INSTRUCTIONS.ROTATE_GROUND);
       gestureDetected = angleChanged;
     } else if (data.numberOfHands === 1) {
       // Hand moving too fast.
-      this.setSeasonsState(true, false, false, true);
+      this.setSeasonsState(true, false, false, true, false);
     } else if (data.numberOfHands === 2 && data.handsVertical) {
       const distanceChanged = this.modelController.setHandDistance(data.handsDistance);
-      this.setSeasonsState(true, distanceChanged, true, false);
+      this.setSeasonsState(true, distanceChanged, true, false, false);
       this.setInstructions(INSTRUCTIONS.DISTANCE);
       gestureDetected = distanceChanged;
     } else if (data.numberOfHands === 2) {
       // Sunrays inactive.
-      this.setSeasonsState(true, false, false, true);
+      this.setSeasonsState(true, false, false, true, false);
       this.setInstructions(INSTRUCTIONS.TWO_HANDS);
+    }
+    return gestureDetected;
+  }
+
+  handleOrbitViewGestures(data) {
+    let gestureDetected = false;
+    if (data.numberOfHands === 0){
+      // orbit view inactive.
+      this.setSeasonsState(false, false, false, true, true);
+      this.setInstructions(INSTRUCTIONS.INITIAL_ORBIT);
+    } else{
+      this.setSeasonsState(false, false, false, true, true);
+      if (data.handClosed)
+        this.setInstructions(INSTRUCTIONS.ORBIT);
+      else{
+        this.setInstructions(INSTRUCTIONS.ORBIT_FIST);
+      }
+      gestureDetected = data.handClosed;
     }
     return gestureDetected;
   }

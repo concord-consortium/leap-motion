@@ -14,6 +14,7 @@ const SUMMER_SOLSTICE = 171; // 171 day of year
 const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
 const SPACE = 'space';
 const GROUND = 'ground';
+const ORBIT = 'orbit';
 
 const AVAILABLE_CALLBACKS = {
   activeRayViewChanged: function (viewType) {}
@@ -52,6 +53,7 @@ export default class ModelController {
     ['small-bottom', 'small-top', 'main'].forEach(function (pos) {
       if (viewState[pos] === 'raysGround') result = GROUND;
       else if (viewState[pos] === 'raysSpace') result = SPACE;
+      else if (viewState[pos] === 'orbit') result = ORBIT;
     });
     return result;
   }
@@ -64,7 +66,7 @@ export default class ModelController {
     }
     let viewState = this.seasons.state.view;
     ['small-bottom', 'small-top', 'main'].forEach(function (pos) {
-      if (viewState[pos] === 'raysGround' || viewState[pos] === 'raysSpace') result = pos;
+      if (viewState[pos] === 'raysGround' || viewState[pos] === 'raysSpace' || viewState[pos] === 'orbit') result = pos;
     });
     return result;
   }
