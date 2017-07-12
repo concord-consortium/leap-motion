@@ -20,6 +20,49 @@ const AVAILABLE_CALLBACKS = {
   activeRayViewChanged: function (viewType) {}
 };
 
+function mouseEvent(type, sx, sy, cx, cy) {
+  var evt;
+  var e = {
+    bubbles: true,
+    cancelable: (type != "mousemove"),
+    view: window,
+    detail: 0,
+    screenX: sx,
+    screenY: sy,
+    clientX: cx,
+    clientY: cy,
+    ctrlKey: false,
+    altKey: false,
+    shiftKey: false,
+    metaKey: false,
+    button: 0,
+    relatedTarget: undefined
+  };
+  if (typeof( document.createEvent ) == "function") {
+    evt = document.createEvent("MouseEvents");
+    evt.initMouseEvent(type,
+      e.bubbles, e.cancelable, e.view, e.detail,
+      e.screenX, e.screenY, e.clientX, e.clientY,
+      e.ctrlKey, e.altKey, e.shiftKey, e.metaKey,
+      e.button, document.body.parentNode);
+  } else if (document.createEventObject) {
+    evt = document.createEventObject();
+    for (prop in e) {
+    evt[prop] = e[prop];
+  }
+    evt.button = { 0:1, 1:4, 2:2 }[evt.button] || evt.button;
+  }
+  return evt;
+}
+function dispatchEvent (el, evt) {
+  if (el.dispatchEvent) {
+    el.dispatchEvent(evt);
+  } else if (el.fireEvent) {
+    el.fireEvent('on' + type, evt);
+  }
+  return evt;
+}
+
 export default class ModelController {
   constructor(callbacks) {
     this.targetAngle = null;
@@ -309,5 +352,65 @@ export default class ModelController {
     let result = {inWinterOrSpring: SUMMER_SOLSTICE - distFromSolstice, inSummerOrFall: SUMMER_SOLSTICE + distFromSolstice};
     if (result.inWinterOrSpring < 0) result.inWinterOrSpring += 365;
     return result;
+  }
+
+  getInteractionData(x, y) {
+
+    let target = document.getElementsByClassName('view-manager')[0];
+    let main = target.getElementsByClassName('view main')[0];
+    let canvas = main.getElementsByTagName('canvas')[0];
+
+    // canvas width is double the client rect on a retina display
+    let rect = canvas.getBoundingClientRect();
+    // x and y are screen coordinates within the canvas, that could be doubled if retina
+    let percentageX = x / canvas.width;
+    let percentageY = y / canvas.height;
+
+    // canvas will be bound to the rectangle, so calculate position wihtin rect based on percentage
+    let rectX = percentageX * rect.width;
+    let rectY = percentageY * rect.height;
+
+    // the positions for the canvas bounding rect is now known, calculate offset for screen position
+    let offsetX = rectX + rect.left;
+    let offsetY = rectY + rect.top;
+
+    let screenX = offsetX - screen.width;
+    let screenY = screen.height - offsetY;
+
+    let interactionData = {};
+    let coords = {};
+    coords.screenX = screenX;
+    coords.screenY = screenY;
+    coords.clientX = rectX;
+    coords.clientY = rectY;
+    interactionData.canvas = canvas;
+    interactionData.coords = coords;
+
+    return interactionData;
+  }
+
+  startOrbitInteraction(x, y) {
+    // mouse down on the earth
+    let interactionData = this.getInteractionData(x, y);
+    let coords = interactionData.coords;
+
+    console.log(coords);
+    let evtDown = mouseEvent('mousedown', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
+    dispatchEvent(interactionData.canvas, evtDown);
+  }
+
+  handleOrbitInteraction(x, y, dx, dy) {
+    // for changes in movement of dx and dy, simulate dragging earth at screen coordinates x and y
+    let interactionData = this.getInteractionData(x, y);
+    let coords = interactionData.coords;
+    let evtMove = mouseEvent('mousemove', coords.screenX+dx, coords.screenY+dy, coords.clientX+dx, coords.clientY+dy);
+
+    dispatchEvent(interactionData.canvas, evtMove);
+  }
+
+  finishOrbitInteraction(x, y) {
+    let evtUp = mouseEvent('mouseup', 0,0,0,0);
+
+    dispatchEvent(document, evtUp);
   }
 }

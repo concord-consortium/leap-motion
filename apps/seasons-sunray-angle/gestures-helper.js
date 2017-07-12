@@ -72,7 +72,7 @@ export default class GesturesHelper {
     return (dist - this.config.minDist) / (this.config.maxDist - this.config.minDist);
   }
 
-  processLeapFrame(frame) {
+  processLeapFrame(frame, previousFrame) {
     const hands = frame.hands;
     const data = {};
     data.numberOfHands = hands.length;
@@ -83,6 +83,16 @@ export default class GesturesHelper {
       data.handAngle = getHandAngle(hand);
       let handClosed = hand.grabStrength > this.config.closedGrabStrength;
       data.handClosed = handClosed;
+
+      if (previousFrame) {
+        let previousHandClosed = previousFrame.hands.length > 0 && previousFrame.hands[0].grabStrength > this.config.closedGrabStrength;
+        data.handClosedChanged = handClosed != previousHandClosed;
+
+        let t = hand.translation(previousFrame);
+        if (Math.abs(t[0]) > 2 || Math.abs(t[2]) > 2) {
+          data.handTranslation = t;
+        }
+      }
       if (this.config.twoHandsAngleDetection) {
         data.rightHandPointingLeft = hand.type === 'right' && isPointingLeft(hand);
       }

@@ -64,7 +64,8 @@ export default class SeasonsSunrayAngle extends React.Component {
       instructions: INSTRUCTIONS.INITIAL_GROUND,
       overlayEnabled: true,
       phantomHandsHint: null,
-      renderSize: getURLParam('simulation') || 'seasons'
+      renderSize: getURLParam('simulation') || 'seasons',
+      previousFrame: null
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -122,7 +123,8 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   handleLeapFrame(frame) {
-    const data = this.gesturesHelper.processLeapFrame(frame);
+    const { previousFrame } = this.state;
+    const data = this.gesturesHelper.processLeapFrame(frame, previousFrame);
     let gestureDetected = false;
     if (this.state.activeRaysView === 'space') {
       gestureDetected = this.handleSpaceViewGestures(data);
@@ -135,6 +137,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.updateOverlayVisibility(data, gestureDetected);
     this.updatePhantomHandsHint(data, gestureDetected);
     this.gesturesLogger.logGesture(data, gestureDetected, this.modelController.seasonsState.day);
+    this.setState({previousFrame: frame});
   }
 
   updateOverlayVisibility(data, gestureDetected) {
@@ -227,10 +230,22 @@ export default class SeasonsSunrayAngle extends React.Component {
       this.setInstructions(INSTRUCTIONS.INITIAL_ORBIT);
     } else{
       this.setSeasonsState(false, false, false, true, true);
-      if (data.handClosed)
+      if (data.handClosed){
+        let p = this.refs.seasonsModel.getEarthScreenPosition();
+        if (data.handClosedChanged){
+          this.modelController.startOrbitInteraction(p.x, p.y);
+        }
         this.setInstructions(INSTRUCTIONS.ORBIT);
+        if (data.handTranslation){
+          // hand is moving
+          this.modelController.handleOrbitInteraction(p.x, p.y, data.handTranslation[0], data.handTranslation[2]);
+        }
+      }
       else{
-        this.setInstructions(INSTRUCTIONS.ORBIT_FIST);
+        if (data.handClosedChanged){
+          this.modelController.finishOrbitInteraction(0,0);
+          this.setInstructions(INSTRUCTIONS.ORBIT_FIST);
+        }
       }
       gestureDetected = data.handClosed;
     }
