@@ -7,9 +7,9 @@ export default () => {
       <p>
       Why are summers in the North warm and winters cold?
       </p><p>
-      Explore the views of this simulation to give you clues to answer this question using a Leap Motion controller. The views can show the appearance of the seasons for any day of the year on any place on Earth.
+      Explore the views of this simulation to give you clues to answer this question using a Leap Motion Controller. The views can show the appearance of the seasons for any day of the year on any place on Earth.
       </p><p>
-      The Orbit view shows the motion of the Earth around the sun throughout the year. It is a 3D view that can be tipped and rotated by dragging the scene or the orbit with the mouse. The day of the year can be changed by dragging the Earth.
+      Orbit view shows the motion of the Earth around the sun throughout the year. It is a 3D view that can be tipped and rotated by dragging the scene or the orbit with the mouse. The day of the year can be changed by dragging the Earth.
       </p><p>
       Earth view shows how the Earth would look from outer space for the set day of the year. Drag the Earth to change the view of it. The location of the season is set by dragging the “dot” or the “ring” around the latitude of the Earth.
       </p><p>
