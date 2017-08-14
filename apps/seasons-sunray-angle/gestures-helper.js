@@ -84,6 +84,17 @@ export default class GesturesHelper {
       let handClosed = hand.grabStrength > this.config.closedGrabStrength;
       data.handClosed = handClosed;
 
+      let activePointers = frame.pointables.filter(function (pointer){
+        // first finger, only if extended and valid
+        return pointer.type==1 && pointer.extended && pointer.valid;
+      });
+      // in case user is using more than one finger
+      let pointable = activePointers[0];
+      if (pointable && activePointers.length === 1) {
+        data.pointerDirection = pointable.direction;
+        data.isPointing = true
+      }
+
       if (previousFrame) {
         let previousHandClosed = previousFrame.hands.length > 0 && previousFrame.hands[0].grabStrength > this.config.closedGrabStrength;
         data.handClosedChanged = handClosed != previousHandClosed;
