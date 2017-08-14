@@ -407,8 +407,15 @@ export default class ModelController {
   finishOrbitInteraction(x, y, activeViewPanel) {
     let interactionData = this.getInteractionData(x, y, activeViewPanel);
     let coords = interactionData.coords;
-    let evtUp = mouseEvent('mouseup', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
+    let moveMagnitude = 50
 
+    let evtUp = mouseEvent('mouseup', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
+    let evtMove = mouseEvent('mousemove', coords.screenX + moveMagnitude, coords.screenY + moveMagnitude, coords.clientX + moveMagnitude, coords.clientY + moveMagnitude);
     dispatchEvent(interactionData.canvas, evtUp);
+
+    setTimeout(function () {
+      dispatchEvent(interactionData.canvas, evtMove);
+    }, 10);
+
   }
 }
