@@ -354,63 +354,61 @@ export default class ModelController {
     return result;
   }
 
-  getInteractionData(x, y) {
-
-    let target = document.getElementsByClassName('view-manager')[0];
-    let main = target.getElementsByClassName('view main')[0];
-    let canvas = main.getElementsByTagName('canvas')[0];
-
-    // canvas width is double the client rect on a retina display
-    let rect = canvas.getBoundingClientRect();
-    // x and y are screen coordinates within the canvas, that could be doubled if retina
-    let percentageX = x / canvas.width;
-    let percentageY = y / canvas.height;
-
-    // canvas will be bound to the rectangle, so calculate position wihtin rect based on percentage
-    let rectX = percentageX * rect.width;
-    let rectY = percentageY * rect.height;
-
-    // the positions for the canvas bounding rect is now known, calculate offset for screen position
-    let offsetX = rectX + rect.left;
-    let offsetY = rectY + rect.top;
-
-    let screenX = offsetX - screen.width;
-    let screenY = screen.height - offsetY;
+  getInteractionData(x, y, activeViewPanel) {
+    let pos = { x, y }
+    let rects = document.getElementsByClassName('seasons-container')[0].getBoundingClientRect();
+    pos.x = x / 2 + rects.left;
+    pos.y = y / 2 + rects.top;
 
     let interactionData = {};
     let coords = {};
-    coords.screenX = screenX;
-    coords.screenY = screenY;
-    coords.clientX = rectX;
-    coords.clientY = rectY;
+    coords.screenX = pos.x;
+    coords.screenY = pos.y;
+    coords.clientX = pos.x;
+    coords.clientY = pos.y;
+
+    let target = document.getElementsByClassName('view-manager')[0];
+    let view = target.getElementsByClassName('view ' + activeViewPanel)[0];
+    let canvas = view.getElementsByTagName('canvas')[0];
+
     interactionData.canvas = canvas;
     interactionData.coords = coords;
 
     return interactionData;
   }
 
-  startOrbitInteraction(x, y) {
+  startOrbitInteraction(x, y, activeViewPanel) {
     // mouse down on the earth
-    let interactionData = this.getInteractionData(x, y);
+    let interactionData = this.getInteractionData(x, y, activeViewPanel);
     let coords = interactionData.coords;
 
-    console.log(coords);
+    let evtMove = mouseEvent('mousemove', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
     let evtDown = mouseEvent('mousedown', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
-    dispatchEvent(interactionData.canvas, evtDown);
+    dispatchEvent(interactionData.canvas, evtMove);
+    setTimeout(function () {
+      dispatchEvent(interactionData.canvas, evtDown);
+    }, 10);
+
   }
 
-  handleOrbitInteraction(x, y, dx, dy) {
+  handleOrbitInteraction(x, y, dx, dy, activeViewPanel) {
     // for changes in movement of dx and dy, simulate dragging earth at screen coordinates x and y
-    let interactionData = this.getInteractionData(x, y);
+    let interactionData = this.getInteractionData(x, y, activeViewPanel);
     let coords = interactionData.coords;
-    let evtMove = mouseEvent('mousemove', coords.screenX+dx, coords.screenY+dy, coords.clientX+dx, coords.clientY+dy);
+    let moveMagnitude = 5
 
+    let evtDown = mouseEvent('mousedown', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
+    let evtMove = mouseEvent('mousemove', coords.screenX + (dx * moveMagnitude), coords.screenY + (dy * moveMagnitude), coords.clientX + (dx * moveMagnitude), coords.clientY + (dy * moveMagnitude));
+
+    dispatchEvent(interactionData.canvas, evtDown);
     dispatchEvent(interactionData.canvas, evtMove);
   }
 
-  finishOrbitInteraction(x, y) {
-    let evtUp = mouseEvent('mouseup', 0,0,0,0);
+  finishOrbitInteraction(x, y, activeViewPanel) {
+    let interactionData = this.getInteractionData(x, y, activeViewPanel);
+    let coords = interactionData.coords;
+    let evtUp = mouseEvent('mouseup', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
 
-    dispatchEvent(document, evtUp);
+    dispatchEvent(interactionData.canvas, evtUp);
   }
 }
