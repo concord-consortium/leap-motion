@@ -356,9 +356,14 @@ export default class ModelController {
 
   getInteractionData(x, y, activeViewPanel) {
     let pos = { x, y }
-    let rects = document.getElementsByClassName('seasons-container')[0].getBoundingClientRect();
-    pos.x = x / 2 + rects.left;
-    pos.y = y / 2 + rects.top;
+    let seasonsContainer = document.getElementsByClassName('seasons-container')[0];
+
+    let view = seasonsContainer.getElementsByClassName('view ' + activeViewPanel)[0];
+    let canvas = view.getElementsByTagName('canvas')[0];
+
+    let rect = view.getBoundingClientRect();
+    pos.x = x / 2 + rect.left;
+    pos.y = y / 2 + rect.top;
 
     let interactionData = {};
     let coords = {};
@@ -366,10 +371,6 @@ export default class ModelController {
     coords.screenY = pos.y;
     coords.clientX = pos.x;
     coords.clientY = pos.y;
-
-    let target = document.getElementsByClassName('view-manager')[0];
-    let view = target.getElementsByClassName('view ' + activeViewPanel)[0];
-    let canvas = view.getElementsByTagName('canvas')[0];
 
     interactionData.canvas = canvas;
     interactionData.coords = coords;
@@ -395,7 +396,8 @@ export default class ModelController {
     // for changes in movement of dx and dy, simulate dragging earth at screen coordinates x and y
     let interactionData = this.getInteractionData(x, y, activeViewPanel);
     let coords = interactionData.coords;
-    let moveMagnitude = 5
+    let moveMagnitude = 4
+
 
     let evtDown = mouseEvent('mousedown', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
     let evtMove = mouseEvent('mousemove', coords.screenX + (dx * moveMagnitude), coords.screenY + (dy * moveMagnitude), coords.clientX + (dx * moveMagnitude), coords.clientY + (dy * moveMagnitude));
@@ -407,7 +409,7 @@ export default class ModelController {
   finishOrbitInteraction(x, y, activeViewPanel) {
     let interactionData = this.getInteractionData(x, y, activeViewPanel);
     let coords = interactionData.coords;
-    let moveMagnitude = 50
+    let moveMagnitude = 100
 
     let evtUp = mouseEvent('mouseup', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
     let evtMove = mouseEvent('mousemove', coords.screenX + moveMagnitude, coords.screenY + moveMagnitude, coords.clientX + moveMagnitude, coords.clientY + moveMagnitude);
@@ -415,7 +417,7 @@ export default class ModelController {
 
     setTimeout(function () {
       dispatchEvent(interactionData.canvas, evtMove);
-    }, 10);
+    }, 20);
 
   }
 }
