@@ -10,6 +10,7 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: "[name].js"
   },
+  devServer: { inline: true },
   module: {
     loaders: [
       { test: /\.jsx?$/, exclude: [
