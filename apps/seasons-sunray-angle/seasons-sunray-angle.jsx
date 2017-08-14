@@ -223,6 +223,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   handleOrbitViewGestures(data) {
+    const {activeViewPanel} = this.state;
     let gestureDetected = false;
     if (data.numberOfHands === 0){
       // orbit view inactive.
@@ -230,20 +231,20 @@ export default class SeasonsSunrayAngle extends React.Component {
       this.setInstructions(INSTRUCTIONS.INITIAL_ORBIT);
     } else{
       this.setSeasonsState(false, false, false, true, true);
+      let p = this.refs.seasonsModel.getEarthScreenPosition();
       if (data.handClosed){
-        let p = this.refs.seasonsModel.getEarthScreenPosition();
         if (data.handClosedChanged){
-          this.modelController.startOrbitInteraction(p.x, p.y);
+          this.modelController.startOrbitInteraction(p.x, p.y, activeViewPanel);
         }
         this.setInstructions(INSTRUCTIONS.ORBIT);
         if (data.handTranslation){
           // hand is moving
-          this.modelController.handleOrbitInteraction(p.x, p.y, data.handTranslation[0], data.handTranslation[2]);
+          this.modelController.handleOrbitInteraction(p.x, p.y, data.handTranslation[0], data.handTranslation[2], activeViewPanel);
         }
       }
       else{
         if (data.handClosedChanged){
-          this.modelController.finishOrbitInteraction(0,0);
+          this.modelController.finishOrbitInteraction(p.x, p.y, activeViewPanel);
           this.setInstructions(INSTRUCTIONS.ORBIT_FIST);
         }
       }
