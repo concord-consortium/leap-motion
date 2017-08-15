@@ -12,8 +12,8 @@ const EARTH_TILT = 0.41;
 const RAD_2_DEG = 180 / Math.PI;
 const SUMMER_SOLSTICE = 171; // 171 day of year
 const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
-const SPACE = 'space';
-const GROUND = 'ground';
+const SPACE = 'raysSpace';
+const GROUND = 'raysGround';
 const ORBIT = 'orbit';
 
 const AVAILABLE_CALLBACKS = {

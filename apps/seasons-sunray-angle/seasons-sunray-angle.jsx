@@ -14,6 +14,7 @@ import GesturesLogger from './gestures-logger';
 import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
 import getURLParam from '../common/js/tools/get-url-param';
+import ActiveViewSelector from './active-view-selector';
 
 import './seasons-sunray-angle.less';
 
@@ -305,7 +306,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         <div className={containerStyle}>
           <div style={{background: '#f6f6f6', width: '1210px'}}>
             <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}
-                     onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange} f
+                     onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange}
                      logHandler={this.log}/>
           </div>
           <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
@@ -317,6 +318,7 @@ export default class SeasonsSunrayAngle extends React.Component {
               {instructions}
             </div>
           </InstructionsOverlay>
+          <ActiveViewSelector overlays={this.modelController.seasonsView} initialOverlays={INITIAL_SEASONS_STATE} onViewStateChange={this.handleViewStateChange} />
         </div>
         <div className='top-links'>
           <SettingsDialog>
