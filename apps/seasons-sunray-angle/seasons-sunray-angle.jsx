@@ -60,7 +60,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeRaysView: 'ground',
+      activeRaysView: 'raysGround',
       activeViewPanel: 'small-top',
       instructions: INSTRUCTIONS.INITIAL_GROUND,
       overlayEnabled: true,
@@ -80,6 +80,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.handleViewStateChange = this.handleViewStateChange.bind(this);
     this.handleLoggingStart = this.handleLoggingStart.bind(this);
     this.handleLoggingEnd = this.handleLoggingEnd.bind(this);
+    this.handleSelectOverlay = this.handleSelectOverlay.bind(this);
     this.log = this.log.bind(this);
   }
 
@@ -127,9 +128,9 @@ export default class SeasonsSunrayAngle extends React.Component {
     const { previousFrame } = this.state;
     const data = this.gesturesHelper.processLeapFrame(frame, previousFrame);
     let gestureDetected = false;
-    if (this.state.activeRaysView === 'space') {
+    if (this.state.activeRaysView === 'raysSpace') {
       gestureDetected = this.handleSpaceViewGestures(data);
-    } else if (this.state.activeRaysView === 'ground') { // ground view
+    } else if (this.state.activeRaysView === 'raysGround') { // ground view
       gestureDetected = this.handleGroundViewGestures(data);
     } else if (this.state.activeRaysView === 'orbit') {
       gestureDetected = this.handleOrbitViewGestures(data);
@@ -262,6 +263,11 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.modelController.handleViewStateChange(state);
   }
 
+  handleSelectOverlay(view) {
+    // When a user requests Leap control over a view
+    this.setState({activeRaysView: view.value, activeViewPanel: view.className, instructions: ''});
+  }
+
   getBasicLogParams() {
     return {
       sim: this.modelController.seasonsState,
@@ -321,7 +327,8 @@ export default class SeasonsSunrayAngle extends React.Component {
           </InstructionsOverlay>
           <ActiveViewSelector overlays={this.modelController.seasonsView} className={activeViewSelectorStyle}
                               initialOverlays={INITIAL_SEASONS_STATE}
-                              onViewStateChange={this.handleViewStateChange} />
+                              activeOverlay={activeViewPanel}
+                              onViewOverlayChange={this.handleSelectOverlay} />
         </div>
         <div className='top-links'>
           <SettingsDialog>

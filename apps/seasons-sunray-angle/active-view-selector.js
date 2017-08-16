@@ -16,7 +16,7 @@ export default class ActiveViewSelector extends React.Component{
     for (let key in overlays) {
       availableOverlays[key] = nextProps.overlays[key]
     }
-    let active = nextProps.overlays.leapControlledView;
+    let active = nextProps.activeOverlay;
     if (active) {
       this.setState({ overlays: availableOverlays, activeView: active });
     } else {
@@ -27,8 +27,7 @@ export default class ActiveViewSelector extends React.Component{
   onChangeView(e) {
     const { overlays } = this.state
     let views = Object.assign({}, overlays);
-    views.leapControlledView = e.currentTarget.value
-    this.props.onViewStateChange(e.currentTarget.value)
+    this.props.onViewOverlayChange(e.currentTarget)
   }
   createInput(key, val, active) {
     let label = key
@@ -44,7 +43,7 @@ export default class ActiveViewSelector extends React.Component{
     let inputs = []
     for (let key in overlays){
       let val = overlays[key]
-      let active = val === activeView
+      let active = key === activeView
       if (val !== 'nothing') {
         inputs.push(this.createInput(key, val, active))
       }
