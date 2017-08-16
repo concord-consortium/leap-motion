@@ -291,7 +291,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   render() {
     const { instructions, activeViewPanel, overlayEnabled, overlayActive, phantomHandsHint, renderSize } = this.state;
     let overlaySizeSettings = renderSize == 'seasons' ? OVERLAY_SIZE : OVERLAY_SIZE_NARROW;
-    let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container-narrow';
+    let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container narrow';
     // Each time user changes position of the rays view, we need to reposition and resize overlay.
     // Position is updated using CSS styles (set by class name, see seasons-sunray-angle.less).
     // Width and height need to be set using React properties, so overlay component can resize its 3D renderer.
