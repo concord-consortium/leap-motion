@@ -1,5 +1,7 @@
 @main-width: 795px;
 @main-width-narrow: 600px;
+@main-height: 600px;
+@main-height-narrow: 495px;
 @right-col-width: 395px;
 @right-col-width-narrow: 335px;
 @column-gap-narrow: 3px;
@@ -25,7 +27,7 @@
         left: 0px;
         font-size: 18px;
         width: @main-width;
-        height: 600px;
+        height: @main-height;
       }
 
       &.small-top {
@@ -62,7 +64,7 @@
 
         &.main {
           width: @main-width-narrow;
-          height: 495px;
+          height: @main-height-narrow;
         }
 
         &.small-top {
@@ -81,7 +83,7 @@
       .view{
         &.main{
           width: @main-width-narrow;
-          height: 495px;
+          height: @main-height-narrow;
         }
         &.small-top{
           width: @right-col-width-narrow;
@@ -171,6 +173,20 @@
       position: absolute;
       width:@selector-width;
       text-align: right;
+      > input {
+        visibility:hidden;
+        position:absolute;
+      }
+      > input + i{
+        color:lightgrey;
+      }
+      > input:hover + i{
+        color:white;
+      }
+      > input:checked + i{
+        color:green;
+      }
+
       &.main{
         left: @main-width - @selector-width;
       }
@@ -179,7 +195,7 @@
       }
        &.small-bottom{
         left: @main-width + @column-gap + @right-col-width - @selector-width;
-        top: 255px;
+        top: @small-panel-height + @small-panel-vertical-space;
       }
     }
     &.narrow{
@@ -192,8 +208,9 @@
         }
         &.small-bottom{
           left: @main-width-narrow +  @column-gap-narrow + @right-col-width-narrow - @selector-width;
-          top: 255px;
+          top: @small-panel-height-narrow + @small-panel-vertical-space-narrow;
         }
       }
     }
+
   }
