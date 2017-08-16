@@ -30,7 +30,7 @@ export default class ActiveViewSelector extends React.Component{
     views.leapControlledView = e.currentTarget.value
     this.props.onViewStateChange(e.currentTarget.value)
   }
-  createInput (key, val, active) {
+  createInput(key, val, active) {
     let label = key
     return (
       <label key={key} className={key}>{val}
@@ -53,10 +53,11 @@ export default class ActiveViewSelector extends React.Component{
   }
 
   render() {
+    const { className } = this.props
     const inputs = this.generateActiveToggles();
 
     return (
-      <div className="active-view-selector">
+      <div className={className}>
         {inputs}
       </div>
     )

@@ -292,6 +292,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     const { instructions, activeViewPanel, overlayEnabled, overlayActive, phantomHandsHint, renderSize } = this.state;
     let overlaySizeSettings = renderSize == 'seasons' ? OVERLAY_SIZE : OVERLAY_SIZE_NARROW;
     let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container narrow';
+    let activeViewSelectorStyle = renderSize == 'seasons' ? 'active-view-selector' : 'active-view-selector narrow';
     // Each time user changes position of the rays view, we need to reposition and resize overlay.
     // Position is updated using CSS styles (set by class name, see seasons-sunray-angle.less).
     // Width and height need to be set using React properties, so overlay component can resize its 3D renderer.
@@ -318,7 +319,9 @@ export default class SeasonsSunrayAngle extends React.Component {
               {instructions}
             </div>
           </InstructionsOverlay>
-          <ActiveViewSelector overlays={this.modelController.seasonsView} initialOverlays={INITIAL_SEASONS_STATE} onViewStateChange={this.handleViewStateChange} />
+          <ActiveViewSelector overlays={this.modelController.seasonsView} className={activeViewSelectorStyle}
+                              initialOverlays={INITIAL_SEASONS_STATE}
+                              onViewStateChange={this.handleViewStateChange} />
         </div>
         <div className='top-links'>
           <SettingsDialog>

@@ -1,3 +1,14 @@
+@main-width: 795px;
+@main-width-narrow: 600px;
+@right-col-width: 395px;
+@right-col-width-narrow: 335px;
+@column-gap-narrow: 3px;
+@column-gap: 10px;
+@small-panel-height: 296px;
+@small-panel-height-narrow: 245px;
+@small-panel-vertical-space: 9px;
+@small-panel-vertical-space-narrow: 5px;
+
 .seasons-container{
     position: relative;
     margin-left: auto;
@@ -13,23 +24,23 @@
         top: 0px;
         left: 0px;
         font-size: 18px;
-        width: 795px;
+        width: @main-width;
         height: 600px;
       }
 
       &.small-top {
         top: 0px;
-        left: 805px;
-        width: 395px;
-        height: 296px;
+        left: @main-width + @column-gap;
+        width: @right-col-width;
+        height: @small-panel-height;
         font-size: 14px;
       }
 
       &.small-bottom {
-        top: 305px;
-        left: 805px;
-        width: 395px;
-        height: 296px;
+        top: @small-panel-height + @small-panel-vertical-space;
+        left: @main-width + @column-gap;
+        width: @right-col-width;
+        height: @small-panel-height;
         font-size: 14px;
       }
       .view-manager{
@@ -50,47 +61,47 @@
         width:940px;
 
         &.main {
-          width: 600px;
+          width: @main-width-narrow;
           height: 495px;
         }
 
         &.small-top {
-          left: 603px;
-          width: 335px;
-          height: 245px;
+          left: @main-width-narrow + @column-gap-narrow;
+          width: @right-col-width-narrow;
+          height: @small-panel-height-narrow;
         }
 
         &.small-bottom {
-          top: 250px;
-          left: 603px;
-          width: 335px;
-          height: 245px;
+          top: @small-panel-height-narrow + @small-panel-vertical-space-narrow;
+          left: @main-width-narrow + @column-gap-narrow;
+          width: @right-col-width-narrow;
+          height: @small-panel-height-narrow;
         }
 
       .view{
         &.main{
-          width: 600px;
+          width: @main-width-narrow;
           height: 495px;
         }
         &.small-top{
-          width: 335px;
-          height: 245px;
-          left: 603px;
+          width: @right-col-width-narrow;
+          height: @small-panel-height-narrow;
+          left: @main-width-narrow + @column-gap-narrow;
         }
         &.small-bottom{
-          width: 335px;
-          height: 245px;
-          left: 603px;
-          top: 250px;
+          width: @right-col-width-narrow;
+          height: @small-panel-height-narrow;
+          left: @main-width-narrow + @column-gap-narrow;
+          top: @small-panel-height-narrow + @small-panel-vertical-space-narrow;
         }
       }
       .view-select{
         &.small-top{
-          left: 608px;
+          left: @main-width-narrow + @column-gap-narrow + 5;
         }
         &.small-bottom{
-          left: 608px;
-          top: 255px;
+          left: @main-width-narrow + @column-gap-narrow + 5;
+          top: @small-panel-height-narrow + @small-panel-vertical-space-narrow + 5;
         }
       }
     }
@@ -154,21 +165,35 @@
 }
   .active-view-selector{
     position:absolute;
-    left:200px;
-    top:0px;
     color:white;
+    @selector-width: 100px;
     label{
       position: absolute;
-      width:100px;
+      width:@selector-width;
+      text-align: right;
       &.main{
-        left: 10px;
+        left: @main-width - @selector-width;
       }
       &.small-top{
-        left: 0px;
+        left: @main-width + @column-gap + @right-col-width - @selector-width;
       }
        &.small-bottom{
-        left: 700px;
+        left: @main-width + @column-gap + @right-col-width - @selector-width;
         top: 255px;
+      }
+    }
+    &.narrow{
+      label{
+        &.main{
+          left: @main-width-narrow - @selector-width;
+        }
+        &.small-top{
+          left: @main-width-narrow +  @column-gap-narrow + @right-col-width-narrow - @selector-width;
+        }
+        &.small-bottom{
+          left: @main-width-narrow +  @column-gap-narrow + @right-col-width-narrow - @selector-width;
+          top: 255px;
+        }
       }
     }
   }
