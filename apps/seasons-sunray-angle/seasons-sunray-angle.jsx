@@ -66,7 +66,9 @@ export default class SeasonsSunrayAngle extends React.Component {
       overlayEnabled: true,
       phantomHandsHint: null,
       renderSize: getURLParam('simulation') || 'seasons',
-      previousFrame: null
+      previousFrame: null,
+      debugMode: getURLParam('debug') && getURLParam('debug') === 'true' || false,
+      mousePos: {screenX: 0, screenY: 0, clientX: 0, clientY: 0}
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -82,6 +84,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.handleLoggingEnd = this.handleLoggingEnd.bind(this);
     this.handleSelectOverlay = this.handleSelectOverlay.bind(this);
     this.log = this.log.bind(this);
+    this.debugMouseMove = this.debugMouseMove.bind(this);
   }
 
   componentDidMount() {
@@ -89,6 +92,21 @@ export default class SeasonsSunrayAngle extends React.Component {
     if (logger.enabled) {
       this.handleLoggingStart();
     }
+    if (this.state.debugMode){
+      document.addEventListener('mousemove', this.debugMouseMove)
+    }
+  }
+  componentWillUnmount(){
+    document.removeEventListener('mousemove', this.debugMouseMove)
+  }
+  debugMouseMove(e){
+    let pos = e;
+    let earthPos = this.refs.seasonsModel.getEarthScreenPosition();
+    let rects = document.getElementsByClassName('seasons-container')[0].getBoundingClientRect();
+
+    pos.earthX = earthPos.x/2 + rects.left;
+    pos.earthY = earthPos.y/2 + rects.top;
+    this.setState({mousePos: pos});
   }
 
   handleConfigChange(event) {
@@ -295,7 +313,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions, activeViewPanel, overlayEnabled, overlayActive, phantomHandsHint, renderSize } = this.state;
+    const { instructions, activeViewPanel, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode } = this.state;
     let overlaySizeSettings = renderSize == 'seasons' ? OVERLAY_SIZE : OVERLAY_SIZE_NARROW;
     let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container narrow';
     let activeViewSelectorStyle = renderSize == 'seasons' ? 'active-view-selector' : 'active-view-selector narrow';
@@ -350,6 +368,12 @@ export default class SeasonsSunrayAngle extends React.Component {
           <AboutDialog>
             <About />
           </AboutDialog>
+          {debugMode && mousePos &&
+            <div className="debug">
+              <div>Mouse positions:<br/>Page:{mousePos.pageX}, {mousePos.pageY}<br/>Client:{mousePos.clientX}, {mousePos.clientY}</div>
+              <div>Earth coords:{Math.round(mousePos.earthX)},{Math.round(mousePos.earthY)}</div>
+            </div>}
+
         </div>
       </div>
     );
