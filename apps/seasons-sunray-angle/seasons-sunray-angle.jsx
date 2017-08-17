@@ -104,8 +104,8 @@ export default class SeasonsSunrayAngle extends React.Component {
     let earthPos = this.refs.seasonsModel.getEarthScreenPosition();
     let rects = document.getElementsByClassName('seasons-container')[0].getBoundingClientRect();
 
-    pos.earthX = earthPos.x/2 + rects.left;
-    pos.earthY = earthPos.y/2 + rects.top;
+    pos.earthX = earthPos.x/window.devicePixelRatio + rects.left;
+    pos.earthY = earthPos.y/window.devicePixelRatio + rects.top;
     this.setState({mousePos: pos});
   }
 
