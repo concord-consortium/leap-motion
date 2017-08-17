@@ -362,8 +362,8 @@ export default class ModelController {
     let canvas = view.getElementsByTagName('canvas')[0];
 
     let rect = view.getBoundingClientRect();
-    pos.x = x / 2 + rect.left;
-    pos.y = y / 2 + rect.top;
+    pos.x = x / window.devicePixelRatio + rect.left;
+    pos.y = y / window.devicePixelRatio + rect.top;
 
     let interactionData = {};
     let coords = {};
