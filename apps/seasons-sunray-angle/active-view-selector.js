@@ -30,13 +30,14 @@ export default class ActiveViewSelector extends React.Component{
     this.props.onViewOverlayChange(e.currentTarget)
   }
   createInput(key, val, active) {
-    let label = key
-    return (
-      <label key={key} className={key}>
-        <input type="radio" className={key} name="active-view" value={val} key={key} checked={active} onChange={this.onChangeView} />
-        <i className="material-icons">&#xE925;</i>
-      </label>
-    )
+    if (val != 'earth') {
+      return (
+        <label key={key} className={key}>
+          <input type="radio" className={key} name="active-view" value={val} key={key} checked={active} onChange={this.onChangeView} />
+          <i className="material-icons">&#xE925;</i>
+        </label>
+      )
+    } else return
   }
 
   generateActiveToggles(){
