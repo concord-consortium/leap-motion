@@ -10,6 +10,8 @@ const DEFAULT_CONFIG = {
   resetHandTimeout: 500
 };
 
+let lastFrameID = 0;
+
 export default class FistBump {
   constructor(config, callbacks) {
     this.config = extend({}, DEFAULT_CONFIG, config);
@@ -62,7 +64,14 @@ export default class FistBump {
     }
   }
 
+
   handleLeapFrame(frame) {
+    if (frame.id === lastFrameID) {
+      // skip repeated frame - this could be happening due to the lab simulation frame rate causing issues with handling Leap frames
+      return;
+    }
+    lastFrameID = frame.id;
+
     let hand = frame.hands[0];
     let closedHand = hand && hand.grabStrength > this.config.closedGrabStrength ? hand : null;
     if (frame.hands.length === 1 && closedHand) {
