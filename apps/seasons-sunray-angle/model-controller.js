@@ -398,7 +398,6 @@ export default class ModelController {
     let coords = interactionData.coords;
     let moveMagnitude = 4
 
-
     let evtDown = mouseEvent('mousedown', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
     let evtMove = mouseEvent('mousemove', coords.screenX + (dx * moveMagnitude), coords.screenY + (dy * moveMagnitude), coords.clientX + (dx * moveMagnitude), coords.clientY + (dy * moveMagnitude));
 

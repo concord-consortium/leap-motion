@@ -249,8 +249,10 @@ export default class SeasonsSunrayAngle extends React.Component {
       // orbit view inactive.
       this.setSeasonsState(false, false, false, true, true);
       this.setInstructions(INSTRUCTIONS.INITIAL_ORBIT);
-    } else{
+      this.refs.seasonsModel.lockCameraRotation(false);
+    } else {
       this.setSeasonsState(false, false, false, true, true);
+      this.refs.seasonsModel.lockCameraRotation(true);
       let p = this.refs.seasonsModel.getEarthScreenPosition();
       if (data.handClosed){
         if (data.handClosedChanged){
