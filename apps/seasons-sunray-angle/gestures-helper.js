@@ -12,7 +12,8 @@ const DEFAULT_CONFIG = {
   maxDist: 250,
   // Enables calculation of new properties, keep disabled if not necessary.
   twoHandsAngleDetection: false,
-  closedGrabStrength: 0.7
+  closedGrabStrength: 0.7,
+  resetHandTimeout: 500
 };
 
 function len(x, y, z) {
@@ -62,7 +63,31 @@ function getHandAngle(hand) {
 export default class GesturesHelper {
   constructor() {
     this.config = extend({}, DEFAULT_CONFIG);
+     this.savedHandType = null;
   }
+
+  updateSavedHandType(type) {
+    // Save hand type at the beginning of gesture. Leap seems to be struggling with hand type
+    // detection once fist is closed and sometimes erroneously switches reported type.
+    // At this point hand type should be still reliable and we make sure that it'll be consistent
+    // while user is shaking his hand.
+    if (!this.savedHandType) {
+      this.savedHandType = type;
+    }
+    if (this.resetHandTimeoutID !== null) {
+      clearTimeout(this.resetHandTimeoutID);
+      this.resetHandTimeoutID = null;
+    }
+  }
+
+  resetSavedHandType() {
+    if (this.resetHandTimeoutID === null) {
+      this.resetHandTimeoutID = setTimeout(() => {
+        this.savedHandType = null;
+      }, this.config.resetHandTimeout);
+    }
+  }
+
 
   distanceBetweenHands(leftHand, rightHand) {
     let p1 = leftHand.palmPosition;
@@ -78,7 +103,8 @@ export default class GesturesHelper {
     data.numberOfHands = hands.length;
     if (data.numberOfHands === 1) {
       let hand = hands[0];
-      data.handType = hand.type;
+      this.updateSavedHandType(hand.type);
+      data.handType = this.savedHandType;
       data.handStill = velocity(hand) < MAX_VELOCITY;
       data.handAngle = getHandAngle(hand);
       let handClosed = hand.grabStrength > this.config.closedGrabStrength;
@@ -116,6 +142,8 @@ export default class GesturesHelper {
         data.leftHandAngle = getHandAngle(leftHand);
         data.rightHandPointingLeft = isPointingLeft(rightHand);
       }
+    } else {
+      this.resetSavedHandType();
     }
     return data;
   }
