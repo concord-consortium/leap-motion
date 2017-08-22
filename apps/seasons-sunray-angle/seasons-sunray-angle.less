@@ -8,8 +8,8 @@
 @column-gap: 10px;
 @small-panel-height: 296px;
 @small-panel-height-narrow: 245px;
-@small-panel-vertical-space: 9px;
-@small-panel-vertical-space-narrow: 5px;
+@small-panel-vertical-space: @main-height - @small-panel-height - @small-panel-height;
+@small-panel-vertical-space-narrow: @main-height-narrow - @small-panel-height-narrow - @small-panel-height-narrow;
 
 .seasons-container{
     position: relative;
@@ -148,21 +148,13 @@
     .detail-toggle-switches{
       margin-right:30px;
     }
+    &.headless{
+      top:0px;
+    }
 }
 .simulation .seasonsnarrow{
-    position: absolute;
-    top: 80px;
-    left: 0px;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, 0%);
-    height: 100%;
-    margin: 0;
     h1{
       margin-left:20px;
-    }
-    .detail-toggle-switches{
-      margin-right:30px;
     }
 }
   .active-view-selector{

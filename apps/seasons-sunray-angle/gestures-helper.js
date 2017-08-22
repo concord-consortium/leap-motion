@@ -88,7 +88,6 @@ export default class GesturesHelper {
     }
   }
 
-
   distanceBetweenHands(leftHand, rightHand) {
     let p1 = leftHand.palmPosition;
     let p2 = rightHand.palmPosition;

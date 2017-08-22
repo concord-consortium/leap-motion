@@ -56,6 +56,7 @@ const SIM_LIST = {
 };
 
 const DEF_SIMULATION = getURLParam('simulation') || 'index';
+const HEADER = !getURLParam('headless');
 
 export default class BaseApp extends React.Component {
   constructor(props) {
@@ -83,7 +84,7 @@ export default class BaseApp extends React.Component {
   }
 
   render() {
-    const { sim } = this.props;
+    const { sim, showHeader } = this.props;
     const { aboutVisible, settingsVisible } = this.state;
     const simulation = React.createElement(SIM_LIST[sim], {
       aboutVisible,
@@ -91,20 +92,20 @@ export default class BaseApp extends React.Component {
       toggleAbout: this.toggleAbout,
       toggleSettings: this.toggleSettings
     });
-    let componentStyleList = ['simulation', sim];
+    let componentStyleList = ['simulation', sim, !showHeader? 'headless':null];
     let componentStyles = componentStyleList.join(' ');
     let headerClass = sim === 'seasons'? 'header seasons' : 'header';
 
     return (
       <div className='main' ref='container'>
         <Typekit kitId="hdw8ayt" />
-        <div className={headerClass}>
+        {showHeader && <div className={headerClass}>
           <div className='header-inner'>
             <img className='projectlogo' src="logos/grasp.png" alt="GRASP Project" />
             <a href="http://illinois.edu/" title="University of Illinois at Urbana-Champaign"><img className="illogo" alt="University of Illinois at Urbana-Champaign" src="http://publish.illinois.edu/graspprogram/files/2015/11/logo.gif" /></a>
             <a href="https://concord.org/" title="The Concord Consortium - Revolutionary digital learning for science, math, and engineering"><img className='cclogo' src="logos/cclogo.png" alt="Concord Consortium" /></a>
           </div>
-        </div>
+        </div>}
         <div className={componentStyles}>
           {simulation}
         </div>
@@ -114,5 +115,6 @@ export default class BaseApp extends React.Component {
 }
 
 BaseApp.defaultProps = {
-  sim: DEF_SIMULATION
+  sim: DEF_SIMULATION,
+  showHeader: HEADER
 };
