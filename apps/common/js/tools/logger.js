@@ -1,7 +1,8 @@
 import getURLParam from './get-url-param';
-
+import iframePhone from 'iframe-phone';
 const LOG_MANAGER_URL = '//cc-log-manager.herokuapp.com/api/logs';
 const APP_NAME = 'GRASP';
+const LOG_TARGET = { LogManager:0, LARA:1, None:2 };
 
 const ID_LENGTH = 8;
 const ID_CHARS = 'abcdefghijklmnopqrstuvwxyz';
@@ -37,6 +38,14 @@ class Logger {
   constructor() {
     this.state = Object.assign({}, INITIAL_STATE);
     this.log = this.log.bind(this);
+    this.logTarget = this.state.enabled ? LOG_TARGET.LogManager : LOG_TARGET.None;
+    console.log("initial log set: " + this.logTarget)
+    this.phone = iframePhone.getIFrameEndpoint();
+    this.phone.addListener('initInteractive', this.initInteractive);
+  }
+  initInteractive(data) {
+    console.log("Init received from LARA container", data);
+    this.logTarget = LOG_TARGET.LARA;
   }
 
   log(action, parameters) {
@@ -55,8 +64,17 @@ class Logger {
         data.event_value = parameters.value;
       }
     }
-    sendToLogManager(data);
+
+    if (this.logTarget === LOG_TARGET.LARA) {
+      sendToLara(data);
+    } else {
+      sendToLogManager(data);
+    }
     console.log('[log]', action, data);
+  }
+
+  sendToLara(data) {
+    this.phone.post('log', { action: data.event, data })
   }
 
   setState(newState) {
