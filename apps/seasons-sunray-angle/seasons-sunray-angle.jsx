@@ -85,10 +85,12 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.handleSelectOverlay = this.handleSelectOverlay.bind(this);
     this.log = this.log.bind(this);
     this.debugMouseMove = this.debugMouseMove.bind(this);
+    logger.initializeLaraConnection();
   }
 
   componentDidMount() {
     this.modelController.setSeasonsComponent(this.refs.seasonsModel);
+
     if (logger.enabled) {
       this.handleLoggingStart();
     }
@@ -98,6 +100,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
   componentWillUnmount(){
     document.removeEventListener('mousemove', this.debugMouseMove)
+    logger.terminateLaraConnection();
   }
   debugMouseMove(e){
     let pos = e;
