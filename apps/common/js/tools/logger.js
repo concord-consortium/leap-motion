@@ -45,7 +45,7 @@ class Logger {
   }
 
   initializeLaraConnection() {
-    console.log("initializing");
+    console.log('initializing');
     this.phone = iframePhone.getIFrameEndpoint();
     this.phone.addListener('initInteractive', this.initInteractive);
     this.phone.addListener('authInfo', this.getAuthInfo);
@@ -53,7 +53,7 @@ class Logger {
   }
 
   initInteractive(data) {
-    console.log("Init received from LARA container", data);
+    console.log('Init received from LARA container', data);
     this.logToLara = true;
     this.getAuthInfo();
   }
@@ -96,7 +96,7 @@ class Logger {
   }
 
   sendToLara(data) {
-    this.phone.post('log', { action: data.event, data: data })
+    this.phone.post('log', { action: data.event, data: data });
   }
 
   setState(newState) {

@@ -63,7 +63,7 @@ function getHandAngle(hand) {
 export default class GesturesHelper {
   constructor() {
     this.config = extend({}, DEFAULT_CONFIG);
-     this.savedHandType = null;
+    this.savedHandType = null;
   }
 
   updateSavedHandType(type) {
@@ -117,7 +117,7 @@ export default class GesturesHelper {
       let pointable = activePointers[0];
       if (pointable && activePointers.length === 1) {
         data.pointerDirection = pointable.direction;
-        data.isPointing = true
+        data.isPointing = true;
       }
 
       if (previousFrame) {

@@ -24,7 +24,7 @@ function mouseEvent(type, sx, sy, cx, cy) {
   var evt;
   var e = {
     bubbles: true,
-    cancelable: (type != "mousemove"),
+    cancelable: (type != 'mousemove'),
     view: window,
     detail: 0,
     screenX: sx,
@@ -38,8 +38,8 @@ function mouseEvent(type, sx, sy, cx, cy) {
     button: 0,
     relatedTarget: undefined
   };
-  if (typeof( document.createEvent ) == "function") {
-    evt = document.createEvent("MouseEvents");
+  if (typeof( document.createEvent ) == 'function') {
+    evt = document.createEvent('MouseEvents');
     evt.initMouseEvent(type,
       e.bubbles, e.cancelable, e.view, e.detail,
       e.screenX, e.screenY, e.clientX, e.clientY,
@@ -47,9 +47,9 @@ function mouseEvent(type, sx, sy, cx, cy) {
       e.button, document.body.parentNode);
   } else if (document.createEventObject) {
     evt = document.createEventObject();
-    for (prop in e) {
-    evt[prop] = e[prop];
-  }
+    for (let prop in e) {
+      evt[prop] = e[prop];
+    }
     evt.button = { 0:1, 1:4, 2:2 }[evt.button] || evt.button;
   }
   return evt;
@@ -58,7 +58,7 @@ function dispatchEvent (el, evt) {
   if (el.dispatchEvent) {
     el.dispatchEvent(evt);
   } else if (el.fireEvent) {
-    el.fireEvent('on' + type, evt);
+    el.fireEvent('on' + evt.type, evt);
   }
   return evt;
 }
@@ -355,7 +355,7 @@ export default class ModelController {
   }
 
   getInteractionData(x, y, activeViewPanel) {
-    let pos = { x, y }
+    let pos = { x, y };
     let seasonsContainer = document.getElementsByClassName('seasons-container')[0];
 
     let view = seasonsContainer.getElementsByClassName('view ' + activeViewPanel)[0];
@@ -396,7 +396,7 @@ export default class ModelController {
     // for changes in movement of dx and dy, simulate dragging earth at screen coordinates x and y
     let interactionData = this.getInteractionData(x, y, activeViewPanel);
     let coords = interactionData.coords;
-    let moveMagnitude = 4
+    let moveMagnitude = 4;
 
     let evtDown = mouseEvent('mousedown', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
     let evtMove = mouseEvent('mousemove', coords.screenX + (dx * moveMagnitude), coords.screenY + (dy * moveMagnitude), coords.clientX + (dx * moveMagnitude), coords.clientY + (dy * moveMagnitude));
@@ -408,7 +408,7 @@ export default class ModelController {
   finishOrbitInteraction(x, y, activeViewPanel) {
     let interactionData = this.getInteractionData(x, y, activeViewPanel);
     let coords = interactionData.coords;
-    let moveMagnitude = 100
+    let moveMagnitude = 100;
 
     let evtUp = mouseEvent('mouseup', coords.screenX, coords.screenY, coords.clientX, coords.clientY);
     let evtMove = mouseEvent('mousemove', coords.screenX + moveMagnitude, coords.screenY + moveMagnitude, coords.clientX + moveMagnitude, coords.clientY + moveMagnitude);
