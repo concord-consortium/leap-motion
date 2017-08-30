@@ -15,6 +15,8 @@ const DEFAULT_CONFIG = {
   closedGrabStrength: 0.7,
   resetHandTimeout: 500
 };
+const VECTOR_UP = [0, 1, 0];
+const VECTOR_RIGHT = [1, 0, 0];
 
 function len(x, y, z) {
   return Math.sqrt(x * x + y * y + z * z);
@@ -117,6 +119,8 @@ export default class GesturesHelper {
       let pointable = activePointers[0];
       if (pointable && activePointers.length === 1) {
         data.pointerDirection = pointable.direction;
+        data.pointerAngleUp = angleBetween(VECTOR_UP, pointable.direction);
+        data.pointerAngleRight = angleBetween(VECTOR_RIGHT, pointable.direction);
         data.isPointing = true;
       }
 
