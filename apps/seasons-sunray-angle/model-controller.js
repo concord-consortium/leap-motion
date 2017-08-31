@@ -148,8 +148,8 @@ export default class ModelController {
     return false;
   }
 
-  setHandAngle(angle) {
-    if (this.activeRaysView === SPACE) {
+  setHandAngle(angle, view) {
+    if (view === SPACE) {
       // In horizontal view user controls ground, not rays.
       angle = 180 - angle;
     }

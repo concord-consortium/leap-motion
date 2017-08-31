@@ -55,6 +55,30 @@ const OVERLAY_SIZE_NARROW = {
   'small-bottom': {width: '335px', height: '245px'}
 };
 
+const DEFAULT_ORBIT_STATE = {
+  groundActive: false,
+  raysActive: false,
+  distMarker: false,
+  buttonsActive: true,
+  orbitViewActive: true
+}
+
+const DEFAULT_GROUND_STATE = {
+  groundActive: true,
+  raysActive: false,
+  distMarker: false,
+  buttonsActive: true,
+  orbitViewActive: false
+};
+
+const DEFAULT_SPACE_STATE = {
+  groundActive: false,
+  raysActive: true,
+  distMarker: false,
+  buttonsActive: true,
+  orbitViewActive: false
+};
+
 
 export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
@@ -136,25 +160,32 @@ export default class SeasonsSunrayAngle extends React.Component {
     }
   }
 
-  setSeasonsState(groundActive, raysActive, distMarker, buttonsActive, orbitViewActive) {
+  setSeasonsState(nextState){ //groundActive, raysActive, distMarker, buttonsActive, orbitViewActive) {
     this.modelController.setSeasonsState({
-      groundColor: groundActive ? GROUND_NORMAL_COLOR : GROUND_INACTIVE_COLOR,
-      sunrayColor: raysActive ? SUNRAY_NORMAL_COLOR : SUNRAY_INACTIVE_COLOR,
-      sunrayDistMarker: distMarker
+      groundColor: nextState.groundActive ? GROUND_NORMAL_COLOR : GROUND_INACTIVE_COLOR,
+      sunrayColor: nextState.raysActive ? SUNRAY_NORMAL_COLOR : SUNRAY_INACTIVE_COLOR,
+      sunrayDistMarker: nextState.distMarker
     });
-    this.modelController.setAnimButtonsDisabled(!buttonsActive);
+    this.modelController.setAnimButtonsDisabled(!nextState.buttonsActive);
   }
 
   handleLeapFrame(frame) {
-    const { previousFrame } = this.state;
+    const { previousFrame, activeRaysView } = this.state;
     const data = this.gesturesHelper.processLeapFrame(frame, previousFrame);
     let gestureDetected = false;
-    if (this.state.activeRaysView === 'raysSpace') {
-      gestureDetected = this.handleSpaceViewGestures(data);
-    } else if (this.state.activeRaysView === 'raysGround') { // ground view
-      gestureDetected = this.handleGroundViewGestures(data);
-    } else if (this.state.activeRaysView === 'orbit') {
-      gestureDetected = this.handleOrbitViewGestures(data);
+
+    switch (activeRaysView){
+      case 'raysSpace':
+        gestureDetected = this.handleSpaceViewGestures(data);
+        break;
+      case 'raysGround':
+        gestureDetected = this.handleGroundViewGestures(data);
+        break;
+      case 'orbit':
+        gestureDetected = this.handleOrbitViewGestures(data);
+        break;
+      default:
+        break;
     }
 
     this.updateOverlayVisibility(data, gestureDetected);
@@ -189,28 +220,43 @@ export default class SeasonsSunrayAngle extends React.Component {
 
   handleSpaceViewGestures(data) {
     let gestureDetected = false;
+
     if (data.numberOfHands === 0) {
       // Ground inactive.
-      this.setSeasonsState(false, true, false, true, false);
+      this.setSeasonsState(DEFAULT_SPACE_STATE);
       this.setInstructions(INSTRUCTIONS.INITIAL_SPACE);
     } else if (data.numberOfHands === 1 && data.handStill) {
       // Try to set angle, feedback depends on whether angle was updated or not (user needs to stay within given
       // range around the current angle).
-      const angleChanged = this.modelController.setHandAngle(data.handAngle);
-      this.setSeasonsState(angleChanged, true, false, false, false);
-      this.setInstructions(INSTRUCTIONS.ROTATE_GROUND);
+
+      // TODO: This is not working correctly!
+      const angleChanged = this.modelController.setHandAngle(data.handAngle, this.state.activeRaysView);
+
+      let nextSeasonsState = Object.assign({}, DEFAULT_SPACE_STATE);
+      nextSeasonsState.groundActive = angleChanged;
+      nextSeasonsState.raysActive = angleChanged;
+      nextSeasonsState.buttonsActive = false;
+      this.setSeasonsState(nextSeasonsState);
+      this.setInstructions(INSTRUCTIONS.ROTATE_SPACE);
       gestureDetected = angleChanged;
     } else if (data.numberOfHands === 1) {
       // Hand moving too fast.
-      this.setSeasonsState(false, true, false, true, false);
+      this.setSeasonsState(DEFAULT_SPACE_STATE);
     } else if (data.numberOfHands === 2 && data.handsVertical) {
       const distanceChanged = this.modelController.setHandDistance(data.handsDistance);
-      this.setSeasonsState(distanceChanged, true, true, false, false);
+
+      let nextSeasonsState = Object.assign({}, DEFAULT_SPACE_STATE);
+      nextSeasonsState.groundActive = distanceChanged;
+      nextSeasonsState.raysActive = distanceChanged;
+      nextSeasonsState.distMarker = true;
+      nextSeasonsState.buttonsActive = false;
+      this.setSeasonsState(nextSeasonsState); //distanceChanged, true, true, false, false);
+
       this.setInstructions(INSTRUCTIONS.DISTANCE);
       gestureDetected = distanceChanged;
     } else if (data.numberOfHands === 2) {
       // Ground inactive.
-      this.setSeasonsState(false, true, false, true, false);
+      this.setSeasonsState(DEFAULT_SPACE_STATE);
       this.setInstructions(INSTRUCTIONS.TWO_HANDS);
     }
     return gestureDetected;
@@ -218,28 +264,40 @@ export default class SeasonsSunrayAngle extends React.Component {
 
   handleGroundViewGestures(data) {
     let gestureDetected = false;
+    let nextSeasonsState = Object.assign({}, DEFAULT_GROUND_STATE);
+
     if (data.numberOfHands === 0) {
       // Sunrays inactive.
-      this.setSeasonsState(true, false, false, true, false);
+      this.setSeasonsState(DEFAULT_GROUND_STATE);
       this.setInstructions(INSTRUCTIONS.INITIAL_GROUND);
     } else if (data.numberOfHands === 1 && data.handStill) {
       // Try to set angle, feedback depends on whether angle was updated or not (user needs to stay within given
       // range around the current angle).
-      const angleChanged = this.modelController.setHandAngle(data.handAngle);
-      this.setSeasonsState(true, angleChanged, false, false, false);
+      const angleChanged = this.modelController.setHandAngle(data.handAngle, this.state.activeRaysView);
+
+      let nextSeasonsState = Object.assign({}, DEFAULT_GROUND_STATE);
+      nextSeasonsState.raysActive = angleChanged;
+      nextSeasonsState.buttonsActive = false;
+      this.setSeasonsState(nextSeasonsState);
+
       this.setInstructions(INSTRUCTIONS.ROTATE_GROUND);
       gestureDetected = angleChanged;
     } else if (data.numberOfHands === 1) {
       // Hand moving too fast.
-      this.setSeasonsState(true, false, false, true, false);
+      this.setSeasonsState(DEFAULT_GROUND_STATE);
     } else if (data.numberOfHands === 2 && data.handsVertical) {
       const distanceChanged = this.modelController.setHandDistance(data.handsDistance);
-      this.setSeasonsState(true, distanceChanged, true, false, false);
+
+      let nextSeasonsState = Object.assign({}, DEFAULT_GROUND_STATE);
+      nextSeasonsState.raysActive = distanceChanged;
+      nextSeasonsState.distMarker = true;
+      nextSeasonsState.buttonsActive = false;
+      this.setSeasonsState(nextSeasonsState);
       this.setInstructions(INSTRUCTIONS.DISTANCE);
       gestureDetected = distanceChanged;
     } else if (data.numberOfHands === 2) {
       // Sunrays inactive.
-      this.setSeasonsState(true, false, false, true, false);
+      this.setSeasonsState(DEFAULT_GROUND_STATE);
       this.setInstructions(INSTRUCTIONS.TWO_HANDS);
     }
     return gestureDetected;
@@ -247,6 +305,7 @@ export default class SeasonsSunrayAngle extends React.Component {
 
   handleOrbitViewGestures(data) {
     const {activeViewPanel} = this.state;
+
     let gestureDetected = false;
     let gestureDetectionFactor = 0;
     let gestureDetectionTolerance = 50;
@@ -256,11 +315,11 @@ export default class SeasonsSunrayAngle extends React.Component {
 
     if (data.numberOfHands === 0){
       // orbit view inactive.
-      this.setSeasonsState(false, false, false, true, true);
+      this.setSeasonsState(DEFAULT_ORBIT_STATE);
       this.setInstructions(INSTRUCTIONS.INITIAL_ORBIT);
       this.refs.seasonsModel.lockCameraRotation(false);
     } else {
-      this.setSeasonsState(false, false, false, true, true);
+      this.setSeasonsState(DEFAULT_ORBIT_STATE);
       this.refs.seasonsModel.lockCameraRotation(true);
       let p = this.refs.seasonsModel.getEarthScreenPosition();
 
