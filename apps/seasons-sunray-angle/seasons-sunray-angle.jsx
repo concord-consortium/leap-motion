@@ -40,8 +40,8 @@ const INSTRUCTIONS = {
   ROTATE_SPACE: 'Rotate your hand to show the ground angle.',
   DISTANCE: 'Change the distance between your hands to show the distance between rays.',
   INITIAL_ORBIT: 'Extend one hand over the controller',
-  ORBIT_CONTROL: 'Point your finger in-line with the axis of the Earth',
-  ORBIT: 'Move your hand around the controller to make the earth orbit the sun'
+  ORBIT_CONTROL: 'Rotate your hand in-line with the axis of the Earth',
+  ORBIT: 'Move your hand around the controller to make the Earth orbit the sun'
 };
 
 const OVERLAY_SIZE = {
@@ -309,9 +309,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     let gestureDetected = false;
     let gestureDetectionFactor = 0;
     let gestureDetectionTolerance = 50;
-    let handControlAngleAchieved = (data.handAngle && data.handAngle > 100 && data.handAngle < 140);
-    let pointerAngleDetected = (data.pointerAngleUp && data.pointerAngleUp > 0.2 && data.pointerAngleUp < 1.2 && data.pointerAngleRight > 1.5);
-    let pointerAngleAchieved = pointerAngleDetected && gestureDetectionFactor < gestureDetectionTolerance;
+    let handControl = (data.handAngle && data.handAngle > 110 && data.handAngle < 130);
 
     if (data.numberOfHands === 0){
       // orbit view inactive.
@@ -323,14 +321,8 @@ export default class SeasonsSunrayAngle extends React.Component {
       this.refs.seasonsModel.lockCameraRotation(true);
       let p = this.refs.seasonsModel.getEarthScreenPosition();
 
-      if (pointerAngleAchieved){ // we can switch to handControlAngleAchieved if we switch to palm angle
-        if (!pointerAngleDetected){
-          // Allow for tolerance due to glitchy detection of gesture
-          gestureDetectionFactor++;
-        }
-        else {
-          gestureDetectionFactor = 0;
-        }
+      if (handControl){ // we can switch to handControlAngleAchieved if we switch to palm angle
+
         this.modelController.startOrbitInteraction(p.x, p.y, activeViewPanel);
         this.setInstructions(INSTRUCTIONS.ORBIT);
         if (data.handTranslation){
@@ -342,7 +334,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         this.modelController.finishOrbitInteraction(p.x, p.y, activeViewPanel);
         this.setInstructions(INSTRUCTIONS.ORBIT_CONTROL);
       }
-      gestureDetected = pointerAngleAchieved; // handControlAngleAchieved;
+      gestureDetected = handControl; // handControlAngleAchieved;
     }
     return gestureDetected;
   }
