@@ -40,7 +40,7 @@ const INSTRUCTIONS = {
   ROTATE_SPACE: 'Rotate your hand to show the ground angle.',
   DISTANCE: 'Change the distance between your hands to show the distance between rays.',
   INITIAL_ORBIT: 'Extend one hand over the controller',
-  ORBIT_CONTROL: 'Point your finger in-line with the axis of the Earth',
+  ORBIT_CONTROL: 'Rotate your hand in-line with the axis of the Earth',
   ORBIT: 'Move your hand around the controller to make the earth orbit the sun'
 };
 
@@ -84,11 +84,11 @@ export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      activeRaysView: 'raysGround',
-      activeViewPanel: 'small-top',
-      instructions: INSTRUCTIONS.INITIAL_GROUND,
+      activeRaysView: 'orbit',
+      activeViewPanel: 'main',
+      instructions: INSTRUCTIONS.INITIAL_ORBIT,
       overlayEnabled: true,
-      phantomHandsHint: null,
+      phantomHandsHint: 'orbitRotateLeft',
       renderSize: getURLParam('simulation') || 'seasons',
       previousFrame: null,
       debugMode: getURLParam('debug') && getURLParam('debug') === 'true' || false,
@@ -207,14 +207,23 @@ export default class SeasonsSunrayAngle extends React.Component {
   updatePhantomHandsHint(data, gestureDetected) {
     if (gestureDetected || data.numberOfHands === 0) {
       this.setState({phantomHandsHint: null});
-    } else if (data.numberOfHands === 1 && data.handType === 'left') {
-      this.setState({phantomHandsHint: 'angleLeft'});
-    } else if (data.numberOfHands === 1 && data.handType === 'right') {
-      this.setState({phantomHandsHint: 'angleRight'});
-    } else if (data.numberOfHands === 2 && !data.handsVertical) {
-      this.setState({phantomHandsHint: 'handsVertical'});
-    } else if (data.numberOfHands === 2 && data.handsVertical) {
-      this.setState({phantomHandsHint: 'handsMove'});
+    } else {
+      if (data.numberOfHands === 1 && this.state.activeRaysView === 'orbit') {
+        if (data.handType === 'left'){
+          (this.state.orbitControlLock === true) ? this.setState({phantomHandsHint: 'orbitRotateLeft'}) : this.setState({phantomHandsHint:'orbitLeft'});
+        }
+        else {
+          (this.state.orbitControlLock === true) ? this.setState({phantomHandsHint: 'orbitRotateRight'}) : this.setState({phantomHandsHint:'orbitRight'});
+        }
+      } else if (data.numberOfHands === 1 && data.handType === 'left') {
+        this.setState({phantomHandsHint: 'angleLeft'});
+      } else if (data.numberOfHands === 1 && data.handType === 'right') {
+        this.setState({phantomHandsHint: 'angleRight'});
+      } else if (data.numberOfHands === 2 && !data.handsVertical && this.state.activeRaysView !== 'orbit') {
+        this.setState({phantomHandsHint: 'handsVertical'});
+      } else if (data.numberOfHands === 2 && data.handsVertical && this.state.activeRaysView !== 'orbit') {
+        this.setState({phantomHandsHint: 'handsMove'});
+      }
     }
   }
 
@@ -309,22 +318,23 @@ export default class SeasonsSunrayAngle extends React.Component {
     let gestureDetected = false;
     let gestureDetectionFactor = 0;
     let gestureDetectionTolerance = 50;
-    let handControlAngleAchieved = (data.handAngle && data.handAngle > 100 && data.handAngle < 140);
-    let pointerAngleDetected = (data.pointerAngleUp && data.pointerAngleUp > 0.2 && data.pointerAngleUp < 1.2 && data.pointerAngleRight > 1.5);
-    let pointerAngleAchieved = pointerAngleDetected && gestureDetectionFactor < gestureDetectionTolerance;
+    let handControlAngle = (data.handAngle && data.handAngle > 110 && data.handAngle < 130);
+    let handControlAngleAchieved = handControlAngle && gestureDetectionFactor < gestureDetectionTolerance;
+    let gestureActiveCount = 0;
 
-    if (data.numberOfHands === 0){
+    if (data.numberOfHands === 0) {
       // orbit view inactive.
       this.setSeasonsState(DEFAULT_ORBIT_STATE);
       this.setInstructions(INSTRUCTIONS.INITIAL_ORBIT);
       this.refs.seasonsModel.lockCameraRotation(false);
-    } else {
+    }
+    else if (data.numberOfHands === 1) {
       this.setSeasonsState(DEFAULT_ORBIT_STATE);
       this.refs.seasonsModel.lockCameraRotation(true);
       let p = this.refs.seasonsModel.getEarthScreenPosition();
 
-      if (pointerAngleAchieved){ // we can switch to handControlAngleAchieved if we switch to palm angle
-        if (!pointerAngleDetected){
+      if (handControlAngleAchieved){
+        if (!handControlAngle){
           // Allow for tolerance due to glitchy detection of gesture
           gestureDetectionFactor++;
         }
@@ -336,13 +346,18 @@ export default class SeasonsSunrayAngle extends React.Component {
         if (data.handTranslation){
           // hand is moving
           this.modelController.handleOrbitInteraction(p.x, p.y, data.handTranslation[0], data.handTranslation[2], activeViewPanel);
+          gestureActiveCount++;
+        } else {
+          gestureActiveCount = 0;
         }
+        this.setState({orbitControlLock: true});
       }
       else{
+        this.setState({orbitControlLock: false});
         this.modelController.finishOrbitInteraction(p.x, p.y, activeViewPanel);
         this.setInstructions(INSTRUCTIONS.ORBIT_CONTROL);
       }
-      gestureDetected = pointerAngleAchieved; // handControlAngleAchieved;
+      gestureDetected = handControlAngleAchieved && data.handTranslation && gestureActiveCount > 100;
     }
     return gestureDetected;
   }
@@ -410,8 +425,8 @@ export default class SeasonsSunrayAngle extends React.Component {
           </div>
           <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
                                width={overlayWidth} height={overlayHeight}
-                               handsViewProps={{positionOffset: [0, -150, 0],
-                                                cameraPosition: [0, 100, 500],
+                               handsViewProps={{positionOffset: [0, -200, 0],
+                                                cameraPosition: [0, 100, 600],
                                                 phantomHands: phantomHands[overlayVisible && phantomHandsHint]}}>
             <div className='instructions'>
               {instructions}

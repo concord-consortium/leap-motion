@@ -13,7 +13,7 @@ const DEFAULT_CONFIG = {
   // Enables calculation of new properties, keep disabled if not necessary.
   twoHandsAngleDetection: false,
   closedGrabStrength: 0.7,
-  resetHandTimeout: 500
+  resetHandTimeout: 200
 };
 const VECTOR_UP = [0, 1, 0];
 const VECTOR_RIGHT = [1, 0, 0];
