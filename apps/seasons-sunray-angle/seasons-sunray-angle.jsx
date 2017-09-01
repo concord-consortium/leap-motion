@@ -147,6 +147,9 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   activeRaysViewChanged(viewName) {
+    logger.log('ControlledViewChanged', {
+      controlledView: viewName
+    });
     this.setState({activeRaysView: viewName})
   }
 
@@ -349,6 +352,9 @@ export default class SeasonsSunrayAngle extends React.Component {
 
   handleSelectOverlay(view) {
     // When a user requests Leap control over a view
+    logger.log('ControlledViewSelected', {
+      controlledView: view.value
+    });
     this.setState({activeRaysView: view.value, activeViewPanel: view.className, instructions: ''});
   }
 
