@@ -208,16 +208,26 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   updatePhantomHandsHint(data, gestureDetected) {
+    const { activeRaysView } = this.state;
     if (gestureDetected || data.numberOfHands === 0) {
       this.setState({phantomHandsHint: null});
-    } else if (data.numberOfHands === 1 && data.handType === 'left') {
-      this.setState({phantomHandsHint: 'angleLeft'});
-    } else if (data.numberOfHands === 1 && data.handType === 'right') {
-      this.setState({phantomHandsHint: 'angleRight'});
-    } else if (data.numberOfHands === 2 && !data.handsVertical) {
-      this.setState({phantomHandsHint: 'handsVertical'});
-    } else if (data.numberOfHands === 2 && data.handsVertical) {
-      this.setState({phantomHandsHint: 'handsMove'});
+    } else {
+      switch (activeRaysView){
+        case 'orbit':
+          this.setState({phantomHandsHint: 'orbitRotate'});
+          break;
+        default:
+          if (data.numberOfHands === 1 && data.handType === 'left') {
+            this.setState({phantomHandsHint: 'angleLeft'});
+          } else if (data.numberOfHands === 1 && data.handType === 'right') {
+            this.setState({phantomHandsHint: 'angleRight'});
+          } else if (data.numberOfHands === 2 && !data.handsVertical) {
+            this.setState({phantomHandsHint: 'handsVertical'});
+          } else if (data.numberOfHands === 2 && data.handsVertical) {
+            this.setState({phantomHandsHint: 'handsMove'});
+          }
+          break;
+      }
     }
   }
 

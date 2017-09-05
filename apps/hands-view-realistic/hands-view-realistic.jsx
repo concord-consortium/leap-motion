@@ -12,6 +12,8 @@ export default class HandsViewRealistic extends React.Component {
       snapshots: []
     };
     this.snapshot = this.snapshot.bind(this);
+    this.filmSnapshots = this.filmSnapshots.bind(this);
+    this.stopFilm = this.stopFilm.bind(this);
     this.rmPhantomHand = this.rmPhantomHand.bind(this);
   }
 
@@ -21,6 +23,16 @@ export default class HandsViewRealistic extends React.Component {
       const newSnapshots = snapshots.concat(data);
       this.setState({snapshots: newSnapshots});
     });
+  }
+
+  filmSnapshots(){
+    this.filmInterval = setInterval(() => {
+      this.snapshot();
+    }, 500);
+
+  }
+  stopFilm(){
+    clearInterval(this.filmInterval);
   }
 
   rmPhantomHand() {
@@ -51,6 +63,8 @@ export default class HandsViewRealistic extends React.Component {
         </div>
         <div className='controls'>
           <button onClick={this.snapshot}>Take snapshot</button>
+          <button onClick={this.filmSnapshots}>Start video record</button>
+          <button onClick={this.stopFilm}>Stop recording</button>
           <button onClick={this.rmPhantomHand}>Remove last snapshot</button>
           <div>
             <textarea value={json} readOnly/>
