@@ -1,22 +1,29 @@
+@sim-width: 1200px;
+@sim-height: 860px;
 @main-width: 795px;
-@main-width-narrow: 600px;
 @main-height: 600px;
-@main-height-narrow: 495px;
+
 @right-col-width: 395px;
-@right-col-width-narrow: 335px;
-@column-gap-narrow: 3px;
 @column-gap: 10px;
-@small-panel-height: 296px;
-@small-panel-height-narrow: 245px;
-@small-panel-vertical-space: @main-height - @small-panel-height - @small-panel-height;
-@small-panel-vertical-space-narrow: @main-height-narrow - @small-panel-height-narrow - @small-panel-height-narrow;
+@small-panel-vertical-space: 4px;
+@small-panel-height: @main-height / 2 - @small-panel-vertical-space;
+
+@sim-width-narrow: 900px;
+@sim-height-narrow:700px;
+@main-width-narrow: 540px;
+@main-height-narrow: 475px;
+
+@column-gap-narrow: 3px;
+@right-col-width-narrow: @sim-width-narrow - @main-width-narrow - @column-gap-narrow;
+@small-panel-vertical-space-narrow: 1px;
+@small-panel-height-narrow: @main-height-narrow / 2 - @small-panel-vertical-space-narrow;
 
 .seasons-container{
     position: relative;
     margin-left: auto;
     margin-right: auto;
-    width: 1200px;
-    height: 860px;
+    width: @sim-width;
+    height: @sim-height;
     overflow: auto;
 
     .grasp-seasons {
@@ -56,11 +63,11 @@
     }
 
   &.narrow{
-    width: 940px;
-    height: 725px;
+    width: @sim-width-narrow;
+    height: @sim-height-narrow;
 
     .grasp-seasons {
-        width:940px;
+        width: @sim-width-narrow;
 
         &.main {
           width: @main-width-narrow;
@@ -108,11 +115,11 @@
       }
     }
     .view-manager{
-      width: 940px;
-      height:500px;
+      width: @sim-width-narrow;
+      height:@main-height-narrow + 5;
     }
     .controls{
-      width: 940px;
+      width: @sim-width-narrow;
       .left-col{
         width: 475px;
       }
@@ -125,6 +132,7 @@
       }
       .day-slider{
         width: 475px;
+        padding: 10px 0 10px;
       }
     }
     .top-links{
@@ -135,6 +143,7 @@
 
 .simulation.seasons, .simulation.seasonsnarrow{
     position: absolute;
+    overflow: hidden;
     top: 80px;
     left: 0px;
     left: 50%;
@@ -151,11 +160,15 @@
     &.headless{
       top:0px;
     }
+    .top-links{
+      margin-right:5px;
+    }
 }
 .simulation .seasonsnarrow{
     h1{
       margin-left:20px;
     }
+
 }
   .active-view-selector{
     position:absolute;

@@ -50,9 +50,9 @@ const OVERLAY_SIZE = {
   'small-bottom': {width: '395px', height: '296px'}
 };
 const OVERLAY_SIZE_NARROW = {
-  'main': {width: '600px', height: '495px'},
-  'small-top': {width: '335px', height: '245px'},
-  'small-bottom': {width: '335px', height: '245px'}
+  'main': {width: '540px', height: '475px'},
+  'small-top': {width: '357px', height: '235px'},
+  'small-bottom': {width: '357px', height: '235px'}
 };
 
 const DEFAULT_ORBIT_STATE = {
