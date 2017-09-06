@@ -12,10 +12,14 @@ export default class GesturesLogger {
     this._statsTimestamp = null;
   }
 
-  logGesture(data, gestureDetected, currentDay) {
+  logGesture(data, gestureDetected, currentDay, orbitGesture) {
     const now = performance.now();
     let newGesture = null;
-    if (gestureDetected && data.numberOfHands === 1) {
+    if (orbitGesture && gestureDetected) {
+      newGesture = 'Gesture:OrbitAligned';
+    } else if (orbitGesture && !gestureDetected && data.numberOfHands === 1) {
+      newGesture = 'Gesture:OrbitNotAligned';
+    } else if (gestureDetected && data.numberOfHands === 1) {
       newGesture = 'Gesture:SetAngle';
     } else if (gestureDetected && data.numberOfHands === 2) {
       newGesture = 'Gesture:SetDistance';

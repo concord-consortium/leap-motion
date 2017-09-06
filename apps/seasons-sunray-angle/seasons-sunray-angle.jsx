@@ -178,6 +178,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     const { previousFrame, activeRaysView } = this.state;
     const data = this.gesturesHelper.processLeapFrame(frame, previousFrame);
     let gestureDetected = false;
+    let orbitGesture = false;
 
     switch (activeRaysView){
       case 'raysSpace':
@@ -187,6 +188,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         gestureDetected = this.handleGroundViewGestures(data);
         break;
       case 'orbit':
+        orbitGesture = true;
         gestureDetected = this.handleOrbitViewGestures(data);
         break;
       default:
@@ -195,7 +197,7 @@ export default class SeasonsSunrayAngle extends React.Component {
 
     this.updateOverlayVisibility(data, gestureDetected);
     this.updatePhantomHandsHint(data, gestureDetected);
-    this.gesturesLogger.logGesture(data, gestureDetected, this.modelController.seasonsState.day);
+    this.gesturesLogger.logGesture(data, gestureDetected, this.modelController.seasonsState.day, orbitGesture);
     this.setState({previousFrame: frame});
   }
 
