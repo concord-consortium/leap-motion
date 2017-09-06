@@ -83,7 +83,7 @@ const phantomHands = {
       {
         frames: orbit,
         follow: {
-          xOffset: [100, -50],
+          xOffset: -100,
           yOffset: -150
         }
       }
@@ -95,12 +95,9 @@ const phantomHands = {
     hands: [
       {
         frames: orbitRotateRight
-      },
-      {
-        frames: orbitRotateLeft
       }
     ],
-    interval: 220
+    interval: 200
   }
 };
 
