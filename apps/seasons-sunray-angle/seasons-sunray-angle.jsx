@@ -165,7 +165,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     }
   }
 
-  setSeasonsState(nextState){ //groundActive, raysActive, distMarker, buttonsActive, orbitViewActive) {
+  setSeasonsState(nextState){ //groundActive, raysActive, distMarker, buttonsActive, orbitViewActive
     this.modelController.setSeasonsState({
       groundColor: nextState.groundActive ? GROUND_NORMAL_COLOR : GROUND_INACTIVE_COLOR,
       sunrayColor: nextState.raysActive ? SUNRAY_NORMAL_COLOR : SUNRAY_INACTIVE_COLOR,

@@ -89,7 +89,7 @@ class Logger {
     if (this.logToLara) {
       this.sendToLara(data);
     }
-    else {
+    if (enabled) {
       sendToLogManager(data);
     }
     console.log('[log]', action, data);
