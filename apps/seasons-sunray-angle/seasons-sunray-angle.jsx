@@ -79,6 +79,7 @@ const DEFAULT_SPACE_STATE = {
   orbitViewActive: false
 };
 
+const DETECTION_TOLERANCE = 20;
 
 export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
@@ -110,6 +111,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.log = this.log.bind(this);
     this.debugMouseMove = this.debugMouseMove.bind(this);
     logger.initializeLaraConnection();
+    this.detectionCount = DETECTION_TOLERANCE + 1;
   }
 
   componentDidMount() {
@@ -320,9 +322,10 @@ export default class SeasonsSunrayAngle extends React.Component {
     const {activeViewPanel} = this.state;
 
     let gestureDetected = false;
-    let gestureDetectionFactor = 0;
-    let gestureDetectionTolerance = 50;
+    let count = this.detectionCount ? this.detectionCount : DETECTION_TOLERANCE + 1;
+
     let handControl = (data.handAngle && data.handAngle > 110 && data.handAngle < 130);
+    let handControlEnabled = handControl || count < DETECTION_TOLERANCE;
 
     if (data.numberOfHands === 0){
       // orbit view inactive.
@@ -334,8 +337,14 @@ export default class SeasonsSunrayAngle extends React.Component {
       this.refs.seasonsModel.lockCameraRotation(true);
       let p = this.refs.seasonsModel.getEarthScreenPosition();
 
-      if (handControl){ // we can switch to handControlAngleAchieved if we switch to palm angle
+      if (!handControl){
+          count++;
+          this.detectionCount = count;
+        } else {
+          this.detectionCount = 0;
+      }
 
+      if (handControlEnabled){
         this.modelController.startOrbitInteraction(p.x, p.y, activeViewPanel);
         this.setInstructions(INSTRUCTIONS.ORBIT);
         if (data.handTranslation){
@@ -347,7 +356,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         this.modelController.finishOrbitInteraction(p.x, p.y, activeViewPanel);
         this.setInstructions(INSTRUCTIONS.ORBIT_CONTROL);
       }
-      gestureDetected = handControl; // handControlAngleAchieved;
+      gestureDetected = handControlEnabled;
     }
     return gestureDetected;
   }
