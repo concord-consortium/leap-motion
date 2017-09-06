@@ -214,7 +214,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     } else {
       switch (activeRaysView){
         case 'orbit':
-          this.setState({phantomHandsHint: 'orbitRotate'});
+          this.setState({phantomHandsHint: ''});
           break;
         default:
           if (data.numberOfHands === 1 && data.handType === 'left') {
@@ -395,7 +395,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions, activeViewPanel, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode } = this.state;
+    const { instructions, activeViewPanel, activeRaysView, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode } = this.state;
     let overlaySizeSettings = renderSize == 'seasons' ? OVERLAY_SIZE : OVERLAY_SIZE_NARROW;
     let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container narrow';
     let activeViewSelectorStyle = renderSize == 'seasons' ? 'active-view-selector' : 'active-view-selector narrow';
@@ -406,6 +406,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     const overlayHeight = overlaySizeSettings[activeViewPanel].height;
     const overlayClassName = `grasp-seasons ${activeViewPanel}`;
     const overlayVisible = overlayEnabled && overlayActive;
+    const orbitInstructions = overlayVisible && activeRaysView === 'orbit' && phantomHandsHint !== null;
 
     return (
       <div>
@@ -424,6 +425,7 @@ export default class SeasonsSunrayAngle extends React.Component {
             <div className='instructions'>
               {instructions}
             </div>
+            {orbitInstructions && <img src="./HandOrbit_t.gif" className="handOrbitOverlay" />}
           </InstructionsOverlay>
           <ActiveViewSelector overlays={this.modelController.seasonsView} className={activeViewSelectorStyle}
                               initialOverlays={INITIAL_SEASONS_STATE}
