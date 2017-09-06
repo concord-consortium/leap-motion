@@ -25,7 +25,11 @@
     width: @sim-width;
     height: @sim-height;
     overflow: auto;
-
+    .overlay{
+      &.hidden{
+        transition-delay: 2s, 2s;
+      }
+    }
     .grasp-seasons {
       position: absolute;
 

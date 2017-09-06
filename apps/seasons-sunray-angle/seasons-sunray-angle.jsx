@@ -153,6 +153,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       controlledView: viewName
     });
     this.setState({activeRaysView: viewName})
+    this.resetOverlay();
   }
 
   activeViewPanelChanged(panelName) {
@@ -245,8 +246,6 @@ export default class SeasonsSunrayAngle extends React.Component {
     } else if (data.numberOfHands === 1 && data.handStill) {
       // Try to set angle, feedback depends on whether angle was updated or not (user needs to stay within given
       // range around the current angle).
-
-      // TODO: This is not working correctly!
       const angleChanged = this.modelController.setHandAngle(data.handAngle, this.state.activeRaysView);
 
       let nextSeasonsState = Object.assign({}, DEFAULT_SPACE_STATE);
