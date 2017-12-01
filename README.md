@@ -45,7 +45,31 @@ This project is automatically deployed to S3 bucket by Travis-CI.
 - other branches are deployed to `/branch/` subdirectories (e.g. http://models-resources.concord.org/leap-motion/branch/master/index.html)
 - tags are deployed to `/version/` subdirectories  (e.g. http://models-resources.concord.org/leap-motion/version/0.1.0/index.html)
 
-## Running project locally 
+- For the Seasons simulation URL parameters can be specified to preset which panels to display. Panels are specified with the parameters:
+```
+viewMain
+viewTop
+viewBottom
+```
+
+Contents can be one of the following:
+```
+orbit
+earth
+raysGround
+raysSpace
+```
+
+The active (controlled by Leap device) view can be specified with the `activeView` parameter, and selecting the contents.
+Example URLs include:
+
+https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=seasons&viewMain=orbit&viewTop=earth&viewBottom=raysGround&activeView=raysGround
+
+https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=seasons&viewMain=raysGround&viewTop=orbit&activeView=raysGround
+
+https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=seasons&viewMain=earth&viewTop=raysGround
+
+## Running project locally
 
 ### Prerequisites
 
@@ -79,6 +103,6 @@ Follow previous instructions, but replace `production.zip` segment in the URL wi
 - [0.2.0 (Feb 13, 2016)](http://models-resources.concord.org/leap-motion/version/0.2.0/index.html)
 - [0.1.0 (Feb 2, 2016)](http://models-resources.concord.org/leap-motion/version/0.1.0/index.html)
 
-## License 
+## License
 
 [MIT](https://github.com/concord-consortium/grasp-seasons/blob/master/LICENSE)

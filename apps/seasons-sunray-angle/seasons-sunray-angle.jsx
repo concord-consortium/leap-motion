@@ -32,6 +32,14 @@ const INITIAL_SEASONS_STATE = {
   }
 };
 
+const INITIAL_SEASONS_STATE_BLANK = {
+  view: {
+    'main': 'nothing',
+    'small-top': 'nothing',
+    'small-bottom': 'nothing'
+  }
+};
+
 const INSTRUCTIONS = {
   INITIAL_GROUND: 'Use one hand to set sunray angle or two hands to set distance between rays.',
   INITIAL_SPACE: 'Use one hand to set ground angle or two hands to set distance between rays.',
@@ -84,9 +92,12 @@ const DETECTION_TOLERANCE = 20;
 export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
     super(props);
+    let initialSeasonsState = this.setInitialSeasonsState();
+    let initialView = this.setInitialActiveView(initialSeasonsState);
     this.state = {
-      activeRaysView: 'raysGround',
-      activeViewPanel: 'small-top',
+      initialSeasonsState,
+      activeRaysView: initialView.activeRaysView,
+      activeViewPanel: initialView.activeViewPanel,
       instructions: INSTRUCTIONS.INITIAL_GROUND,
       overlayEnabled: true,
       phantomHandsHint: null,
@@ -112,6 +123,82 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.debugMouseMove = this.debugMouseMove.bind(this);
     logger.initializeLaraConnection();
     this.detectionCount = DETECTION_TOLERANCE + 1;
+  }
+
+  setInitialSeasonsState(){
+    let initialSeasonsState = INITIAL_SEASONS_STATE;
+    let viewTypes = ['raysGround','raysSpace','earth','orbit'];
+
+    if (getURLParam('viewMain') || getURLParam('viewTop') || getURLParam('viewBottom')){
+      initialSeasonsState = INITIAL_SEASONS_STATE_BLANK;
+    }
+
+    if (getURLParam('viewMain')) {
+      let mainParam = getURLParam('viewMain');
+      if (viewTypes.indexOf(mainParam) > -1){
+        initialSeasonsState.view.main = mainParam;
+        // we cannot have the same view in multiple windows
+        viewTypes.splice(viewTypes.indexOf(mainParam), 1);
+      }
+    }
+
+    if (getURLParam('viewTop')){
+      let topParam = getURLParam('viewTop');
+      if (viewTypes.indexOf(topParam) > -1){
+        initialSeasonsState.view['small-top'] = topParam;
+        viewTypes.splice(viewTypes.indexOf(topParam), 1);
+      }
+    }
+
+    if (getURLParam('viewBottom')) {
+      let bottomParam = getURLParam('viewBottom');
+      if (viewTypes.indexOf(bottomParam) > -1){
+        initialSeasonsState.view['small-bottom'] = bottomParam;
+      }
+    }
+    return initialSeasonsState;
+  }
+  setInitialActiveView(initialSeasonsState){
+    console.log("setting view ", initialSeasonsState);
+    let selectedViews = Object.values(initialSeasonsState.view);
+    let view = getURLParam('activeView');
+    let controllableViews = ['raysGround','raysSpace','orbit'];
+
+    let initialView = {
+      activeRaysView:'raysGround',
+      activeViewPanel: 'small-top'
+    };
+
+    if (view && controllableViews.indexOf(view) > -1){
+      let viewIndex = selectedViews.indexOf(view);
+      // make sure the selected view is actually controllable
+      if (viewIndex > -1) {
+        initialView.activeRaysView = view;
+        initialView.activeViewPanel = Object.keys(initialSeasonsState.view)[viewIndex];
+      }
+      else {
+         initialView.activeRaysView = 'nothing';
+         initialView.activeViewPanel = 'main';
+      }
+    } else {
+      // No view selected - if the user specified views in the url,
+      // select a valid view based on seasons state. Otherwise, use defaults
+      if (getURLParam('viewMain') || getURLParam('viewTop') || getURLParam('viewBottom')){
+        initialView.activeRaysView = 'nothing';
+        initialView.activeViewPanel = 'main';
+        // go through selected views and find first controllable view
+        for (let i = 0; i < selectedViews.length; i++){
+          if (controllableViews.indexOf(selectedViews[i]) > -1){
+            console.log("can control " + selectedViews[i], controllableViews.indexOf(selectedViews[i]));
+            initialView.activeViewPanel = Object.keys(initialSeasonsState.view)[i];
+            initialView.activeRaysView = selectedViews[i];
+            break;
+          }
+        }
+      }
+    }
+    console.log(initialView);
+    return initialView;
   }
 
   componentDidMount() {
@@ -405,7 +492,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions, activeViewPanel, activeRaysView, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode } = this.state;
+    const { instructions, activeViewPanel, activeRaysView, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode, initialSeasonsState } = this.state;
     let overlaySizeSettings = renderSize == 'seasons' ? OVERLAY_SIZE : OVERLAY_SIZE_NARROW;
     let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container narrow';
     let activeViewSelectorStyle = renderSize == 'seasons' ? 'active-view-selector' : 'active-view-selector narrow';
@@ -423,7 +510,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         <h1>Seasons</h1>
         <div className={containerStyle}>
           <div style={{background: '#f6f6f6', width: '1210px'}}>
-            <Seasons ref='seasonsModel' initialState={INITIAL_SEASONS_STATE}
+            <Seasons ref='seasonsModel' initialState={initialSeasonsState}
                      onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange}
                      logHandler={this.log}/>
           </div>
@@ -438,7 +525,7 @@ export default class SeasonsSunrayAngle extends React.Component {
             {orbitInstructions && <img src="./HandOrbit_t.gif" className="handOrbitOverlay" />}
           </InstructionsOverlay>
           <ActiveViewSelector overlays={this.modelController.seasonsView} className={activeViewSelectorStyle}
-                              initialOverlays={INITIAL_SEASONS_STATE}
+                              initialOverlays={initialSeasonsState}
                               activeOverlay={activeViewPanel}
                               onViewOverlayChange={this.handleSelectOverlay} />
         </div>

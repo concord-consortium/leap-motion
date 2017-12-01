@@ -25,8 +25,8 @@ function sendToLogManager(data) {
       console.warning('Log Manager error', this.statusText);
     }
   });
-  req.addEventListener('error', function () {
-    console.warning('Log Manager error', this.statusText);
+  req.addEventListener('error', function (e) {
+    console.warning('Log Manager error', this.statusText, e);
   });
   req.open('POST', LOG_MANAGER_URL);
   req.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
