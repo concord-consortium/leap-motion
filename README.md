@@ -63,11 +63,11 @@ raysSpace
 The active (controlled by Leap device) view can be specified with the `activeView` parameter, and selecting the contents.
 Example URLs include:
 
-https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=seasons&viewMain=orbit&viewTop=earth&viewBottom=raysGround&activeView=raysGround
+https://models-resources.concord.org/leap-motion/branch/orbit-view-control/index.html?simulation=seasons&viewMain=orbit&viewTop=earth&viewBottom=raysGround&activeView=raysGround
 
-https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=seasons&viewMain=raysGround&viewTop=orbit&activeView=raysGround
+https://models-resources.concord.org/leap-motion/branch/orbit-view-control/index.html?simulation=seasons&viewMain=raysGround&viewTop=orbit&activeView=raysGround
 
-https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=seasons&viewMain=earth&viewTop=raysGround
+https://models-resources.concord.org/leap-motion/branch/orbit-view-control/index.html?simulation=seasons&viewMain=earth&viewTop=raysGround
 
 ## Running project locally
 
