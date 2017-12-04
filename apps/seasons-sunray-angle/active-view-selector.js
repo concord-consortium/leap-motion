@@ -9,6 +9,7 @@ export default class ActiveViewSelector extends React.Component{
     };
     this.generateActiveToggles = this.generateActiveToggles.bind(this);
     this.onChangeView = this.onChangeView.bind(this);
+    this.createInput = this.createInput.bind(this);
   }
   componentWillReceiveProps(nextProps) {
     const { overlays } = this.state;
@@ -30,7 +31,7 @@ export default class ActiveViewSelector extends React.Component{
     this.props.onViewOverlayChange(e.currentTarget);
   }
   createInput(key, val, active) {
-    if (val != 'earth') {
+    if (this.props.controllableViews.indexOf(val) > -1) {
       return (
         <label key={key} className={key}>
           <input type="radio" className={key} name="active-view" value={val} key={key} checked={active} onChange={this.onChangeView} />
@@ -45,9 +46,11 @@ export default class ActiveViewSelector extends React.Component{
     let inputs = [];
     for (let key in overlays){
       let val = overlays[key];
-      let active = key === activeView;
-      if (val !== 'nothing') {
-        inputs.push(this.createInput(key, val, active));
+      if (this.props.controllableViews.indexOf(val) > -1) {
+        let active = key === activeView;
+        if (val !== 'nothing') {
+          inputs.push(this.createInput(key, val, active));
+        }
       }
     }
     return inputs;

@@ -64,10 +64,11 @@ function dispatchEvent (el, evt) {
 }
 
 export default class ModelController {
-  constructor(callbacks) {
+  constructor(callbacks, controllableViews) {
     this.targetAngle = null;
     this.seasons = null;
     this.callbacks = extend({}, AVAILABLE_CALLBACKS, callbacks);
+    this.controllableViews = controllableViews;
     this.resetInteractionState();
   }
 

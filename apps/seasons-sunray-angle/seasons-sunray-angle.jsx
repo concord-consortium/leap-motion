@@ -40,6 +40,8 @@ const INITIAL_SEASONS_STATE_BLANK = {
   }
 };
 
+const CONTROLLABLE_VIEWS = ['raysGround','raysSpace'];
+
 const INSTRUCTIONS = {
   INITIAL_GROUND: 'Use one hand to set sunray angle or two hands to set distance between rays.',
   INITIAL_SPACE: 'Use one hand to set ground angle or two hands to set distance between rays.',
@@ -93,7 +95,12 @@ export default class SeasonsSunrayAngle extends React.Component {
   constructor(props) {
     super(props);
     let initialSeasonsState = this.setInitialSeasonsState();
-    let initialView = this.setInitialActiveView(initialSeasonsState);
+
+    let controllableViews = CONTROLLABLE_VIEWS;
+    if (getURLParam('orbitControl') === 'true') controllableViews.push('orbit');
+
+    let initialView = this.setInitialActiveView(initialSeasonsState, controllableViews);
+
     this.state = {
       initialSeasonsState,
       activeRaysView: initialView.activeRaysView,
@@ -103,13 +110,14 @@ export default class SeasonsSunrayAngle extends React.Component {
       phantomHandsHint: null,
       renderSize: getURLParam('simulation') || 'seasons',
       previousFrame: null,
+      controllableViews,
       debugMode: getURLParam('debug') && getURLParam('debug') === 'true' || false,
       mousePos: {screenX: 0, screenY: 0, clientX: 0, clientY: 0}
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
       activeViewPanelChanged: this.activeViewPanelChanged.bind(this)
-    });
+    }, controllableViews);
     this.gesturesHelper = new GesturesHelper();
     this.gesturesLogger = new GesturesLogger();
     this.handleConfigChange = this.handleConfigChange.bind(this);
@@ -158,11 +166,9 @@ export default class SeasonsSunrayAngle extends React.Component {
     }
     return initialSeasonsState;
   }
-  setInitialActiveView(initialSeasonsState){
-    console.log("setting view ", initialSeasonsState);
+  setInitialActiveView(initialSeasonsState, controllableViews){
     let selectedViews = Object.values(initialSeasonsState.view);
     let view = getURLParam('activeView');
-    let controllableViews = ['raysGround','raysSpace','orbit'];
 
     let initialView = {
       activeRaysView:'raysGround',
@@ -189,7 +195,6 @@ export default class SeasonsSunrayAngle extends React.Component {
         // go through selected views and find first controllable view
         for (let i = 0; i < selectedViews.length; i++){
           if (controllableViews.indexOf(selectedViews[i]) > -1){
-            console.log("can control " + selectedViews[i], controllableViews.indexOf(selectedViews[i]));
             initialView.activeViewPanel = Object.keys(initialSeasonsState.view)[i];
             initialView.activeRaysView = selectedViews[i];
             break;
@@ -197,7 +202,6 @@ export default class SeasonsSunrayAngle extends React.Component {
         }
       }
     }
-    console.log(initialView);
     return initialView;
   }
 
@@ -263,25 +267,28 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   handleLeapFrame(frame) {
-    const { previousFrame, activeRaysView } = this.state;
+    const { previousFrame, activeRaysView, controllableViews } = this.state;
     const data = this.gesturesHelper.processLeapFrame(frame, previousFrame);
     let gestureDetected = false;
     let orbitGesture = false;
 
-    switch (activeRaysView){
-      case 'raysSpace':
-        gestureDetected = this.handleSpaceViewGestures(data);
-        break;
-      case 'raysGround':
-        gestureDetected = this.handleGroundViewGestures(data);
-        break;
-      case 'orbit':
-        orbitGesture = true;
-        gestureDetected = this.handleOrbitViewGestures(data);
-        break;
-      default:
-        break;
+    if (controllableViews.indexOf(activeRaysView) > -1){
+      switch (activeRaysView){
+        case 'raysSpace':
+          gestureDetected = this.handleSpaceViewGestures(data);
+          break;
+        case 'raysGround':
+          gestureDetected = this.handleGroundViewGestures(data);
+          break;
+        case 'orbit':
+          orbitGesture = true;
+          gestureDetected = this.handleOrbitViewGestures(data);
+          break;
+        default:
+          break;
+      }
     }
+
 
     this.updateOverlayVisibility(data, gestureDetected);
     this.updatePhantomHandsHint(data, gestureDetected);
@@ -492,7 +499,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions, activeViewPanel, activeRaysView, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode, initialSeasonsState } = this.state;
+    const { instructions, activeViewPanel, activeRaysView, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode, initialSeasonsState, controllableViews} = this.state;
     let overlaySizeSettings = renderSize == 'seasons' ? OVERLAY_SIZE : OVERLAY_SIZE_NARROW;
     let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container narrow';
     let activeViewSelectorStyle = renderSize == 'seasons' ? 'active-view-selector' : 'active-view-selector narrow';
@@ -502,7 +509,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     const overlayWidth = overlaySizeSettings[activeViewPanel].width;
     const overlayHeight = overlaySizeSettings[activeViewPanel].height;
     const overlayClassName = `grasp-seasons ${activeViewPanel}`;
-    const overlayVisible = overlayEnabled && overlayActive;
+    const overlayVisible = overlayEnabled && overlayActive && activeRaysView !== 'nothing';
     const orbitInstructions = overlayVisible && activeRaysView === 'orbit' && phantomHandsHint !== null;
 
     return (
@@ -527,7 +534,8 @@ export default class SeasonsSunrayAngle extends React.Component {
           <ActiveViewSelector overlays={this.modelController.seasonsView} className={activeViewSelectorStyle}
                               initialOverlays={initialSeasonsState}
                               activeOverlay={activeViewPanel}
-                              onViewOverlayChange={this.handleSelectOverlay} />
+                              onViewOverlayChange={this.handleSelectOverlay}
+                              controllableViews={controllableViews} />
         </div>
         <div className='top-links'>
           <SettingsDialog>
