@@ -1,9 +1,16 @@
 import update from 'react-addons-update';
+import getURLParam from '../tools/get-url-param';
 
 export default {
   getInitialState: function (props) {
+    let bar = getURLParam('bar') ? getURLParam('bar') : 'none';
+    let markOne = getURLParam('markOne') !== null ? getURLParam('markOne') : undefined;
+
     return {
-      labProps: {}
+      labProps: {
+        bar,
+        markOne
+      }
     };
   },
 

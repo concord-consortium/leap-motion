@@ -17,7 +17,7 @@
       },
       "onLoad": [
         "onClick('atom', function(x, y, atom) {",
-        "  markAtoms([atom.idx]); console.log(atom.idx);",
+        "  markAtoms([atom.idx]); ",
         "});",
         "",
         "var KE_CHANGE = 0.07;",
@@ -159,7 +159,13 @@
         "  } else {",
         "    addMinusSign(4);",
         "  }",
-        "});"
+        "});",
+        "function markOneAtom() {",
+        "  if (get('markOne') === true){",
+        "    markAtoms([22]);",
+        "  }",
+        "}",
+        "onPropertyChange('markOne', markOneAtom);"
       ]
     }
   ],
@@ -186,6 +192,10 @@
     {
     "name": "keDiff",
     "initialValue": null
+    },
+    {
+      "name": "markOne",
+      "initialValue": false
     }
   ],
   "components": [

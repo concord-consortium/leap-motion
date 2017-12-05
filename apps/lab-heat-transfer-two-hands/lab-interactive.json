@@ -36,6 +36,12 @@
         "  setImageProperties(0, {opacity: bar ? 1 : 0});",
         "  setImageProperties(0, {visible: spoonEnabled ? 1 : 0});",
         "}",
+        "function markOneAtom() {",
+        "  if (get('markOne') === true){",
+        "    markAtoms([109]);",
+        "  }",
+        "}",
+        "onPropertyChange('markOne', markOneAtom);",
         "onPropertyChange('bar', updateSpoonVis);",
         "onPropertyChange('spoonEnabled', updateSpoonVis);",
         "updateSpoonVis();"
@@ -45,6 +51,10 @@
   "parameters": [
     {
       "name": "spoonEnabled",
+      "initialValue": false
+    },
+    {
+      "name": "markOne",
       "initialValue": false
     },
     {
