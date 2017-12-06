@@ -16,6 +16,8 @@ import interactive from './lab-interactive.json';
 import model from './lab-model.json';
 import './lab-heat-transfer-two-hands.less'
 
+import getURLParam from '../common/js/tools/get-url-param';
+
 const TEMP_MULT = 115; // freq * temp mult = new target temperature
 const MAX_TEMP = 600;
 const MIN_TEMP = 30;
@@ -46,10 +48,13 @@ export default class LabHeatTransfer extends React.Component {
     this.soundEnabledChanged = this.soundEnabledChanged.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSpoonVisibility = this.handleSpoonVisibility.bind(this);
+
+    let spoonEnabled = getURLParam('spoon') !== null ? getURLParam('spoon') : (this.props.spoonEnabled ? this.props.spoonEnabled : DEF_LAB_PROPS.spoonEnabled);
+
     this.state = {
       leapState: null,
       overlayEnabled: true,
-      spoonEnabled: this.props.spoonEnabled ? this.props.spoonEnabled : DEF_LAB_PROPS.spoonEnabled
+      spoonEnabled
     };
   }
 
