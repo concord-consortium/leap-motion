@@ -43,6 +43,7 @@ export default class ProjectList extends React.Component {
         </ul>
         <h2>Old versions:</h2>
         <ul>
+          <li><a href="http://models-resources.concord.org/leap-motion/version/0.6.0/index.html" target="_blank">0.6.0 (Jun 13, 2017)</a></li>
           <li><a href="http://models-resources.concord.org/leap-motion/version/0.5.0/index.html" target="_blank">0.5.0 (Mar 20, 2017)</a></li>
           <li><a href="http://models-resources.concord.org/leap-motion/version/0.4.0/index.html" target="_blank">0.4.0 (Jun 9, 2016)</a></li>
           <li><a href="http://models-resources.concord.org/leap-motion/version/0.3.0/index.html" target="_blank">0.3.0 (Feb 18, 2016)</a></li>
