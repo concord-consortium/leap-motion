@@ -10,13 +10,7 @@ http://models-resources.concord.org/leap-motion/branch/master/index.html
 
 Old versions can be accesed via `/version/<tag>` path, e.g.:
 
-http://models-resources.concord.org/leap-motion/version/0.1.0/index.html
-
-Github Pages deployment is equal to version 0.1.0:
-
-http://concord-consortium.github.io/leap-motion/
-
-It won't be updated in the future.
+http://models-resources.concord.org/leap-motion/version/0.6.0/index.html
 
 ## Development
 
