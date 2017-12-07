@@ -43,9 +43,14 @@ This project is automatically deployed to S3 bucket by Travis-CI.
 
 - `production` branch is deployed to top-level directory (http://models-resources.concord.org/leap-motion/index.html).
 - other branches are deployed to `/branch/` subdirectories (e.g. http://models-resources.concord.org/leap-motion/branch/master/index.html)
-- tags are deployed to `/version/` subdirectories  (e.g. http://models-resources.concord.org/leap-motion/version/0.1.0/index.html)
+- tags are deployed to `/version/` subdirectories  (e.g. http://models-resources.concord.org/leap-motion/version/0.6.0/index.html)
 
-- For the Seasons simulation URL parameters can be specified to preset which panels to display. Panels are specified with the parameters:
+
+## URL Parameters
+Many of the simulations can be customized using URL parameters as follows:
+
+### Seasons
+For the Seasons simulation URL parameters can be specified to preset which panels to display. Panels are specified with the parameters:
 ```
 viewMain
 viewTop
@@ -65,11 +70,27 @@ If orbit view controls are required, they can be enabled with the `orbitControl=
 The active (controlled by Leap device) view can be specified with the `activeView` parameter, and selecting the contents.
 Example URLs include:
 
-https://models-resources.concord.org/leap-motion/branch/orbit-view-control/index.html?simulation=seasons&viewMain=orbit&viewTop=earth&viewBottom=raysGround&activeView=raysGround
+https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=seasons&viewMain=orbit&viewTop=earth&viewBottom=raysGround&activeView=raysGround
 
-https://models-resources.concord.org/leap-motion/branch/orbit-view-control/index.html?simulation=seasons&viewMain=raysGround&viewTop=orbit&activeView=raysGround&orbitControl=true
+https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=seasons&viewMain=raysGround&viewTop=orbit&activeView=raysGround&orbitControl=true
 
-https://models-resources.concord.org/leap-motion/branch/orbit-view-control/index.html?simulation=seasons&viewMain=earth&viewTop=raysGround
+https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=seasons&viewMain=earth&viewTop=raysGround
+
+### Heat Transfer Simulations
+For the main Heat Transfer and Heat Transfer Transparent demos, the following URL parameters can be applied:
+```
+bar (thick/thin/vacuum/none)
+spoon (true/false)
+markOne
+```
+Adding a bar will connect the two groups of molecules immediately when the simulation is loaded. The spoon, previously enabled in the Options menu, can be pre-set to appear whenever a bar is present.
+The `markOne` parameter will highlight an atom on the right for the student to watch as the simulation heats up.
+
+Example URL:
+https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=labheattransfertransparent&bar=thick&spoon=false&markOne
+
+For the Heat Transfer Long simulation, the only parameter that can be specified is the `markOne` parameter, and this will highlight the top right particle. Omitting the parameter leaves all particles unmarked.
+https://models-resources.concord.org/leap-motion/branch/master/index.html?simulation=labheattransferlong&markOne
 
 ## Running project locally
 
@@ -98,6 +119,7 @@ Follow previous instructions, but replace `production.zip` segment in the URL wi
 
 ## Releases
 
+- [0.6.0 (Jun 13, 2017)](http://models-resources.concord.org/leap-motion/version/0.6.0/index.html)
 - [0.5.0 (Mar 20, 2017)](http://models-resources.concord.org/leap-motion/version/0.5.0/index.html)
 - [0.4.0 (Jun 9, 2016)](http://models-resources.concord.org/leap-motion/version/0.4.0/index.html)
 - [0.3.0 (Feb 18, 2016)](http://models-resources.concord.org/leap-motion/version/0.3.0/index.html)
