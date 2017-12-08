@@ -78,6 +78,9 @@ spoon (true/false)
 markOne
 ```
 Adding a bar will connect the two groups of molecules immediately when the simulation is loaded. The spoon, previously enabled in the Options menu, can be pre-set to appear whenever a bar is present.
+
+The `vacuum` parameter for the bar will leave a vacuum between the two groups of molecules, but if the spoon is selected it will appear.
+
 The `markOne` parameter will highlight an atom on the right for the student to watch as the simulation heats up.
 
 Example URL:
