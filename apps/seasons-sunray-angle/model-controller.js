@@ -94,10 +94,13 @@ export default class ModelController {
     }
     let viewState = this.seasons.state.view;
     let result = GROUND;
+    let views = this.controllableViews;
     ['small-bottom', 'small-top', 'main'].forEach(function (pos) {
-      if (viewState[pos] === 'raysGround') result = GROUND;
-      else if (viewState[pos] === 'raysSpace') result = SPACE;
-      else if (viewState[pos] === 'orbit') result = ORBIT;
+      if (views.indexOf(viewState[pos]) > -1){
+        if (viewState[pos] === 'raysGround') result = GROUND;
+        else if (viewState[pos] === 'raysSpace') result = SPACE;
+        else if (viewState[pos] === 'orbit') result = ORBIT;
+      }
     });
     return result;
   }
@@ -109,8 +112,12 @@ export default class ModelController {
       return result;
     }
     let viewState = this.seasons.state.view;
+
+    let views = this.controllableViews;
     ['small-bottom', 'small-top', 'main'].forEach(function (pos) {
-      if (viewState[pos] === 'raysGround' || viewState[pos] === 'raysSpace' || viewState[pos] === 'orbit') result = pos;
+      if (views.indexOf(viewState[pos]) > -1) {
+        result = pos;
+      }
     });
     return result;
   }
