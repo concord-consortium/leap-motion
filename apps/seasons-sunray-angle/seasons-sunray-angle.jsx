@@ -15,6 +15,7 @@ import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
 import getURLParam from '../common/js/tools/get-url-param';
 import ActiveViewSelector from './active-view-selector';
+import t from '../common/js/tools/translate';
 
 import './seasons-sunray-angle.less';
 
@@ -42,16 +43,18 @@ const INITIAL_SEASONS_STATE_BLANK = {
 
 const CONTROLLABLE_VIEWS = ['raysGround','raysSpace'];
 
+const LANG = getURLParam('lang') || 'en_us';
+
 const INSTRUCTIONS = {
-  INITIAL_GROUND: 'Use one hand to set sunray angle or two hands to set distance between rays.',
-  INITIAL_SPACE: 'Use one hand to set ground angle or two hands to set distance between rays.',
-  TWO_HANDS: 'Please keep you hands vertical.',
-  ROTATE_GROUND: 'Rotate your hand to show the sunray angle.',
-  ROTATE_SPACE: 'Rotate your hand to show the ground angle.',
-  DISTANCE: 'Change the distance between your hands to show the distance between rays.',
-  INITIAL_ORBIT: 'Extend one hand over the controller',
-  ORBIT_CONTROL: 'Rotate your hand in-line with the axis of the Earth',
-  ORBIT: 'Move your hand around the controller to make the Earth orbit the sun'
+  INITIAL_GROUND: t('~INSTRUCTIONS_INITIAL_GROUND', LANG),
+  INITIAL_SPACE: t('~INSTRUCTIONS_INITIAL_SPACE', LANG),
+  TWO_HANDS: t('~INSTRUCTIONS_TWO_HANDS', LANG),
+  ROTATE_GROUND: t('~INSTRUCTIONS_ROTATE_GROUND', LANG),
+  ROTATE_SPACE: t('~INSTRUCTIONS_ROTATE_SPACE', LANG),
+  DISTANCE: t('~INSTRUCTIONS_DISTANCE', LANG),
+  INITIAL_ORBIT: t('~INSTRUCTIONS_INITIAL_ORBIT', LANG),
+  ORBIT_CONTROL: t('~INSTRUCTIONS_ORBIT_CONTROL', LANG),
+  ORBIT: t('~INSTRUCTIONS_ORBIT', LANG)
 };
 
 const OVERLAY_SIZE = {
@@ -112,7 +115,8 @@ export default class SeasonsSunrayAngle extends React.Component {
       previousFrame: null,
       controllableViews,
       debugMode: getURLParam('debug') && getURLParam('debug') === 'true' || false,
-      mousePos: {screenX: 0, screenY: 0, clientX: 0, clientY: 0}
+      mousePos: {screenX: 0, screenY: 0, clientX: 0, clientY: 0},
+      language: getURLParam('lang') || 'en_us'
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -499,7 +503,7 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions, activeViewPanel, activeRaysView, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode, initialSeasonsState, controllableViews} = this.state;
+    const { instructions, activeViewPanel, activeRaysView, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode, initialSeasonsState, controllableViews, language} = this.state;
     let overlaySizeSettings = renderSize == 'seasons' ? OVERLAY_SIZE : OVERLAY_SIZE_NARROW;
     let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container narrow';
     let activeViewSelectorStyle = renderSize == 'seasons' ? 'active-view-selector' : 'active-view-selector narrow';
@@ -519,7 +523,7 @@ export default class SeasonsSunrayAngle extends React.Component {
           <div style={{background: '#f6f6f6', width: '1210px'}}>
             <Seasons ref='seasonsModel' initialState={initialSeasonsState}
                      onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange}
-                     logHandler={this.log}/>
+                     logHandler={this.log} lang={language}/>
           </div>
           <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
                                width={overlayWidth} height={overlayHeight}
@@ -540,15 +544,15 @@ export default class SeasonsSunrayAngle extends React.Component {
         <div className='top-links'>
           <SettingsDialog>
             <p>
-              Overlay: <input type='checkbox' name='overlayEnabled' checked={overlayEnabled} onChange={this.handleInputChange}/>
+              {t('~OVERLAY', language)}: <input type='checkbox' name='overlayEnabled' checked={overlayEnabled} onChange={this.handleInputChange}/>
             </p>
             <p>
-              Min distance between hands [mm]: <input type='text' name='minDist'
+              {t('~MINIMUM_HAND_DIST', language)}: <input type='text' name='minDist'
                                                       defaultValue={this.gesturesHelper.config.minDist}
                                                       onChange={this.handleConfigChange}/>
             </p>
             <p>
-              Max distance between hands [mm]: <input type='text' name='maxDist'
+              {t('~MAXIMUM_HAND_DIST', language)}: <input type='text' name='maxDist'
                                                       defaultValue={this.gesturesHelper.config.maxDist}
                                                       onChange={this.handleConfigChange}/>
             </p>
