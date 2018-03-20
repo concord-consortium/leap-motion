@@ -15,6 +15,7 @@ const WINTER_SOLSTICE = SUMMER_SOLSTICE + 365 * 0.5;
 const SPACE = 'raysSpace';
 const GROUND = 'raysGround';
 const ORBIT = 'orbit';
+const NOTHING = 'nothing';
 
 const AVAILABLE_CALLBACKS = {
   activeRayViewChanged: function (viewType) {}
@@ -90,10 +91,10 @@ export default class ModelController {
   get activeRaysView() {
     if (!this.seasons) {
       // If seasons isn't loaded yet, return true since the ground view control is the default view.
-      return GROUND;
+      return NOTHING;
     }
     let viewState = this.seasons.state.view;
-    let result = GROUND;
+    let result = NOTHING;
     let views = this.controllableViews;
     ['small-bottom', 'small-top', 'main'].forEach(function (pos) {
       if (views.indexOf(viewState[pos]) > -1){
