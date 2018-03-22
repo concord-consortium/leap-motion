@@ -43,20 +43,6 @@ const INITIAL_SEASONS_STATE_BLANK = {
 
 const CONTROLLABLE_VIEWS = ['raysGround','raysSpace'];
 
-const LANG = getURLParam('lang') || 'en_us';
-
-const INSTRUCTIONS = {
-  INITIAL_GROUND: t('~INSTRUCTIONS_INITIAL_GROUND', LANG),
-  INITIAL_SPACE: t('~INSTRUCTIONS_INITIAL_SPACE', LANG),
-  TWO_HANDS: t('~INSTRUCTIONS_TWO_HANDS', LANG),
-  ROTATE_GROUND: t('~INSTRUCTIONS_ROTATE_GROUND', LANG),
-  ROTATE_SPACE: t('~INSTRUCTIONS_ROTATE_SPACE', LANG),
-  DISTANCE: t('~INSTRUCTIONS_DISTANCE', LANG),
-  INITIAL_ORBIT: t('~INSTRUCTIONS_INITIAL_ORBIT', LANG),
-  ORBIT_CONTROL: t('~INSTRUCTIONS_ORBIT_CONTROL', LANG),
-  ORBIT: t('~INSTRUCTIONS_ORBIT', LANG)
-};
-
 const OVERLAY_SIZE = {
   'main': {width: '795px', height: '600px'},
   'small-top': {width: '395px', height: '296px'},
@@ -104,11 +90,16 @@ export default class SeasonsSunrayAngle extends React.Component {
 
     let initialView = this.setInitialActiveView(initialSeasonsState, controllableViews);
 
+    let lang = getURLParam('lang') || 'en_us';
+
+    let allInstructions = this.loadInstructions(lang);
+
     this.state = {
       initialSeasonsState,
+      allInstructions,
       activeRaysView: initialView.activeRaysView,
       activeViewPanel: initialView.activeViewPanel,
-      instructions: INSTRUCTIONS.INITIAL_GROUND,
+      instructions: allInstructions.INITIAL_GROUND,
       overlayEnabled: true,
       phantomHandsHint: null,
       renderSize: getURLParam('simulation') || 'seasons',
@@ -116,7 +107,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       controllableViews,
       debugMode: getURLParam('debug') && getURLParam('debug') === 'true' || false,
       mousePos: {screenX: 0, screenY: 0, clientX: 0, clientY: 0},
-      language: getURLParam('lang') || 'en_us'
+      language: lang
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -209,6 +200,21 @@ export default class SeasonsSunrayAngle extends React.Component {
     return initialView;
   }
 
+  loadInstructions(lang){
+    let instructions = {
+      INITIAL_GROUND: t('~INSTRUCTIONS_INITIAL_GROUND', lang),
+      INITIAL_SPACE: t('~INSTRUCTIONS_INITIAL_SPACE', lang),
+      TWO_HANDS: t('~INSTRUCTIONS_TWO_HANDS', lang),
+      ROTATE_GROUND: t('~INSTRUCTIONS_ROTATE_GROUND', lang),
+      ROTATE_SPACE: t('~INSTRUCTIONS_ROTATE_SPACE', lang),
+      DISTANCE: t('~INSTRUCTIONS_DISTANCE',lang),
+      INITIAL_ORBIT: t('~INSTRUCTIONS_INITIAL_ORBIT', lang),
+      ORBIT_CONTROL: t('~INSTRUCTIONS_ORBIT_CONTROL', lang),
+      ORBIT: t('~INSTRUCTIONS_ORBIT', lang)
+    };
+    return instructions;
+  }
+
   componentDidMount() {
     this.modelController.setSeasonsComponent(this.refs.seasonsModel);
 
@@ -219,10 +225,12 @@ export default class SeasonsSunrayAngle extends React.Component {
       document.addEventListener('mousemove', this.debugMouseMove)
     }
   }
+
   componentWillUnmount(){
     document.removeEventListener('mousemove', this.debugMouseMove)
     logger.terminateLaraConnection();
   }
+
   debugMouseMove(e){
     let pos = e;
     let earthPos = this.refs.seasonsModel.getEarthScreenPosition();
@@ -335,12 +343,13 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   handleSpaceViewGestures(data) {
+    const { allInstructions } = this.state;
     let gestureDetected = false;
 
     if (data.numberOfHands === 0) {
       // Ground inactive.
       this.setSeasonsState(DEFAULT_SPACE_STATE);
-      this.setInstructions(INSTRUCTIONS.INITIAL_SPACE);
+      this.setInstructions(allInstructions.INITIAL_SPACE);
     } else if (data.numberOfHands === 1 && data.handStill) {
       // Try to set angle, feedback depends on whether angle was updated or not (user needs to stay within given
       // range around the current angle).
@@ -351,7 +360,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       nextSeasonsState.raysActive = angleChanged;
       nextSeasonsState.buttonsActive = false;
       this.setSeasonsState(nextSeasonsState);
-      this.setInstructions(INSTRUCTIONS.ROTATE_SPACE);
+      this.setInstructions(allInstructions.ROTATE_SPACE);
       gestureDetected = angleChanged;
     } else if (data.numberOfHands === 1) {
       // Hand moving too fast.
@@ -366,24 +375,26 @@ export default class SeasonsSunrayAngle extends React.Component {
       nextSeasonsState.buttonsActive = false;
       this.setSeasonsState(nextSeasonsState); //distanceChanged, true, true, false, false);
 
-      this.setInstructions(INSTRUCTIONS.DISTANCE);
+      this.setInstructions(allInstructions.DISTANCE);
       gestureDetected = distanceChanged;
     } else if (data.numberOfHands === 2) {
       // Ground inactive.
       this.setSeasonsState(DEFAULT_SPACE_STATE);
-      this.setInstructions(INSTRUCTIONS.TWO_HANDS);
+      this.setInstructions(allInstructions.TWO_HANDS);
     }
     return gestureDetected;
   }
 
   handleGroundViewGestures(data) {
+    const { allInstructions } = this.state;
+
     let gestureDetected = false;
     let nextSeasonsState = Object.assign({}, DEFAULT_GROUND_STATE);
 
     if (data.numberOfHands === 0) {
       // Sunrays inactive.
       this.setSeasonsState(DEFAULT_GROUND_STATE);
-      this.setInstructions(INSTRUCTIONS.INITIAL_GROUND);
+      this.setInstructions(allInstructions.INITIAL_GROUND);
     } else if (data.numberOfHands === 1 && data.handStill) {
       // Try to set angle, feedback depends on whether angle was updated or not (user needs to stay within given
       // range around the current angle).
@@ -394,7 +405,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       nextSeasonsState.buttonsActive = false;
       this.setSeasonsState(nextSeasonsState);
 
-      this.setInstructions(INSTRUCTIONS.ROTATE_GROUND);
+      this.setInstructions(allInstructions.ROTATE_GROUND);
       gestureDetected = angleChanged;
     } else if (data.numberOfHands === 1) {
       // Hand moving too fast.
@@ -407,18 +418,18 @@ export default class SeasonsSunrayAngle extends React.Component {
       nextSeasonsState.distMarker = true;
       nextSeasonsState.buttonsActive = false;
       this.setSeasonsState(nextSeasonsState);
-      this.setInstructions(INSTRUCTIONS.DISTANCE);
+      this.setInstructions(allInstructions.DISTANCE);
       gestureDetected = distanceChanged;
     } else if (data.numberOfHands === 2) {
       // Sunrays inactive.
       this.setSeasonsState(DEFAULT_GROUND_STATE);
-      this.setInstructions(INSTRUCTIONS.TWO_HANDS);
+      this.setInstructions(allInstructions.TWO_HANDS);
     }
     return gestureDetected;
   }
 
   handleOrbitViewGestures(data) {
-    const {activeViewPanel} = this.state;
+    const { activeViewPanel, allInstructions } = this.state;
 
     let gestureDetected = false;
     let count = this.detectionCount ? this.detectionCount : DETECTION_TOLERANCE + 1;
@@ -429,7 +440,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     if (data.numberOfHands === 0){
       // orbit view inactive.
       this.setSeasonsState(DEFAULT_ORBIT_STATE);
-      this.setInstructions(INSTRUCTIONS.INITIAL_ORBIT);
+      this.setInstructions(allInstructions.INITIAL_ORBIT);
       this.refs.seasonsModel.lockCameraRotation(false);
     } else {
       this.setSeasonsState(DEFAULT_ORBIT_STATE);
@@ -445,7 +456,7 @@ export default class SeasonsSunrayAngle extends React.Component {
 
       if (handControlEnabled){
         this.modelController.startOrbitInteraction(p.x, p.y, activeViewPanel);
-        this.setInstructions(INSTRUCTIONS.ORBIT);
+        this.setInstructions(allInstructions.ORBIT);
         if (data.handTranslation){
           // hand is moving
           this.modelController.handleOrbitInteraction(p.x, p.y, data.handTranslation[0], data.handTranslation[2], activeViewPanel);
@@ -453,7 +464,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       }
       else{
         this.modelController.finishOrbitInteraction(p.x, p.y, activeViewPanel);
-        this.setInstructions(INSTRUCTIONS.ORBIT_CONTROL);
+        this.setInstructions(allInstructions.ORBIT_CONTROL);
       }
       gestureDetected = handControlEnabled;
     }
@@ -518,13 +529,14 @@ export default class SeasonsSunrayAngle extends React.Component {
 
     return (
       <div>
-        <h1>Seasons</h1>
+        <h1>{t('~SEASONS', language)}</h1>
         <div className={containerStyle}>
           <div style={{background: '#f6f6f6', width: '1210px'}}>
             <Seasons ref='seasonsModel' initialState={initialSeasonsState}
                      onSimStateChange={this.handleSimStateChange} onViewStateChange={this.handleViewStateChange}
                      logHandler={this.log} lang={language}/>
           </div>
+          {activeRaysView !== 'nothing' &&
           <InstructionsOverlay visible={overlayVisible} className={overlayClassName}
                                width={overlayWidth} height={overlayHeight}
                                handsViewProps={{positionOffset: [0, -150, 0],
@@ -535,6 +547,8 @@ export default class SeasonsSunrayAngle extends React.Component {
             </div>
             {orbitInstructions && <img src="./HandOrbit_t.gif" className="handOrbitOverlay" />}
           </InstructionsOverlay>
+          }
+
           <ActiveViewSelector overlays={this.modelController.seasonsView} className={activeViewSelectorStyle}
                               initialOverlays={initialSeasonsState}
                               activeOverlay={activeViewPanel}
@@ -542,7 +556,7 @@ export default class SeasonsSunrayAngle extends React.Component {
                               controllableViews={controllableViews} />
         </div>
         <div className='top-links'>
-          <SettingsDialog>
+          <SettingsDialog lang={language}>
             <p>
               {t('~OVERLAY', language)}: <input type='checkbox' name='overlayEnabled' checked={overlayEnabled} onChange={this.handleInputChange}/>
             </p>
@@ -556,9 +570,9 @@ export default class SeasonsSunrayAngle extends React.Component {
                                                       defaultValue={this.gesturesHelper.config.maxDist}
                                                       onChange={this.handleConfigChange}/>
             </p>
-            <LoggingConfig onStart={this.handleLoggingStart} onEnd={this.handleLoggingEnd}/>
+            <LoggingConfig onStart={this.handleLoggingStart} onEnd={this.handleLoggingEnd} lang={language}/>
           </SettingsDialog>
-          <AboutDialog>
+          <AboutDialog lang={language}>
             <About />
           </AboutDialog>
           {debugMode && mousePos &&

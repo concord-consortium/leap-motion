@@ -1,6 +1,7 @@
 import React from 'react';
 import Dialog from './dialog.jsx';
 import LeapStatus from './leap-status.jsx';
+import t from '../tools/translate';
 
 export default class SettingsDialog extends React.Component {
   constructor(props) {
@@ -22,11 +23,11 @@ export default class SettingsDialog extends React.Component {
 
   render() {
     const { dialogVisible } = this.state;
-    const { children } = this.props;
+    const { children, lang } = this.props;
     return (
       <span>
-        <span className='dialog-link' onClick={this.handleDialogToggle}>Settings</span>
-        <Dialog visible={dialogVisible} onToggle={this.handleDialogToggle} title='Settings'>
+        <span className='dialog-link' onClick={this.handleDialogToggle}>{t('~SETTINGS', lang)}</span>
+        <Dialog visible={dialogVisible} onToggle={this.handleDialogToggle} title={t('~SETTINGS', lang)}>
           <LeapStatus ref='status' visible={dialogVisible}>
             {children}
           </LeapStatus>
