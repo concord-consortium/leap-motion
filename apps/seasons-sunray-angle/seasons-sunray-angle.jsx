@@ -15,6 +15,7 @@ import ModelController from './model-controller';
 import {Seasons} from 'grasp-seasons';
 import getURLParam from '../common/js/tools/get-url-param';
 import ActiveViewSelector from './active-view-selector';
+import LanguageSelector from '../common/js/components/language-selector.jsx';
 import t from '../common/js/tools/translate';
 
 import './seasons-sunray-angle.less';
@@ -91,6 +92,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     let initialView = this.setInitialActiveView(initialSeasonsState, controllableViews);
 
     let lang = getURLParam('lang') || 'en_us';
+    if (lang === 'es_mx') lang = 'es_es'; // only one translation for Spanish currently available
 
     let allInstructions = this.loadInstructions(lang);
 
@@ -124,6 +126,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.handleSelectOverlay = this.handleSelectOverlay.bind(this);
     this.log = this.log.bind(this);
     this.debugMouseMove = this.debugMouseMove.bind(this);
+    this.handleSelectLanguage = this.handleSelectLanguage.bind(this);
     logger.initializeLaraConnection();
     this.detectionCount = DETECTION_TOLERANCE + 1;
   }
@@ -486,7 +489,12 @@ export default class SeasonsSunrayAngle extends React.Component {
     });
     this.setState({activeRaysView: view.value, activeViewPanel: view.className, instructions: ''});
   }
-
+  handleSelectLanguage(lang){
+    const { language } = this.state;
+    if (lang !== language){
+      this.setState({language: lang});
+    }
+  }
   getBasicLogParams() {
     return {
       sim: this.modelController.seasonsState,
@@ -575,6 +583,7 @@ export default class SeasonsSunrayAngle extends React.Component {
           <AboutDialog lang={language}>
             <About />
           </AboutDialog>
+          <LanguageSelector lang={language} onLanguageChange={this.handleSelectLanguage} />
           {debugMode && mousePos &&
             <div className="debug">
               <div>Mouse positions:<br/>Page:{mousePos.pageX}, {mousePos.pageY}<br/>Client:{mousePos.clientX}, {mousePos.clientY}</div>
