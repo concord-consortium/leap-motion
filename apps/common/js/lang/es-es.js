@@ -1,7 +1,7 @@
 export default {
-  '~SEASONS': 'Estaciones',
+  '~SEASONS': 'Temporadas',
   '~SETTINGS': 'Configuraciones',
-  '~ABOUT': 'Acerca de',
+  '~ABOUT': 'Información',
 
   '~MINIMUM_HAND_DIST': 'Distancia mínima entre las manos [mm]',
   '~MAXIMUM_HAND_DIST': 'Distancia máxima entre las manos [mm]',
