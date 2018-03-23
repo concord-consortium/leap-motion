@@ -2,8 +2,8 @@ import React from 'react';
 import t from '../tools/translate';
 
 const LANGUAGE_LOOKUPS = {
-  'en_us':'/lab/lab/resources/flags/us.png',
-  'es_es':'/lab/lab/resources/flags/es.png'
+  'en_us':'./lab/lab/resources/flags/us.png',
+  'es_es':'./lab/lab/resources/flags/es.png'
 };
 
 export default class LanguageSelector extends React.PureComponent{
