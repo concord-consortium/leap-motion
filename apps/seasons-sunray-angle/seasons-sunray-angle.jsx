@@ -492,7 +492,8 @@ export default class SeasonsSunrayAngle extends React.Component {
   handleSelectLanguage(lang){
     const { language } = this.state;
     if (lang !== language){
-      this.setState({language: lang});
+      let allInstructions = this.loadInstructions(lang);
+      this.setState({language: lang, allInstructions});
     }
   }
   getBasicLogParams() {
