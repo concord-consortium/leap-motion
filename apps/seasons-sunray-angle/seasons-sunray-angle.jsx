@@ -90,10 +90,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     if (getURLParam('orbitControl') === 'true') controllableViews.push('orbit');
 
     let initialView = this.setInitialActiveView(initialSeasonsState, controllableViews);
-
-    let lang = getURLParam('lang') || 'en_us';
-    if (lang === 'es_mx') lang = 'es_es'; // only one translation for Spanish currently available
-
+    let lang = getURLParam('lang') || props.lang || 'en_us';
     let allInstructions = this.loadInstructions(lang);
 
     this.state = {
@@ -109,7 +106,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       controllableViews,
       debugMode: getURLParam('debug') && getURLParam('debug') === 'true' || false,
       mousePos: {screenX: 0, screenY: 0, clientX: 0, clientY: 0},
-      language: props.lang || lang
+      language: lang
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
