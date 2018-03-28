@@ -109,7 +109,7 @@ export default class SeasonsSunrayAngle extends React.Component {
       controllableViews,
       debugMode: getURLParam('debug') && getURLParam('debug') === 'true' || false,
       mousePos: {screenX: 0, screenY: 0, clientX: 0, clientY: 0},
-      language: lang
+      language: props.lang || lang
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -489,11 +489,13 @@ export default class SeasonsSunrayAngle extends React.Component {
     });
     this.setState({activeRaysView: view.value, activeViewPanel: view.className, instructions: ''});
   }
+
   handleSelectLanguage(lang){
     const { language } = this.state;
     if (lang !== language){
-      let allInstructions = this.loadInstructions(lang);
-      this.setState({language: lang, allInstructions});
+      let allInstructions = this.loadInstructions(lang),
+      instructions = allInstructions.INITIAL_GROUND;
+      this.setState({language: lang, allInstructions, instructions});
     }
   }
   getBasicLogParams() {

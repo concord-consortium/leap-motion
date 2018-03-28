@@ -148,7 +148,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { interactive, model } = this.props;
+    const { lang } = this.props;
     const { overlayEnabled, overlayActive, labProps, spoonEnabled } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (

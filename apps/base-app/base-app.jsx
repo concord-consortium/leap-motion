@@ -63,7 +63,8 @@ export default class BaseApp extends React.Component {
     super(props);
     this.state = {
       aboutVisible: false,
-      settingsVisible: false
+      settingsVisible: false,
+      lang: 'en_us'
     };
     this.toggleAbout = this.toggleAbout.bind(this);
     this.toggleSettings = this.toggleSettings.bind(this);
@@ -85,12 +86,13 @@ export default class BaseApp extends React.Component {
 
   render() {
     const { sim, showHeader } = this.props;
-    const { aboutVisible, settingsVisible } = this.state;
+    const { aboutVisible, settingsVisible, lang } = this.state;
     const simulation = React.createElement(SIM_LIST[sim], {
       aboutVisible,
       settingsVisible,
       toggleAbout: this.toggleAbout,
-      toggleSettings: this.toggleSettings
+      toggleSettings: this.toggleSettings,
+      lang
     });
     let componentStyleList = ['simulation', sim, !showHeader? 'headless':null];
     let componentStyles = componentStyleList.join(' ');
