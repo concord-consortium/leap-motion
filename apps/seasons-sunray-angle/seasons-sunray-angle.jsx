@@ -7,6 +7,7 @@ import logger from '../common/js/tools/logger';
 import LoggingConfig from '../common/js/components/logging-config.jsx';
 import SettingsDialog from '../common/js/components/settings-dialog.jsx';
 import AboutDialog from '../common/js/components/about-dialog.jsx';
+import LeapConnectionDialog from '../common/js/components/leap-connection-dialog.jsx';
 import About from './about.jsx';
 import phantomHands from './phantom-hands';
 import GesturesHelper from './gestures-helper';
@@ -106,7 +107,8 @@ export default class SeasonsSunrayAngle extends React.Component {
       controllableViews,
       debugMode: getURLParam('debug') && getURLParam('debug') === 'true' || false,
       mousePos: {screenX: 0, screenY: 0, clientX: 0, clientY: 0},
-      language: lang
+      language: lang,
+      leapConnected: false
     };
     this.modelController = new ModelController({
       activeRayViewChanged: this.activeRaysViewChanged.bind(this),
@@ -126,6 +128,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     this.handleSelectLanguage = this.handleSelectLanguage.bind(this);
     logger.initializeLaraConnection();
     this.detectionCount = DETECTION_TOLERANCE + 1;
+
   }
 
   setInitialSeasonsState(){
@@ -279,8 +282,9 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   handleLeapFrame(frame) {
-    const { previousFrame, activeRaysView, controllableViews } = this.state;
+    const { previousFrame, activeRaysView, controllableViews, leapConnected } = this.state;
     const data = this.gesturesHelper.processLeapFrame(frame, previousFrame);
+
     let gestureDetected = false;
     let orbitGesture = false;
 
@@ -301,11 +305,24 @@ export default class SeasonsSunrayAngle extends React.Component {
       }
     }
 
-
     this.updateOverlayVisibility(data, gestureDetected);
     this.updatePhantomHandsHint(data, gestureDetected);
     this.gesturesLogger.logGesture(data, gestureDetected, this.modelController.seasonsState.day, orbitGesture);
     this.setState({previousFrame: frame});
+  }
+  handleDeviceConnected(){
+    const { leapConnected } = this.state;
+    if (!leapConnected){
+      console.log("Device connected in Seasons");
+      this.setState({leapConnected: true});
+    }
+  }
+  handleDeviceDisconnected(){
+    const { leapConnected } = this.state;
+    if (leapConnected){
+      console.log("Device disconnected in Seasons");
+      this.setState({leapConnected: false});
+    }
   }
 
   updateOverlayVisibility(data, gestureDetected) {
@@ -522,7 +539,8 @@ export default class SeasonsSunrayAngle extends React.Component {
   }
 
   render() {
-    const { instructions, activeViewPanel, activeRaysView, overlayEnabled, overlayActive, phantomHandsHint, renderSize, mousePos, debugMode, initialSeasonsState, controllableViews, language} = this.state;
+    const { instructions, activeViewPanel, activeRaysView, overlayEnabled, overlayActive, leapConnected,
+    phantomHandsHint, renderSize, mousePos, debugMode, initialSeasonsState, controllableViews, language} = this.state;
     let overlaySizeSettings = renderSize == 'seasons' ? OVERLAY_SIZE : OVERLAY_SIZE_NARROW;
     let containerStyle = renderSize == 'seasons' ? 'seasons-container' : 'seasons-container narrow';
     let activeViewSelectorStyle = renderSize == 'seasons' ? 'active-view-selector' : 'active-view-selector narrow';
@@ -532,7 +550,7 @@ export default class SeasonsSunrayAngle extends React.Component {
     const overlayWidth = overlaySizeSettings[activeViewPanel].width;
     const overlayHeight = overlaySizeSettings[activeViewPanel].height;
     const overlayClassName = `grasp-seasons ${activeViewPanel}`;
-    const overlayVisible = overlayEnabled && overlayActive && activeRaysView !== 'nothing';
+    const overlayVisible = leapConnected && overlayEnabled && overlayActive && activeRaysView !== 'nothing';
     const orbitInstructions = overlayVisible && activeRaysView === 'orbit' && phantomHandsHint !== null;
 
     return (
@@ -564,6 +582,9 @@ export default class SeasonsSunrayAngle extends React.Component {
                               controllableViews={controllableViews} />
         </div>
         <div className='top-links'>
+
+          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} />
+
           <SettingsDialog lang={language}>
             <p>
               {t('~OVERLAY', language)}: <input type='checkbox' name='overlayEnabled' checked={overlayEnabled} onChange={this.handleInputChange}/>

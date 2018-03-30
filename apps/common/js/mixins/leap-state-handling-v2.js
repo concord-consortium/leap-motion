@@ -20,8 +20,19 @@ export default {
     this._onFrameCallback = (frame) => {
       this.handleLeapFrame(this.preprocessLeapFrame(frame));
     };
+    this._onDisconnectedCallback = () => {
+      if (this.handleDeviceDisconnected) this.handleDeviceDisconnected();
+      else console.log('=== Device disconnected! ===');
+    };
+    this._onConnectedCallback = () => {
+      if (this.handleDeviceConnected) this.handleDeviceConnected();
+      else console.log('=== Connected to device! === ');
+    };
     if (device === 'realsense') {
       controller.init();
+    } else {
+      controller.on('deviceStopped', this._onDisconnectedCallback);
+      controller.on('streamingStarted', this._onConnectedCallback);
     }
     controller.on('frame', this._onFrameCallback);
   },
@@ -48,4 +59,4 @@ export default {
     }
     return frame;
   }
-}
+};

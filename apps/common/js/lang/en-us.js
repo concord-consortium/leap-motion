@@ -24,6 +24,11 @@ export default {
   '~VOLUME_PRESSURE_HAND_MISSING':  'Place two hands over the Leap controller.',
   '~VOLUME_PRESSURE_ROTATE':  'Rotate one hand to become the plunger.',
   '~VOLUME_PRESSURE_FIST': 'Make a fist with the other hand to become the molecules.',
-  '~VOLUME_PRESSURE_DEFAULT': 'Tap fist to palm to show how often the molecules hit.'
+  '~VOLUME_PRESSURE_DEFAULT': 'Tap fist to palm to show how often the molecules hit.',
+
+  '~LEAP_CONNECTION': 'Leap Device Connection',
+  '~LEAP_CONNECTED': 'Leap motion device detected successfully!',
+  '~LEAP_NOT_CONNECTED': 'Leap motion device is not connected',
+  '~LEAP_DISCONNECTED': 'Connection to the Leap device has been lost'
 
 };

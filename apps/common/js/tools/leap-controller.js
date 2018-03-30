@@ -8,7 +8,7 @@ const controller = new Leap.Controller({
 controller.connect();
 
 controller.on('connect', function () {
-  console.log('Leap controller connected.');
+  console.log('Leap controller service connected.');
 });
 
 export default controller;
