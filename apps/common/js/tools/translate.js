@@ -16,7 +16,7 @@ const translateString = (key, lang) => translations[lang] && translations[lang][
  * in the language file:
  *   ["~TIME_SENSITIVE_GREETING", "~TIME.EVENING", "User"]
  */
-export default function translate(key, lang=defaultLang) {
+export default function translate(key, lang = defaultLang) {
   if (typeof key === 'string') {
     return translateString(key, lang);
   } else if (Array.isArray(key)) {
@@ -27,4 +27,33 @@ export default function translate(key, lang=defaultLang) {
     console.log('Could not translate: ', key);
   }
   return error;
+}
+
+export function translateJson (object, propNames, lang=defaultLang) {
+  if (!object || !propNames || (propNames.length == null)) return object;
+
+  function translateValue(key, value) {
+    if (!value) return value;
+    switch (typeof value) {
+    case 'string':
+      return (!key || (propNames.indexOf(key) >= 0))
+        ? translate(value, lang)
+        : value;
+    case 'object':
+      if (Array.isArray(value)) {
+        // note that the key for strings in arrays is the key for the array
+        return value.map((item) => translateValue(key, item));
+      }
+      else {
+        for (let objKey in value) {
+          value[objKey] = translateValue(objKey, value[objKey]);
+        }
+      }
+      return value;
+    default:
+      return value;
+    }
+  }
+
+  return translateValue(null, object);
 }

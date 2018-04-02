@@ -1,8 +1,18 @@
 export default {
+  // General
   '~SEASONS': 'Seasons',
   '~SETTINGS': 'Settings',
   '~ABOUT': 'About',
+  '~SOUND': 'Sound',
+  '~NO_HAND_CHECK': '"No hand" required duration [ms]',
 
+  // Leap connection strings
+  '~LEAP_CONNECTION': 'Leap Device Connection',
+  '~LEAP_CONNECTED': 'Leap Motion device detected successfully!',
+  '~LEAP_NOT_CONNECTED': 'Leap Motion device is not connected',
+  '~LEAP_DISCONNECTED': 'Connection to the Leap Motion device has been lost',
+
+  // Seasons
   '~MINIMUM_HAND_DIST': 'Min distance between hands [mm]',
   '~MAXIMUM_HAND_DIST': 'Max distance between hands [mm]',
   '~OVERLAY': 'Overlay',
@@ -16,19 +26,35 @@ export default {
   '~INSTRUCTIONS_ORBIT_CONTROL': 'Rotate your hand in-line with the axis of the Earth',
   '~INSTRUCTIONS_ORBIT': 'Move your hand around the controller to make the Earth orbit the sun',
 
+  // Lab Heat Transfer
+  '~HEAT_TRANSFER_TITLE': 'Heat Transfer',
   '~HEAT_TRANSFER_INITIAL': 'Place one hand (left or right) over the Leap controller.',
   '~HEAT_TRANSFER_ONE_HAND': 'Close your fist to become one block of molecules.',
   '~HEAT_TRANSFER_CLOSED_HAND': 'Shake your fist to show the molecules moving.',
+  '~HEAT_TRANSFER_SPOON': 'Spoon',
 
+  // Volume Pressure
   '~VOLUME_PRESSURE_NO_HANDS': 'Place hands six inches over the Leap controller.',
   '~VOLUME_PRESSURE_HAND_MISSING':  'Place two hands over the Leap controller.',
   '~VOLUME_PRESSURE_ROTATE':  'Rotate one hand to become the plunger.',
   '~VOLUME_PRESSURE_FIST': 'Make a fist with the other hand to become the molecules.',
   '~VOLUME_PRESSURE_DEFAULT': 'Tap fist to palm to show how often the molecules hit.',
 
-  '~LEAP_CONNECTION': 'Leap Device Connection',
-  '~LEAP_CONNECTED': 'Leap motion device detected successfully!',
-  '~LEAP_NOT_CONNECTED': 'Leap motion device is not connected',
-  '~LEAP_DISCONNECTED': 'Connection to the Leap device has been lost'
+  // Translations for interactives
+  '~LAB_HEAT_TITLE': 'Conduction Between Two Solids',
+  '~LAB_HEAT_INSTRUCTIONS': 'Choose a material to fill the space between the two solids.',
+  '~LAB_HEAT_TEMPERATURE_RIGHT': 'Temperature of Molecules on Right',
+  '~LAB_HEAT_TEMPERATURE_LEFT': 'Temperature of Molecules on Left',
+  '~LAB_HEAT_TEMPERATURE_RIGHT_UNITS': 'Temperature of Molecules on Right (&deg;C)',
+  '~LAB_HEAT_TEMPERATURE_LEFT_UNITS': 'Temperature of Molecules on Left (&deg;C)',
+  '~LAB_HEAT_KE_SHADING': 'K. E. Shading',
+  '~LAB_HEAT_LABEL_VACUUM': 'Vacuum',
+  '~LAB_HEAT_LABEL_THICK': 'Thick long bar',
+  '~LAB_HEAT_LABEL_THIN': 'Thin long bar',
 
+  // General Lab Labels
+  '~LAB_HEAT_LABEL_SPEED': 'Speed:',
+  '~LAB_OPTION_FAST': 'Fast',
+  '~LAB_OPTION_MEDIUM': 'Medium',
+  '~LAB_OPTION_SLOW': 'Slow'
 };
