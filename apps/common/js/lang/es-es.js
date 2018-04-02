@@ -4,7 +4,13 @@ export default {
   '~SETTINGS': 'Configuraciones',
   '~ABOUT': 'Información',
   '~SOUND': 'Sonar',
+  '~HEATING_FREQUENCY': 'Frecuencia de calentamiento',
+  '~COOLING_FREQUENCY': 'Frecuencia de enfriamiento',
   '~NO_HAND_CHECK': 'La duración requerida "sin mano" [ms]',
+  '~SENSITIVITY': 'Sensibilidad',
+  '~SPRING_STRENGTH': 'Fuerza de la primavera',
+  '~MASS_DRAGGABLE_ATOM': 'Masa de átomo arrastrable',
+  '~MASS_REGULAR_ATOMS': 'Masa de átomos regulares',
 
   // Leap connection strings
   '~LEAP_CONNECTION': 'Conexión al dispositivo Leap',
@@ -38,6 +44,19 @@ export default {
   '~HEAT_TRANSFER_TWO_HANDS': 'Cierra tus puños para convertirte en moléculas.',
   '~HEAT_TRANSFER_TWO_UNCLEAR': 'Mueva los puños hacia la izquierda o hacia la derecha para convertirse en un bloque de moléculas.',
   '~HEAT_TRANSFER_TWO_CLOSED_FISTS': 'Mueva los puños para mostrar las moléculas colisionando.',
+
+  '~HEAT_TRANSFER_MICRO_TITLE': 'Transferencia de calor: Micro V2',
+  '~HEAT_TRANSFER_MICRO_INITIAL': 'Coloque dos manos sobre el controlador Leap.',
+  '~HEAT_TRANSFER_MICRO_ONE_HAND': 'Coloque dos manos sobre el controlador Leap.',
+  '~HEAT_TRANSFER_MICRO_TWO_HANDS': 'Cierra tus puños para convertirte en moléculas.',
+  '~HEAT_TRANSFER_MICRO_ONE_FIST': 'Cierra tus puños para convertirte en moléculas.',
+  '~HEAT_TRANSFER_MICRO_CLOSED_FISTS': 'Mueva los puños para mostrar las moléculas colisionando.',
+
+  '~HEAT_TRANSFER_MICRO_DIRECT_TITLE': 'Transferencia de calor: Micro Direct V2',
+  '~HEAT_TRANSFER_MICRO_DIRECT_INITIAL': 'Coloque una mano (izquierda o derecha) sobre el controlador Leap.',
+  '~HEAT_TRANSFER_MICRO_DIRECT_ONE_HAND': 'Cierre su puño para agarrar una molécula.',
+  '~HEAT_TRANSFER_MICRO_DIRECT_TWO_HANDS': 'Usa solo una mano',
+  '~HEAT_TRANSFER_MICRO_DIRECT_ONE_FIST': 'Agita su puño para mostrar la molécula en movimiento.',
 
   // Volume Pressure
   '~VOLUME_PRESSURE_NO_HANDS': 'Coloque las manos seis pulgadas sobre el controlador Leap.',

@@ -1,10 +1,16 @@
 export default {
-  // General
+  // General & settings
   '~SEASONS': 'Seasons',
   '~SETTINGS': 'Settings',
   '~ABOUT': 'About',
   '~SOUND': 'Sound',
+  '~HEATING_FREQUENCY': 'Heating frequency',
+  '~COOLING_FREQUENCY': 'Cooling frequency',
   '~NO_HAND_CHECK': '"No hand" required duration [ms]',
+  '~SENSITIVITY': 'Sensitivity',
+  '~SPRING_STRENGTH': 'Spring strength',
+  '~MASS_DRAGGABLE_ATOM': 'Mass of draggable atom',
+  '~MASS_REGULAR_ATOMS': 'Mass of regular atoms',
 
   // Leap connection strings
   '~LEAP_CONNECTION': 'Leap Device Connection',
@@ -38,6 +44,20 @@ export default {
   '~HEAT_TRANSFER_TWO_HANDS': 'Close your fists to become molecules.',
   '~HEAT_TRANSFER_TWO_UNCLEAR': 'Move your fists to the left or right to become one block of molecules.',
   '~HEAT_TRANSFER_TWO_CLOSED_FISTS': 'Bump your fists to show the molecules colliding.',
+
+  // Heat Transfer Micro
+  '~HEAT_TRANSFER_MICRO_TITLE': 'Heat Transfer Micro V2',
+  '~HEAT_TRANSFER_MICRO_INITIAL': 'Place two hands over the Leap controller.',
+  '~HEAT_TRANSFER_MICRO_ONE_HAND': 'Place two hands over the Leap controller.',
+  '~HEAT_TRANSFER_MICRO_TWO_HANDS': 'Close your fists to become molecules.',
+  '~HEAT_TRANSFER_MICRO_ONE_FIST': 'Close your fists to become molecules.',
+  '~HEAT_TRANSFER_MICRO_CLOSED_FISTS': 'Bump your fists to show the molecules colliding.',
+
+  '~HEAT_TRANSFER_MICRO_DIRECT_TITLE': 'Heat Transfer Micro Direct V2',
+  '~HEAT_TRANSFER_MICRO_DIRECT_INITIAL': 'Place one hand (left or right) over the Leap controller.',
+  '~HEAT_TRANSFER_MICRO_DIRECT_ONE_HAND': 'Close your fist to grab a molecule.',
+  '~HEAT_TRANSFER_MICRO_DIRECT_TWO_HANDS': 'Use only one hand.',
+  '~HEAT_TRANSFER_MICRO_DIRECT_ONE_FIST': 'Shake your fist to show the molecule moving.',
 
   // Volume Pressure
   '~VOLUME_PRESSURE_NO_HANDS': 'Place hands six inches over the Leap controller.',

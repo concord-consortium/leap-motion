@@ -1,5 +1,5 @@
 {
-  "title": "Heat Transfer Micro V2",
+  "title": "~HEAT_TRANSFER_MICRO_TITLE",
   "publicationStatus": "draft",
   "subtitle": "GRASP",
   "about": "",
@@ -132,7 +132,7 @@
     {
       "type": "checkbox",
       "id": "ke-shading",
-      "text": "KE Shading",
+      "text": "~LAB_HEAT_KE_SHADING",
       "property": "keShading"
     },
     {
