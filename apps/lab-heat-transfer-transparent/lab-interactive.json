@@ -1,5 +1,5 @@
 {
-  "title": "Conduction Between Two Solids",
+  "title": "~LAB_HEAT_TITLE",
   "publicationStatus": "draft",
   "subtitle": "GRASP",
   "about": "",
@@ -135,7 +135,7 @@
   "outputs": [
     {
       "name": "rightAtomsTemp",
-      "label": "Temperature of Molecules on Right",
+      "label": "~LAB_HEAT_TEMPERATURE_RIGHT",
       "unitAbbreviation": "°C",
       "value": [
         "return getTemperatureOfAtoms(get('rightAtomsIndices'));"
@@ -143,7 +143,7 @@
     },
     {
       "name": "leftAtomsTemp",
-      "label": "Temperature of Molecules on Left",
+      "label": "~LAB_HEAT_TEMPERATURE_LEFT",
       "unitAbbreviation": "°C",
       "value": [
         "return getTemperatureOfAtoms(get('leftAtomsIndices'));"
@@ -217,19 +217,19 @@
       "type": "radio",
       "orientation": "horizontal",
       "property": "timeStep",
-      "label": "Speed:",
+      "label": "~LAB_HEAT_LABEL_SPEED",
       "labelOn": "left",
       "options": [
         {
-          "text": "Fast",
+          "text": "~LAB_OPTION_FAST",
           "value": 1.0
         },
         {
-          "text": "Medium",
+          "text": "~LAB_OPTION_MEDIUM",
           "value": 0.2
         },
         {
-          "text": "Slow",
+          "text": "~LAB_OPTION_SLOW",
           "value": 0.05
         }
       ]
@@ -239,7 +239,7 @@
       "id": "bar-graph",
       "min": 0,
       "max": 600,
-      "title": "Temperature of Molecules on Right (&deg;C)",
+      "title": "~LAB_HEAT_TEMPERATURE_RIGHT_UNITS",
       "property": "rightAtomsTempAvg",
       "units": false,
       "labelFormat": "3r",
@@ -250,7 +250,7 @@
       "id": "bar-graph2",
       "min": 0,
       "max": 600,
-      "title": "Temperature of Molecules on Left (&deg;C)",
+      "title": "~LAB_HEAT_TEMPERATURE_LEFT_UNITS",
       "property": "leftAtomsTempAvg",
       "units": false,
       "labelFormat": "3r",
@@ -259,13 +259,13 @@
     {
       "type": "checkbox",
       "id": "show-ke",
-      "text": "K. E. Shading",
+      "text": "~LAB_HEAT_KE_SHADING",
       "property": "keShading"
     },
     {
       "type": "text",
       "id": "instructions",
-      "text": "Choose a material to fill the space between the two solids."
+      "text": "~LAB_HEAT_INSTRUCTIONS"
     },
     {
       "type": "radio",
@@ -275,15 +275,15 @@
       "property": "bar",
       "options": [
         {
-          "text": "Vacuum",
+          "text": "~LAB_HEAT_LABEL_VACUUM",
           "value": "none"
         },
         {
-          "text": "Thick long bar",
+          "text": "~LAB_HEAT_LABEL_THICK",
           "value": "thick"
         },
         {
-          "text": "Thin long bar",
+          "text": "~LAB_HEAT_LABEL_THIN",
           "value": "thin"
         }
       ]

@@ -33,6 +33,12 @@ export default {
   '~HEAT_TRANSFER_CLOSED_HAND': 'Agita tu puño para mostrar las moléculas en movimiento.',
   '~HEAT_TRANSFER_SPOON': 'Cuchara',
 
+  '~HEAT_TRANSFER_TWO_INITIAL': 'Coloque dos manos sobre el controlador Leap.',
+  '~HEAT_TRANSFER_TWO_ONE_HAND': 'Usa dos manos.',
+  '~HEAT_TRANSFER_TWO_HANDS': 'Cierra tus puños para convertirte en moléculas.',
+  '~HEAT_TRANSFER_TWO_UNCLEAR': 'Mueva los puños hacia la izquierda o hacia la derecha para convertirse en un bloque de moléculas.',
+  '~HEAT_TRANSFER_TWO_CLOSED_FISTS': 'Mueva los puños para mostrar las moléculas colisionando.',
+
   // Volume Pressure
   '~VOLUME_PRESSURE_NO_HANDS': 'Coloque las manos seis pulgadas sobre el controlador Leap.',
   '~VOLUME_PRESSURE_HAND_MISSING':  'Coloque dos manos sobre el controlador Leap.',

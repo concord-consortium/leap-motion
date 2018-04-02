@@ -33,6 +33,12 @@ export default {
   '~HEAT_TRANSFER_CLOSED_HAND': 'Shake your fist to show the molecules moving.',
   '~HEAT_TRANSFER_SPOON': 'Spoon',
 
+  '~HEAT_TRANSFER_TWO_INITIAL': 'Place two hands over the Leap controller.',
+  '~HEAT_TRANSFER_TWO_ONE_HAND': 'Use two hands.',
+  '~HEAT_TRANSFER_TWO_HANDS': 'Close your fists to become molecules.',
+  '~HEAT_TRANSFER_TWO_UNCLEAR': 'Move your fists to the left or right to become one block of molecules.',
+  '~HEAT_TRANSFER_TWO_CLOSED_FISTS': 'Bump your fists to show the molecules colliding.',
+
   // Volume Pressure
   '~VOLUME_PRESSURE_NO_HANDS': 'Place hands six inches over the Leap controller.',
   '~VOLUME_PRESSURE_HAND_MISSING':  'Place two hands over the Leap controller.',

@@ -14,6 +14,7 @@ import InstructionsOverlay from '../common/js/components/instructions-overlay.js
 import phantomHands from './phantom-hands.js';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
+import t, {translateJson} from '../common/js/tools/translate.js';
 import './lab-heat-transfer-two-hands.less'
 
 import getURLParam from '../common/js/tools/get-url-param';
@@ -50,12 +51,29 @@ export default class LabHeatTransfer extends React.Component {
     this.handleSpoonVisibility = this.handleSpoonVisibility.bind(this);
 
     let spoonEnabled = getURLParam('spoon') !== null ? getURLParam('spoon') : (this.props.spoonEnabled ? this.props.spoonEnabled : DEF_LAB_PROPS.spoonEnabled);
+    let lang = getURLParam('lang') || props.lang || 'en_us';
+    let translatedInteractive = translateJson(interactive, ['title','text','label'], lang);
+    let allInstructions = this.loadInstructions(lang);
 
     this.state = {
       leapState: null,
       overlayEnabled: true,
-      spoonEnabled
+      spoonEnabled,
+      language: lang,
+      allInstructions,
+      translatedInteractive
     };
+  }
+
+  loadInstructions(lang){
+    let instructions = {
+      INITIAL: t('~HEAT_TRANSFER_TWO_INITIAL', lang),
+      ONE_HAND: t('~HEAT_TRANSFER_TWO_ONE_HAND', lang),
+      TWO_HANDS: t('~HEAT_TRANSFER_TWO_HANDS', lang),
+      SIDE_UNCLEAR: t('~HEAT_TRANSFER_TWO_UNCLEAR', lang),
+      CLOSED_FISTS: t('~HEAT_TRANSFER_TWO_CLOSED_FISTS', lang)
+    };
+    return instructions;
   }
 
   handleLeapFrame(frame) {
@@ -142,28 +160,29 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   getHintText() {
-    switch(this.state.leapState) {
+    const {leapState, allInstructions} = this.state;
+    switch(leapState) {
       case 'initial':
-        return 'Place two hands over the Leap controller.';
+        return allInstructions.INITIAL;
       case 'oneHand':
-        return 'Use two hands.';
+        return allInstructions.ONE_HAND;
       case 'twoHands':
-        return 'Close your fists to become molecules.';
+        return allInstructions.TWO_HANDS;
       case 'sideUnclear':
-        return 'Move your fists to the left or right to become one block of molecules.';
+        return allInstructions.SIDE_UNCLEAR;
       case 'closedFists':
-        return 'Bump your fists to show the molecules colliding.';
+        return allInstructions.CLOSED_FISTS;
     }
   }
 
   render() {
-    const { overlayEnabled, overlayActive, labProps, leapState, spoonEnabled } = this.state;
+    const { overlayEnabled, overlayActive, labProps, leapState, spoonEnabled, translatedInteractive, language } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
-        <h1>Heat Transfer</h1>
+        <h1>{t('~HEAT_TRANSFER_TITLE', language)}</h1>
         <div className='container'>
-          <Lab ref='labModel' interactive={interactive} model={model}
+          <Lab ref='labModel' interactive={translatedInteractive} model={model}
                width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
                propsUpdateDelay={75}
                props={labProps}
@@ -177,11 +196,11 @@ export default class LabHeatTransfer extends React.Component {
           </InstructionsOverlay>
         </div>
         <div className='top-links'>
-          <SettingsDialog ref='status'>
+          <SettingsDialog ref='status' lang={language}>
             <table>
               <tbody>
               <tr>
-                <td>Overlay:</td>
+                <td>{t('~OVERLAY', language)}:</td>
                 <td>
                   <input type='checkbox' name='overlayEnabled'
                          checked={overlayEnabled}
@@ -189,7 +208,7 @@ export default class LabHeatTransfer extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>Spoon:</td>
+                <td>{t('~HEAT_TRANSFER_SPOON', language)}:</td>
                 <td>
                   <input type='checkbox' name='spoonEnabled'
                          checked={spoonEnabled}
@@ -197,7 +216,7 @@ export default class LabHeatTransfer extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>Sound:</td>
+                <td>{t('~SOUND', language)}:</td>
                 <td>
                   <input type='checkbox' name='soundEnabled'
                          defaultChecked={this.fistsShaking.config.soundEnabled}
@@ -207,7 +226,7 @@ export default class LabHeatTransfer extends React.Component {
               </tbody>
             </table>
           </SettingsDialog>
-          <AboutDialog>
+          <AboutDialog lang={language}>
             <About />
           </AboutDialog>
         </div>
