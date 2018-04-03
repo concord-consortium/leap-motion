@@ -11,6 +11,7 @@ export default {
   '~SPRING_STRENGTH': 'Fuerza de la primavera',
   '~MASS_DRAGGABLE_ATOM': 'Masa de átomo arrastrable',
   '~MASS_REGULAR_ATOMS': 'Masa de átomos regulares',
+  '~EPSILON': 'Epsilon (fuerza atractiva)',
 
   // Leap connection strings
   '~LEAP_CONNECTION': 'Conexión al dispositivo Leap',

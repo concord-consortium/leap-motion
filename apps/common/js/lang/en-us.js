@@ -11,6 +11,7 @@ export default {
   '~SPRING_STRENGTH': 'Spring strength',
   '~MASS_DRAGGABLE_ATOM': 'Mass of draggable atom',
   '~MASS_REGULAR_ATOMS': 'Mass of regular atoms',
+  '~EPSILON': 'Epsilon (attractive force)',
 
   // Leap connection strings
   '~LEAP_CONNECTION': 'Leap Device Connection',

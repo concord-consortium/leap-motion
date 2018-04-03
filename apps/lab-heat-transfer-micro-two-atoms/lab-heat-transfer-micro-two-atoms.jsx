@@ -12,6 +12,8 @@ import About from './about.jsx';
 import InstructionsOverlay from '../common/js/components/instructions-overlay.jsx';
 import interactive from './lab-interactive.json';
 import model from './lab-model.json';
+import t, {translateJson} from '../common/js/tools/translate.js';
+import getURLParam from '../common/js/tools/get-url-param';
 import './lab-heat-transfer-micro-two-atoms.less'
 
 const IFRAME_WIDTH = 510;
@@ -23,14 +25,32 @@ export default class LabHeatTransfer extends React.Component {
     this.fistShake = new FistShake({}, this.gestureCallbacks);
     this.labModelLoaded = this.labModelLoaded.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+
+    let lang = getURLParam('lang') || props.lang || 'en_us';
+    let translatedInteractive = translateJson(interactive, ['title','text','label'], lang);
+    let allInstructions = this.loadInstructions(lang);
+
     this.state = {
       leapState: 'initial',
       overlayEnabled: true,
       handleSensitivity: 1,
       springStrength: 1500,
       atomMass: 150,
-      draggableAtomMass: 40
+      draggableAtomMass: 40,
+      language: lang,
+      allInstructions,
+      translatedInteractive
     }
+  }
+
+  loadInstructions(lang){
+    let instructions = {
+      INITIAL: t('~HEAT_TRANSFER_TWO_INITIAL', lang),
+      ONE_HAND: t('~HEAT_TRANSFER_TWO_ONE_HAND', lang),
+      TWO_HANDS: t('~HEAT_TRANSFER_TWO_HANDS', lang),
+      CLOSED_FISTS: t('~HEAT_TRANSFER_TWO_CLOSED_FISTS', lang)
+    };
+    return instructions;
   }
 
   handleLeapFrame(frame) {
@@ -95,25 +115,26 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   getStateMsg() {
-    switch(this.state.leapState) {
+    const {leapState, allInstructions} = this.state;
+    switch(leapState) {
       case 'initial':
-        return 'Place two hands over the Leap controller.';
+        return allInstructions.INITIAL;
       case 'oneHandDetected':
-        return 'Use two hands.';
+        return allInstructions.ONE_HAND;
       case 'twoHandsDetected':
-        return 'Close your fists to become molecules.';
+        return allInstructions.TWO_HANDS;
       case 'twoClosedFists':
-        return 'Bump your fists to show the molecules colliding.';
+        return allInstructions.CLOSED_FISTS;
     }
   }
 
   render() {
-    const { overlayEnabled, overlayActive, labProps } = this.state;
+    const { overlayEnabled, overlayActive, labProps, translatedInteractive, language } = this.state;
     return (
       <div>
-        <h1>Heat Transfer</h1>
+        <h1>{t('~HEAT_TRANSFER_TITLE', language)}</h1>
         <div className='container'>
-          <Lab ref='labModel' interactive={interactive} model={model}
+          <Lab ref='labModel' interactive={translatedInteractive} model={model}
                width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
                propsUpdateDelay={16}
                props={labProps}
@@ -126,11 +147,11 @@ export default class LabHeatTransfer extends React.Component {
           </InstructionsOverlay>
         </div>
         <div className='top-links'>
-          <SettingsDialog ref='status'>
+          <SettingsDialog ref='status' lang={language}>
             <table>
               <tbody>
               <tr>
-                <td>Overlay:</td>
+                <td>{t('~OVERLAY', language)}:</td>
                 <td>
                   <input type='checkbox' name='overlayEnabled'
                          checked={overlayEnabled}
@@ -138,7 +159,7 @@ export default class LabHeatTransfer extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>Sensitivity:</td>
+                <td>{t('~SENSITIVITY', language)}:</td>
                 <td>
                   <input type='text' name='handleSensitivity' size='7'
                          value={this.state.handleSensitivity}
@@ -150,7 +171,7 @@ export default class LabHeatTransfer extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>Spring strength:</td>
+                <td>{t('~SPRING_STRENGTH', language)}:</td>
                 <td>
                   <input type='text' name='springStrength' size='7'
                          value={this.state.springStrength}
@@ -162,7 +183,7 @@ export default class LabHeatTransfer extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>Mass of the draggable atom:</td>
+                <td>{t('~MASS_DRAGGABLE_ATOM', language)}:</td>
                 <td>
                   <input type='text' name='draggableAtomMass' size='7'
                          value={this.state.draggableAtomMass}
@@ -174,7 +195,7 @@ export default class LabHeatTransfer extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>Mass of the regular atoms:</td>
+                <td>{t('~MASS_REGULAR_ATOMS', language)}:</td>
                 <td>
                   <input type='text' name='atomMass' size='7'
                          value={this.state.atomMass}
@@ -188,7 +209,7 @@ export default class LabHeatTransfer extends React.Component {
               </tbody>
             </table>
           </SettingsDialog>
-          <AboutDialog>
+          <AboutDialog lang={language}>
             <About />
           </AboutDialog>
         </div>
