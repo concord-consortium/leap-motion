@@ -211,7 +211,7 @@ export default class LabHeatTransfer extends React.Component {
           </InstructionsOverlay>
         </div>
         <div className='top-links'>
-          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} />
+          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} lang={language}/>
           <SettingsDialog ref='status' lang={language}>
             <table>
               <tbody>

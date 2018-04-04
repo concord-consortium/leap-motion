@@ -583,7 +583,7 @@ export default class SeasonsSunrayAngle extends React.Component {
         </div>
         <div className='top-links'>
 
-          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} />
+          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} lang={language}/>
 
           <SettingsDialog lang={language}>
             <p>

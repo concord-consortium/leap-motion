@@ -196,8 +196,8 @@ export default class LabVolumePressure extends React.Component {
           </InstructionsOverlay>
         </div>
         <div className='top-links'>
-          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} />
-          <SettingsDialog ref='status'>
+          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} lang={language}/>
+          <SettingsDialog ref='status' lang={language}>
             <table>
               <tbody>
               <tr>
@@ -253,7 +253,7 @@ export default class LabVolumePressure extends React.Component {
               </tbody>
             </table>
           </SettingsDialog>
-          <AboutDialog>
+          <AboutDialog lang={language}>
             <About />
           </AboutDialog>
         </div>
