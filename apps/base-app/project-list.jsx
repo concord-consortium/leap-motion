@@ -7,6 +7,7 @@ export default class ProjectList extends React.Component {
     super(props);
     this.state = { language: getURLParam('lang') || 'en_us' }
     this.handleSelectLanguage = this.handleSelectLanguage.bind(this);
+    this.buildUrl = this.buildUrl.bind(this);
   }
 
   handleSelectLanguage(lang){
@@ -15,7 +16,10 @@ export default class ProjectList extends React.Component {
       this.setState({language: lang});
     }
   }
-
+  buildUrl(url){
+    const {language} = this.state;
+    return url + '&lang=' + language;
+  }
   render() {
     const {language} = this.state;
 
@@ -26,17 +30,17 @@ export default class ProjectList extends React.Component {
         </div>
         <h2>The most recent apps with gesture input:</h2>
         <ul>
-          <li>Gas Model: <a href="?simulation=labvolumepressure" target="_blank">lab-volume-pressure</a></li>
-          <li>Heat Transfer: <a href="?simulation=labheattransfer" target="_blank">lab-heat-transfer</a></li>
-          <li>Heat Transfer (transparent): <a href="?simulation=labheattransfertransparent" target="_blank">lab-heat-transfer-transparent</a></li>
-          <li>Heat Transfer (two hands): <a href="?simulation=labheattransfertwohands" target="_blank">lab-heat-transfer-two-hands</a></li>
+          <li>Gas Model: <a href={this.buildUrl("?simulation=labvolumepressure")}target="_blank">lab-volume-pressure</a></li>
+          <li>Heat Transfer: <a href={this.buildUrl("?simulation=labheattransfer")}target="_blank">lab-heat-transfer</a></li>
+          <li>Heat Transfer (transparent): <a href={this.buildUrl("?simulation=labheattransfertransparent")}target="_blank">lab-heat-transfer-transparent</a></li>
+          <li>Heat Transfer (two hands): <a href={this.buildUrl("?simulation=labheattransfertwohands")}target="_blank">lab-heat-transfer-two-hands</a></li>
           <li>Heat Transfer (two hands, RealSense): <a href="?simulation=labheattransfertwohands&device=realsense" target="_blank">lab-heat-transfer-two-hands</a></li>
-          <li>Heat Transfer (micro): <a href="?simulation=labheattransfermicro" target="_blank">lab-heat-transfer-micro</a></li>
-          <li>Heat Transfer (micro, direct control): <a href="?simulation=labheattransfermicrodirect" target="_blank">lab-heat-transfer-micro-direct</a></li>
-          <li>Heat Transfer (micro, direct control, two atoms): <a href="?simulation=labheattransfermicrotwoatoms" target="_blank">lab-heat-transfer-micro-two-atoms</a></li>
-          <li>Heat Transfer (micro, long): <a href="?simulation=labheattransferlong" target="_blank">lab-heat-transfer-long</a></li>
-          <li>Seasons: <a href="?simulation=seasons" target="_blank">seasons-sunray-angle</a></li>
-          <li>Seasons (narrow): <a href="?simulation=seasonsnarrow" target="_blank">seasons-narrow</a></li>
+          <li>Heat Transfer (micro): <a href={this.buildUrl("?simulation=labheattransfermicro")}target="_blank">lab-heat-transfer-micro</a></li>
+          <li>Heat Transfer (micro, direct control): <a href={this.buildUrl("?simulation=labheattransfermicrodirect")}target="_blank">lab-heat-transfer-micro-direct</a></li>
+          <li>Heat Transfer (micro, direct control, two atoms): <a href={this.buildUrl("?simulation=labheattransfermicrotwoatoms")} target="_blank">lab-heat-transfer-micro-two-atoms</a></li>
+          <li>Heat Transfer (micro, long): <a href={this.buildUrl("?simulation=labheattransferlong")} target="_blank">lab-heat-transfer-long</a></li>
+          <li>Seasons: <a href={this.buildUrl("?simulation=seasons")} target="_blank">seasons-sunray-angle</a></li>
+          <li>Seasons (narrow): <a href={this.buildUrl("?simulation=seasonsnarrow")} target="_blank">seasons-narrow</a></li>
         </ul>
         <h2>Lab models (without gesture input):</h2>
         <ul>
