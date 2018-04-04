@@ -61,6 +61,7 @@ export default {
   '~HEAT_TRANSFER_MICRO_DIRECT_ONE_FIST': 'Shake your fist to show the molecule moving.',
 
   // Volume Pressure
+  '~VOLUME_PRESSURE_TITLE': 'Gas Pressure vs. Volume',
   '~VOLUME_PRESSURE_NO_HANDS': 'Place hands six inches over the Leap controller.',
   '~VOLUME_PRESSURE_HAND_MISSING':  'Place two hands over the Leap controller.',
   '~VOLUME_PRESSURE_ROTATE':  'Rotate one hand to become the plunger.',
@@ -78,6 +79,16 @@ export default {
   '~LAB_HEAT_LABEL_VACUUM': 'Vacuum',
   '~LAB_HEAT_LABEL_THICK': 'Thick long bar',
   '~LAB_HEAT_LABEL_THIN': 'Thin long bar',
+
+  '~LAB_PRESSURE_TITLE': 'The Volume-Pressure Relationship',
+  '~LAB_PRESSURE_SUBTITLE': 'Explore how the volume of a gas affects pressure.',
+  '~LAB_VOLUME': 'Volume',
+  '~LAB_PRESSURE_GAUGE': 'Pressure Gauge',
+  '~LAB_PRESSURE_LABEL': 'Pressure (Bar)',
+  '~LAB_PRESSURE_ROD_VISIBLE': 'Plunger rod visible',
+  '~LAB_PRESSURE_NUMBER_SPOTS': 'Number of bump spots',
+  '~LAB_PRESSURE_SPOT_FADE_SPEED': 'Bump spot fade speed',
+  '~LAB_PRESSURE_SPOT_SENSITIVITY': 'Bump spot sensitivity',
 
   // General Lab Labels
   '~LAB_HEAT_LABEL_SPEED': 'Speed:',

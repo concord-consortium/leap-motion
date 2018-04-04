@@ -1,7 +1,7 @@
 {
-  "title": "The Volume-Pressure Relationship",
+  "title": "~LAB_PRESSURE_TITLE",
   "publicationStatus": "public",
-  "subtitle": "Explore how the volume of a gas affects pressure.",
+  "subtitle": "~LAB_PRESSURE_SUBTITLE",
   "aspectRatio": 1.35,
   "showTopBar": false,
   "about": [
@@ -129,7 +129,7 @@
     {
       "name": "volume",
       "unitAbbreviation": "nm³",
-      "label": "Volume",
+      "label": "~LAB_VOLUME",
       "initialValue": 0.82,
       "onChange": [
         "var width = get('width');",
@@ -192,7 +192,7 @@
     {
       "name": "pressureProbeInstantaneous",
       "unitType": "pressure",
-      "label": "Pressure Gauge",
+      "label": "~LAB_PRESSURE_GAUGE",
       "value": [
         "return get('orientation') === 'right' ? getObstacleProperties(0).westProbeValue : getObstacleProperties(0).eastProbeValue;"
       ]
@@ -202,7 +202,7 @@
     {
       "name": "pressureProbeFiltered",
       "unitType": "pressure",
-      "label": "Pressure Gauge",
+      "label": "~LAB_PRESSURE_GAUGE",
       "property": "pressureProbeInstantaneous",
       "type": "RunningAverage",
       "period": 2500
@@ -214,7 +214,7 @@
       "id": "bar-graph",
       "min": 0,
       "max": 2.5,
-      "title": "Pressure (Bar)",
+      "title": "~LAB_PRESSURE_LABEL",
       "property": "pressureProbeFiltered"
     },
     {

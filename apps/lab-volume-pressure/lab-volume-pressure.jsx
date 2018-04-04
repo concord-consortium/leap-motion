@@ -14,7 +14,9 @@ import About from './about.jsx';
 import interactive from './lab-interactive.json';
 import phantomHands from './phantom-hands';
 import model from './lab-model.json';
+import t, {translateJson} from '../common/js/tools/translate.js';
 import './lab-voule-pressure.less';
+import getURLParam from '../common/js/tools/get-url-param';
 
 const MAX_VOL = 0.82;
 const MIN_VOL = 0.1;
@@ -39,10 +41,29 @@ export default class LabVolumePressure extends React.Component {
     super(props);
     this.labModelLoaded = this.labModelLoaded.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
+
+    let lang = getURLParam('lang') || props.lang || 'en_us';
+    let translatedInteractive = translateJson(interactive, ['title','text','label'], lang);
+    let allInstructions = this.loadInstructions(lang);
+
     this.state = {
       leapState: {},
-      overlayEnabled: true
+      overlayEnabled: true,
+      language: lang,
+      allInstructions,
+      translatedInteractive
     }
+  }
+
+  loadInstructions(lang){
+    let instructions = {
+      DEFAULT: t('~VOLUME_PRESSURE_DEFAULT', lang),
+      NO_HANDS: t('~VOLUME_PRESSURE_NO_HANDS', lang),
+      HAND_MISSING: t('~VOLUME_PRESSURE_HAND_MISSING', lang),
+      ROTATE: t('~VOLUME_PRESSURE_ROTATE', lang),
+      FIST: t('~VOLUME_PRESSURE_FIST', lang)
+    };
+    return instructions;
   }
 
   componentDidMount() {
@@ -129,23 +150,24 @@ export default class LabVolumePressure extends React.Component {
   }
 
   getHintText() {
+    const {allInstructions} = this.state;
     switch(this.getHintName()) {
-      case 'noHands': return 'Place hands six inches over the Leap controller.';
-      case 'handMissing': return 'Place two hands over the Leap controller.';
-      case 'rotate': return 'Rotate one hand to become the plunger.';
-      case 'fist': return 'Make a fist with the other hand to become the molecules.';
-      default: return 'Tap fist to palm to show how often the molecules hit.';
+      case 'noHands': return allInstructions.NO_HANDS;
+      case 'handMissing': return allInstructions.HAND_MISSING;
+      case 'rotate': return allInstructions.ROTATE;
+      case 'fist': return allInstructions.FIST;
+      default: return allInstructions.DEFAULT;
     }
   }
 
   render() {
-    const { overlayEnabled, overlayActive, labProps } = this.state;
+    const { overlayEnabled, overlayActive, labProps, translatedInteractive, language } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
-        <h1>Gas Pressure vs. Volume</h1>
+        <h1>{t('~VOLUME_PRESSURE_TITLE', language)}</h1>
         <div className='container'>
-          <Lab ref='labModel' interactive={interactive} model={model}
+          <Lab ref='labModel' interactive={translatedInteractive} model={model}
                width={IFRAME_WIDTH} height={IFRAME_HEIGHT}
                propsUpdateDelay={75}
                props={labProps}
@@ -163,7 +185,7 @@ export default class LabVolumePressure extends React.Component {
             <table>
               <tbody>
               <tr>
-                <td>Overlay:</td>
+                <td>{t('~OVERLAY', language)}:</td>
                 <td>
                   <input type='checkbox' name='overlayEnabled'
                          checked={overlayEnabled}
@@ -171,13 +193,13 @@ export default class LabVolumePressure extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>Plunger rod visible:</td>
+                <td>{t('~LAB_PRESSURE_ROD_VISIBLE', language)}:</td>
                 <td>
                   <input type='checkbox' name='plungerRodVisible' checked={labProps.plungerRodVisible || false} onChange={this.handleLabPropChange}/>
                 </td>
               </tr>
               <tr>
-                <td>Number of bump spots:</td>
+                <td>{t('~LAB_PRESSURE_NUMBER_SPOTS', language)}:</td>
                 <td>
                   <input type='text' name='markersCount' size='7'
                          value={labProps.markersCount || 0}
@@ -189,7 +211,7 @@ export default class LabVolumePressure extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>Bump spot fade speed:</td>
+                <td>{t('~LAB_PRESSURE_SPOT_FADE_SPEED', language)}:</td>
                 <td>
                   <input type='text' name='markerFadeSpeed' size='7'
                          value={labProps.markerFadeSpeed || 0}
@@ -201,7 +223,7 @@ export default class LabVolumePressure extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>Bump spot sensitivity:</td>
+                <td>{t('~LAB_PRESSURE_SPOT_SENSITIVITY', language)}:</td>
                 <td>
                   <input type='text' name='markerSensitivity' size='7'
                          value={labProps.markerSensitivity || 0}

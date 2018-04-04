@@ -1,10 +1,29 @@
 import React from 'react';
+import LanguageSelector from '../common/js/components/language-selector.jsx';
+import getURLParam from '../common/js/tools/get-url-param';
 
 export default class ProjectList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { language: getURLParam('lang') || 'en_us' }
+    this.handleSelectLanguage = this.handleSelectLanguage.bind(this);
+  }
+
+  handleSelectLanguage(lang){
+    const { language } = this.state;
+    if (lang !== language){
+      this.setState({language: lang});
+    }
+  }
 
   render() {
+    const {language} = this.state;
+
     return (
       <div className='projects'>
+        <div className='project-language-selector'>
+          <LanguageSelector lang={language} onLanguageChange={this.handleSelectLanguage} />
+        </div>
         <h2>The most recent apps with gesture input:</h2>
         <ul>
           <li>Gas Model: <a href="?simulation=labvolumepressure" target="_blank">lab-volume-pressure</a></li>

@@ -60,6 +60,7 @@ export default {
   '~HEAT_TRANSFER_MICRO_DIRECT_ONE_FIST': 'Agita su puño para mostrar la molécula en movimiento.',
 
   // Volume Pressure
+  '~VOLUME_PRESSURE_TITLE': 'Presión de gas vs. volumen',
   '~VOLUME_PRESSURE_NO_HANDS': 'Coloque las manos seis pulgadas sobre el controlador Leap.',
   '~VOLUME_PRESSURE_HAND_MISSING':  'Coloque dos manos sobre el controlador Leap.',
   '~VOLUME_PRESSURE_ROTATE':  'Gire una mano para convertirse en el émbolo.',
@@ -77,6 +78,16 @@ export default {
   '~LAB_HEAT_LABEL_VACUUM': 'Vacío',
   '~LAB_HEAT_LABEL_THICK': 'Barra larga y gruesa',
   '~LAB_HEAT_LABEL_THIN': 'Barra larga y delgada',
+
+  '~LAB_PRESSURE_TITLE': 'La relación volumen-presión',
+  '~LAB_PRESSURE_SUBTITLE': 'Explore cómo el volumen de un gas afecta la presión.',
+  '~LAB_VOLUME': 'Volumen',
+  '~LAB_PRESSURE_GAUGE': 'Manómetro',
+  '~LAB_PRESSURE_LABEL': 'Presión (Bar)',
+  '~LAB_PRESSURE_ROD_VISIBLE': 'Barra de émbolo visible',
+  '~LAB_PRESSURE_NUMBER_SPOTS': 'Número de puntos de impacto',
+  '~LAB_PRESSURE_SPOT_FADE_SPEED': 'Tasa de desvanecimiento de punto',
+  '~LAB_PRESSURE_SPOT_SENSITIVITY': 'Sensibilidad al impacto',
 
   // General Lab Labels
   '~LAB_HEAT_LABEL_SPEED': 'Velocidad:',
