@@ -43,6 +43,19 @@ This project is automatically deployed to S3 bucket by Travis-CI.
 ## URL Parameters
 Many of the simulations can be customized using URL parameters as follows:
 
+### Translations (all simulations)
+GRASP Leap Interactives are available in two languages - English and Spanish. The Spanish version can be selected from the main
+menu page by clicking on the flag in the top-right to choose the language. Alternatively, all simulations can be launched with one
+of the following parameters:
+
+```
+lang=en_us
+lang=es_es
+```
+
+English is the default language. Spanish translation is a work-in-progress. All language translation strings can be found
+in [apps/common/js/lang](apps/common/js/lang).
+
 ### Seasons
 For the Seasons simulation URL parameters can be specified to preset which panels to display. Panels are specified with the parameters:
 ```
