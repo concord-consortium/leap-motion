@@ -104,7 +104,7 @@ export default class BaseApp extends React.Component {
         {showHeader && <div className={headerClass}>
           <div className='header-inner'>
             <img className='projectlogo' src="logos/grasp.png" alt="GRASP Project" />
-            <a href="http://illinois.edu/" title="University of Illinois at Urbana-Champaign"><img className="illogo" alt="University of Illinois at Urbana-Champaign" src="http://publish.illinois.edu/graspprogram/files/2015/11/logo.gif" /></a>
+            <a href="http://illinois.edu/" title="University of Illinois at Urbana-Champaign"><img className="illogo" alt="University of Illinois at Urbana-Champaign" src="logos/imark.gif" /></a>
             <a href="https://concord.org/" title="The Concord Consortium - Revolutionary digital learning for science, math, and engineering"><img className='cclogo' src="logos/cclogo.png" alt="Concord Consortium" /></a>
           </div>
         </div>}
