@@ -34,7 +34,6 @@ export default class ProjectList extends React.Component {
           <li>Heat Transfer: <a href={this.buildUrl("?simulation=labheattransfer")}target="_blank">lab-heat-transfer</a></li>
           <li>Heat Transfer (transparent): <a href={this.buildUrl("?simulation=labheattransfertransparent")}target="_blank">lab-heat-transfer-transparent</a></li>
           <li>Heat Transfer (two hands): <a href={this.buildUrl("?simulation=labheattransfertwohands")}target="_blank">lab-heat-transfer-two-hands</a></li>
-          <li>Heat Transfer (two hands, RealSense): <a href="?simulation=labheattransfertwohands&device=realsense" target="_blank">lab-heat-transfer-two-hands</a></li>
           <li>Heat Transfer (micro): <a href={this.buildUrl("?simulation=labheattransfermicro")}target="_blank">lab-heat-transfer-micro</a></li>
           <li>Heat Transfer (micro, direct control): <a href={this.buildUrl("?simulation=labheattransfermicrodirect")}target="_blank">lab-heat-transfer-micro-direct</a></li>
           <li>Heat Transfer (micro, direct control, two atoms): <a href={this.buildUrl("?simulation=labheattransfermicrotwoatoms")} target="_blank">lab-heat-transfer-micro-two-atoms</a></li>
@@ -52,6 +51,7 @@ export default class ProjectList extends React.Component {
         <h2>Old apps:</h2>
         <ul>
           <li>Pressure Equilibrium Model: <a href="?simulation=labpressureequilibrium" target="_blank">lab-pressure-equilibrium</a></li>
+          <li>Heat Transfer (two hands, RealSense): <a href="?simulation=labheattransfertwohands&device=realsense" target="_blank">lab-heat-transfer-two-hands</a></li>
         </ul>
         <h2>Tests:</h2>
         <ul>
