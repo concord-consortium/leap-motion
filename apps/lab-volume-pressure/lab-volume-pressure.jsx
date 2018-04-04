@@ -3,6 +3,7 @@ import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
 import Lab from 'react-lab';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
+import LeapConnectionDialog from '../common/js/components/leap-connection-dialog.jsx';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import FistBump from './fist-bump';
@@ -51,7 +52,8 @@ export default class LabVolumePressure extends React.Component {
       overlayEnabled: true,
       language: lang,
       allInstructions,
-      translatedInteractive
+      translatedInteractive,
+      leapConnected: false
     }
   }
 
@@ -131,7 +133,20 @@ export default class LabVolumePressure extends React.Component {
   handleLeapFrame(frame) {
     return this.fistBump.handleLeapFrame(frame);
   }
-
+  handleDeviceConnected(){
+    const { leapConnected } = this.state;
+    if (!leapConnected){
+      console.log("Device connected in Volume Pressure sim");
+      this.setState({leapConnected: true});
+    }
+  }
+  handleDeviceDisconnected(){
+    const { leapConnected } = this.state;
+    if (leapConnected){
+      console.log("Device disconnected in Volume Pressure sim");
+      this.setState({leapConnected: false});
+    }
+  }
   getHintName() {
     const state = this.state.leapState;
     if (state.numberOfHands === 0) {
@@ -161,7 +176,7 @@ export default class LabVolumePressure extends React.Component {
   }
 
   render() {
-    const { overlayEnabled, overlayActive, labProps, translatedInteractive, language } = this.state;
+    const { overlayEnabled, overlayActive, labProps, translatedInteractive, language, leapConnected } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
@@ -181,6 +196,7 @@ export default class LabVolumePressure extends React.Component {
           </InstructionsOverlay>
         </div>
         <div className='top-links'>
+          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} />
           <SettingsDialog ref='status'>
             <table>
               <tbody>

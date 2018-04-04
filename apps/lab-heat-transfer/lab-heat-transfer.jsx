@@ -3,6 +3,7 @@ import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
 import Lab from 'react-lab';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
+import LeapConnectionDialog from '../common/js/components/leap-connection-dialog.jsx';
 import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import FistShake from './fist-shake';
@@ -61,7 +62,8 @@ export default class LabHeatTransfer extends React.Component {
       spoonEnabled,
       language: lang,
       allInstructions,
-      translatedInteractive
+      translatedInteractive,
+      leapConnected: false
     }
   }
 
@@ -77,7 +79,20 @@ export default class LabHeatTransfer extends React.Component {
   handleLeapFrame(frame) {
     return this.fistShake.handleLeapFrame(frame);
   }
-
+  handleDeviceConnected(){
+    const { leapConnected } = this.state;
+    if (!leapConnected){
+      console.log("Device connected in Heat Transfer sim");
+      this.setState({leapConnected: true});
+    }
+  }
+  handleDeviceDisconnected(){
+    const { leapConnected } = this.state;
+    if (leapConnected){
+      console.log("Device disconnected in Heat Transfer sim");
+      this.setState({leapConnected: false});
+    }
+  }
   get plotter() {
     return this.refs.status.plotter;
   }
@@ -165,7 +180,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { translatedInteractive, overlayEnabled, overlayActive, labProps, spoonEnabled, language } = this.state;
+    const { translatedInteractive, overlayEnabled, overlayActive, labProps, spoonEnabled, language, leapConnected } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
@@ -184,6 +199,7 @@ export default class LabHeatTransfer extends React.Component {
           </InstructionsOverlay>
         </div>
         <div className='top-links'>
+          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} />
           <SettingsDialog ref='status' lang={language}>
             <table>
               <tbody>

@@ -3,6 +3,7 @@ import reactMixin from 'react-mixin';
 import pureRender from 'react-addons-pure-render-mixin';
 import Lab from 'react-lab';
 import leapStateHandlingV2 from '../common/js/mixins/leap-state-handling-v2';
+import LeapConnectionDialog from '../common/js/components/leap-connection-dialog.jsx';
 import overlayVisibility from '../common/js/mixins/overlay-visibility';
 import setLabProps from '../common/js/mixins/set-lab-props';
 import FistsShaking from './fists-shaking';
@@ -61,7 +62,8 @@ export default class LabHeatTransfer extends React.Component {
       spoonEnabled,
       language: lang,
       allInstructions,
-      translatedInteractive
+      translatedInteractive,
+      leapConnected: false
     };
   }
 
@@ -84,7 +86,20 @@ export default class LabHeatTransfer extends React.Component {
       this.gestureNotDetected(data);
     }
   }
-
+  handleDeviceConnected(){
+    const { leapConnected } = this.state;
+    if (!leapConnected){
+      console.log("Device connected in Heat Transfer (two hands) sim");
+      this.setState({leapConnected: true});
+    }
+  }
+  handleDeviceDisconnected(){
+    const { leapConnected } = this.state;
+    if (leapConnected){
+      console.log("Device disconnected in Heat Transfer (two hands) sim");
+      this.setState({leapConnected: false});
+    }
+  }
   gestureDetected(data) {
     let avgFreq;
     const newLabProps = {markedBlock: data.selectedSide};
@@ -176,7 +191,7 @@ export default class LabHeatTransfer extends React.Component {
   }
 
   render() {
-    const { overlayEnabled, overlayActive, labProps, leapState, spoonEnabled, translatedInteractive, language } = this.state;
+    const { overlayEnabled, overlayActive, labProps, leapState, spoonEnabled, translatedInteractive, language, leapConnected } = this.state;
     const overlayVisible = overlayEnabled && overlayActive;
     return (
       <div>
@@ -196,6 +211,7 @@ export default class LabHeatTransfer extends React.Component {
           </InstructionsOverlay>
         </div>
         <div className='top-links'>
+          <LeapConnectionDialog connected={leapConnected} title={t('~LEAP_CONNECTION', language)} />
           <SettingsDialog ref='status' lang={language}>
             <table>
               <tbody>
