@@ -1,5 +1,5 @@
 import THREE from 'three';
-import rigs from 'exports?rigs!../lib/leap-rigged-hand/hand_models_v1';
+import rigs from 'exports-loader?rigs!../lib/leap-rigged-hand/hand_models_v1';
 import extend from '../tools/extend';
 
 // TODO: probably it should be integrated with phantom-hands.js module.

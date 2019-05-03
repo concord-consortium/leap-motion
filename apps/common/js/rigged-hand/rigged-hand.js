@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import rigs from 'exports?rigs!../lib/leap-rigged-hand/hand_models_v1';
+import rigs from 'exports-loader?rigs!../lib/leap-rigged-hand/hand_models_v1';
 import THREE from 'three';
 
 // Options include:
